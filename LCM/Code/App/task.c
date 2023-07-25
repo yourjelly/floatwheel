@@ -46,7 +46,10 @@ void KEY1_Task(void)
 				{
 					Gear_Position = 1;
 				}
-				
+
+				// //write 
+				// EEPROM_ProgramByte(0x0C0001BF, Gear_Position);
+				//EEPROM_EraseByte(0x12345678);			
 			}
 		break;
 		
@@ -106,7 +109,7 @@ void Sensor_Activation_Diplay(void)
 	
 	switch(Footpad_Activation_Flag)
 	{
-		case 1:// adc1>2.ADC_THRESHOLD  adc2<2.ADC_THRESHOLD
+		case 1:// adc1>2.ADC_THRESHOLD_LOWER  adc2<2.ADC_THRESHOLD_LOWER
 			for(i=0;i<5;i++)
 			{
 				WS2812_Set_Colour(i,0,0,WS2812_Measure);
@@ -117,7 +120,7 @@ void Sensor_Activation_Diplay(void)
 			}
 		break;
 		
-		case 2:// adc1<2.ADC_THRESHOLD  adc2>2.ADC_THRESHOLD
+		case 2:// adc1<2.ADC_THRESHOLD_LOWER  adc2>2.ADC_THRESHOLD_LOWER
 			for(i=0;i<5;i++)
 			{
 				WS2812_Set_Colour(i,0,0,0);
@@ -128,14 +131,14 @@ void Sensor_Activation_Diplay(void)
 			}
 		break;
 		
-		case 3:// adc1>2.ADC_THRESHOLD  adc2>2.ADC_THRESHOLD
+		case 3:// adc1>2.ADC_THRESHOLD_LOWER  adc2>2.ADC_THRESHOLD_LOWER
 			for(i=0;i<10;i++)
 			{
 				WS2812_Set_Colour(i,0,0,WS2812_Measure);
 			}
 		break;
 			
-		case 4:// adc1<ADC_THRESHOLD.5V  adc2<2.ADC_THRESHOLD
+		case 4:// adc1<ADC_THRESHOLD_LOWER.5V  adc2<2.ADC_THRESHOLD_LOWER
 			for(i=0;i<10;i++)
 			{
 				WS2812_Set_Colour(i,0,0,0);
@@ -164,12 +167,12 @@ void WS2812_Boot(void) {
 	if (num > 10) {
 		num = 10;
 	}
+
 	for (i=0;i<num;i++) {
 		switch (BOOT_ANIMATION) {
 			case 1:
 				WS2812_Set_Colour(i,0,255,255);
 			break;
-			
 			case 2:
 				WS2812_Set_Colour(i,rgbMap[i][0],rgbMap[i][1],rgbMap[i][2]);
 			break;
@@ -444,6 +447,19 @@ void Power_Task(void)
 						Gear_Position = 1; //������Ĭ����1��
 						Buzzer_Flag = 2;    //����Ĭ�Ϸ�������
 						power_step = 0;
+
+						// // Read from eeprom
+						// int* memoryPtr;
+						// unsigned int address = 0x0C0001BF;
+						// // Assign the memory address to the pointer
+						// memoryPtr = (int*)address;
+						// // Read the data at the memory address using the pointer
+						// int data = *memoryPtr;
+
+						// if (data > 0) {
+						// 	Gear_Position = data;
+						// }
+
 					}
 				break;
 			}
@@ -735,7 +751,7 @@ void Flashlight_Detection(void)
 	{
 		if(gear_position_last != Gear_Position)
 		{
-			if(ADC1_Val < ADC_THRESHOLD && ADC2_Val < ADC_THRESHOLD)
+			if(ADC1_Val < ADC_THRESHOLD_LOWER && ADC2_Val < ADC_THRESHOLD_LOWER)
 			{
 				switch(Gear_Position)
 				{
@@ -1142,7 +1158,7 @@ void Conditional_Judgment(void)
 				
 				//VESC_Rpm = -10;//������Ҫע��
 				
-				if(ADC1_Val>2.9 || ADC2_Val > 2.9)
+				if(ADC1_Val>ADC_THRESHOLD_UPPER || ADC2_Val > ADC_THRESHOLD_UPPER)
 				{
 					if(data.rpm > VESC_RPM_WIDTH)
 					{
@@ -1181,16 +1197,16 @@ void Conditional_Judgment(void)
 				
 				if(data.rpm<VESC_RPM)
 				{
-					if(ADC1_Val < 2.9 && ADC2_Val <2.9)
+					if(ADC1_Val < ADC_THRESHOLD_UPPER && ADC2_Val < ADC_THRESHOLD_UPPER)
 					{
 						Lightbar_Mode_Flag = 1;  //��ʾ����
 					}
-					else if(ADC1_Val > 2.9 && ADC2_Val > 2.9)
+					else if(ADC1_Val > ADC_THRESHOLD_UPPER && ADC2_Val > ADC_THRESHOLD_UPPER)
 					{
 						Lightbar_Mode_Flag = 2;  //����ʾ����
 						Footpad_Activation_Flag = 3;  //10���ƶ�������
 					}
-					else if(ADC1_Val >2.9)
+					else if(ADC1_Val >ADC_THRESHOLD_UPPER)
 					{
 						Lightbar_Mode_Flag = 2;//����ʾ����
 						Footpad_Activation_Flag = 1;  //���5������     �Ҳ�5���Ʋ�����
@@ -1233,7 +1249,7 @@ void Conditional_Judgment(void)
 					��̤����»�ת�ٴ���1000��ʱ����
 					�����Ƚ�̤��ת�ٵ���1000��ʼ��ʱ�������ػ�ʱ��ػ�
 				*/
-				if(ADC1_Val > 2.9 || ADC2_Val > 2.9 || data.rpm > 1000)
+				if(ADC1_Val > ADC_THRESHOLD_UPPER || ADC2_Val > ADC_THRESHOLD_UPPER || data.rpm > 1000)
 				{
 					Shutdown_Time_S = 0;
 					Shutdown_Time_M = 0;
