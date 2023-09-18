@@ -4,16 +4,16 @@ uint16_t Buzzer_Counter = 0;
 
 /**************************************************
  * @brie   :Buzzer_Init()
- * @note   :·äÃùÆ÷³õÊ¼»¯
- * @param  :ÎÞ
- * @retval :ÎÞ
+ * @note   :ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¼ï¿½ï¿½
+ * @param  :ï¿½ï¿½
+ * @retval :ï¿½ï¿½
  **************************************************/
 void Buzzer_Init(void)
 {
 	GPIO_InitTypeDef GPIO_InitStructure;
-	
+
 	RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOA, ENABLE);
-	//BUZZER
+	// BUZZER
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
 	GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
 	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_3;
@@ -25,17 +25,17 @@ void Buzzer_Init(void)
 
 /**************************************************
  * @brie   :Buzzer_Scan()
- * @note   :·äÃùÆ÷É¨Ãè
- * @param  :ÎÞ
- * @retval :ÎÞ
+ * @note   :ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½É¨ï¿½ï¿½
+ * @param  :ï¿½ï¿½
+ * @retval :ï¿½ï¿½
  **************************************************/
 void Buzzer_Scan(void)
 {
 	static uint8_t buzzer_lock = 0;
-	
-	if(Buzzer_Counter > 0)
+
+	if (Buzzer_Counter > 0)
 	{
-		if(buzzer_lock == 0)
+		if (buzzer_lock == 0)
 		{
 			buzzer_lock = 1;
 			BUZZER_ON;
@@ -43,7 +43,7 @@ void Buzzer_Scan(void)
 		else
 		{
 			Buzzer_Counter--;
-			if(Buzzer_Counter == 0)
+			if (Buzzer_Counter == 0)
 			{
 				buzzer_lock = 0;
 				BUZZER_OFF;
@@ -54,12 +54,11 @@ void Buzzer_Scan(void)
 
 /**************************************************
  * @brie   :Buzzer_Ring()
- * @note   :·äÃùÆ÷Ïì
- * @param  :ring_time ÏìµÄÊ±¼ä
- * @retval :ÎÞ
+ * @note   :ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+ * @param  :ring_time ï¿½ï¿½ï¿½Ê±ï¿½ï¿½
+ * @retval :ï¿½ï¿½
  **************************************************/
 void Buzzer_Ring(uint16_t ring_time)
 {
 	Buzzer_Counter = ring_time;
 }
-

@@ -3,6 +3,7 @@
 
 #include "led.h"
 #include "key.h"
+#include "buzzer.h"
 #include "ws2812.h"
 #include "flag_bit.h"
 #include "vesc_uasrt.h"
@@ -36,25 +37,24 @@ typedef enum
 #define   ADC_THRESHOLD_LOWER       2.5         // Threshold value for footpad activation detection
 #define   ADC_THRESHOLD_UPPER       2.9         // Threshold value for footpad activation detection
 /*******************************************************************************/
-#define   VESC_RPM_WIDTH      		-200 		// When the rotation speed is between ±100, do not switch the front and rear lights, keep the front white light and the rear red light
-#define   LIGHTBAR_BRIGHTNESS_1 	140			// High brightness value (0-255) -- Stock (204)
-#define   LIGHTBAR_BRIGHTNESS_2 	70			// Medium brightness value (0-255) -- Stock (128)
-#define   LIGHTBAR_BRIGHTNESS_3 	10			// Low brightness value (0-255) -- Stock (30)
-#define   MAIN_BRIGHTNESS_1			7000		// Low brightness value (0-9999) -- Stock (7000)
-#define   MAIN_BRIGHTNESS_2			4000		// Medium brightness value (0-9999) -- Stock (4000)
-#define   MAIN_BRIGHTNESS_3			0			// High brightness value (0-9999) -- Stock (0)
+#define   VESC_RPM_WIDTH      		100 		// When the rotation speed is ± this value, do not switch the travel direction
+#define   LIGHTBAR_BRIGHTNESS_HIGH 	140			// High brightness value (0-255) -- Stock (204)
+#define   LIGHTBAR_BRIGHTNESS_MED	70			// Medium brightness value (0-255) -- Stock (128)
+#define   LIGHTBAR_BRIGHTNESS_LOW 	10			// Low brightness value (0-255) -- Stock (30)
+#define   MAIN_BRIGHTNESS_REST		9000		// Main brightness at rest -- Stock 10% (9000)
+#define   MAIN_BRIGHTNESS_LOW		7000		// Low brightness value (0-9999) -- Stock (7000)
+#define   MAIN_BRIGHTNESS_MED		4000		// Medium brightness value (0-9999) -- Stock (4000)
+#define   MAIN_BRIGHTNESS_HIGH		0			// High brightness value (0-9999) -- Stock (0)
 #define   CHARGE_CURRENT			0.3         // Charging current unit A
-#define   CHARGE_CURRENT_L			0.1         // Charging current unit A
-#define   CHARGE_CURRENT_H			0.24        // Charging current unit A
 #define   DETECTION_SWITCH_TIME     500         // Detection switch time unit ms
 #define   CHARGER_DETECTION_DELAY	1000        // Charger detection delay unit ms
 #define   BOOT_ANIMATION		    RAINBOW     // Boot animation (NORMAL, RAINBOW)
-#define   CELL_TYPE                 P42A        // Cell configuration to use for voltage display (P42A, DG40)
+#define   CELL_TYPE                 DG40        // Cell configuration to use for voltage display (P42A, DG40)
 #define	  BUZZER_TYPE				LCM			// Change control of buzzer (LCM, VESC, OFF) - TODO implement the different options in code
 #define	  ENABLE_POWER_WHILE_CHARGE	true		// Enable power while charging
+#define   FADE_TIME					1000		// Time of fade transition (ms)
+#define   FADE_REFRESH				2			// (ms); FADE_TIME/FADE_REFRESH = fade steps 
 
-#define   LIGHT_DELAY				500 		//500ms delay for switching lights, same time is used for the fade length
-void LED_Task(void);
 void KEY1_Task(void);
 void WS2812_Task(void);
 void Power_Task(void);
@@ -69,9 +69,6 @@ void Change_Light_Profile(bool persist);
 void Change_Boot_Animation(uint8_t animation);
 void Change_Cell_Type(uint8_t type);
 void Change_Buzzer_Type(uint8_t type);
-void Set_Light_Brightness();
-//void Change_Cell_Type(uint8_t type, bool get);
-//void Change_Boot_Animation(uint8_t animation,bool get); 
 #endif
 
 

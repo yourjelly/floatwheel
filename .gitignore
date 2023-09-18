@@ -1,3 +1,11 @@
 LCM/Project/MDK5/Objects/
 LCM/Project/MDK5/LCM_Light_Control_IO_WS2812_New.uvguix.*
 LCM/Project/MDK5/Listings/
+LCM/.vscode/tasks.json
+LCM/.vscode/c_cpp_properties.json
+LCM/.vscode/settings.json
+LCM/Scripts/
+LCM/.editorconfig
+LCM/ci_tmp/program_size_summary_cf.log
+LCM/ci_tmp/program_size_summary.log
+LCM/ci_tmp/LCM_Light_Control_IO_WS2812_New/LCM_Light_Control_IO_WS2812_New.bin
