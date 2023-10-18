@@ -210,7 +210,6 @@ void WS2812_Boot(void) {
 	WS2812_Refresh();//ˢ����ʾ
 }
 
-uint8_t brightness = 1;
 /**************************************************
  * @brie   :WS2812_Cal_Bri()
  * @note   :��������
@@ -219,6 +218,9 @@ uint8_t brightness = 1;
  **************************************************/
 uint8_t WS2812_Cal_Bri(uint8_t cnt)
 {
+	static uint8_t brightness = 1;
+
+	// Update brightness
 	if(cnt < 50)
 	{
 		brightness++;
@@ -228,12 +230,12 @@ uint8_t WS2812_Cal_Bri(uint8_t cnt)
 		brightness--;
 	}
 
+	// Clamp brightness
 	if(brightness < 1)
 	{
 		brightness = 1;
 	}
-
-	if(brightness > 50)
+	else if(brightness > 50)
 	{
 		brightness = 50;
 	}
