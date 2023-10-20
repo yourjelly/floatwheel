@@ -1,118 +1,98 @@
 #include "flag_bit.h"
 
 /*
-	Power_Flag = 0; ¸ÕÉÏµç
-	Power_Flag = 1£»VESC¿ª»ú
-	Power_Flag = 2; VESC¿ª»úÍê³É
-	Power_Flag = 3; VESC¹Ø»ú£¬³äµçÆ÷¸ø°å×Ó¹©µç
+	Power_Flag = 0; Default state.
+	Power_Flag = 1; VESC booting up.
+	Power_Flag = 2; VESC boot-up completed.
+	Power_Flag = 3; VESC powered off, board on charger.
 */
 uint8_t Power_Flag = 0;
 /*
-	Charge_Flag = 0; ¸ÕÉÏµç
-	Charge_Flag = 1£»×¼±¸³äµç
-	Charge_Flag = 2£»³äµç´ò¿ª
-	Charge_Flag = 3£»µç³Øµç³äÂúÁË
+	Charge_Flag = 0; Default state.
+	Charge_Flag = 1; Ready for charging.
+	Charge_Flag = 2; Charging in progress.
+	Charge_Flag = 3; Battery fully charged.
 */
 uint8_t Charge_Flag = 0;
 ///*
-//	VESC_Boot_Flag = 0; VESC¹Ø»ú
-//	VESC_Boot_Flag = 1£»VESC¿ª»ú
+//	VESC_Boot_Flag = 0; Default state.
+//	VESC_Boot_Flag = 1ï¿½ï¿½VESCï¿½ï¿½ï¿½ï¿½
 //*/
 //uint8_t VESC_Boot_Flag = 0;
 /*
-	Flashlight_Flag = 0; ¸ÕÉÏµç
-	Flashlight_Flag = 1; VESC¿ª»ú
-	Flashlight_Flag = 2£»VESCÇ°Ãæ°×µÆºóÃæºìµÆ(Õı×ª)
-	Flashlight_Flag = 3£»VESCÇ°ÃæºìµÆºóÃæ°×µÆ(·´×ª)
-	Flashlight_Flag = 4; ÁÁ¶È10%
+	Flashlight_Flag = 0; Default state.
+	Flashlight_Flag = 1; VESC booting up.
+	Flashlight_Flag = 2; Front light white, rear light red (forward).
+	Flashlight_Flag = 3; Front light red, rear light white (reverse).
+	Flashlight_Flag = 4; Brightness set to 10%.
 */
 uint8_t Flashlight_Flag = 0;
 /*
-	Brightness_Flag = 0; ¸ÕÉÏµç
-	Brightness_Flag = 1; ¿ªÊ¼µ÷ÕûÁÁ¶È
-	Brightness_Flag = 2£»ÁÁ¶Èµ÷ÕûÍê³É
+	Brightness_Flag = 0; Default state.
+	Brightness_Flag = 1; Starting brightness adjustment.
+	Brightness_Flag = 2; Brightness adjustment completed.
 */
 uint8_t Brightness_Flag = 0;
 /*
-	WS2812_Display_Flag = 0; ¸ÕÉÏµç
-	WS2812_Display_Flag = 1£»ÏÔÊ¾µçÁ¿
-	WS2812_Display_Flag = 2£»²»ÏÔÊ¾µçÁ¿
+	WS2812_Display_Flag = 0; Default state.
+	WS2812_Display_Flag = 1; Display battery level.
+	WS2812_Display_Flag = 2; Do not display battery level.
 */
 uint8_t WS2812_Display_Flag = 0;
 /*
-	WS2812_Flag = 0; ¸ÕÉÏµç
-	WS2812_Flag = 1£»×ó²à5¸öÀ¶µÆ     ÓÒ²à5¸öµÆ²»·¢¹â   adc1>2.5V  adc2<2.5V
-	WS2812_Flag = 2£»×ó²à5¸öµÆ²»·¢¹â ÓÒ²à5¸öÀ¶µÆ       adc1<2.5V  adc2>2.5V
-	WS2812_Flag = 3£»10¸öµÆ¶¼Á¿À¶µÆ                    adc1>2.5V  adc2>2.5V
-	WS2812_Flag = 4£»10¸öµÆ¶¼Ãğ
+	WS2812_Flag = 0; Default state.
+	WS2812_Flag = 1; Left 5 LEDs blue, Right 5 LEDs off (adc1 > 2.5V, adc2 < 2.5V)
+	WS2812_Flag = 2; Left 5 LEDs off, Right 5 LEDs blue (adc1 < 2.5V, adc2 > 2.5V)
+	WS2812_Flag = 3; All 10 LEDs blue (adc1 > 2.5V, adc2 > 2.5V)
+	WS2812_Flag = 4; All 10 LEDs off.
 */
 uint8_t WS2812_Flag = 0;
 /*
-	Power_Display_Flag = 0; ¸ÕÉÏµç
-	Power_Display_Flag = 1£» 4.08V~4.2V 	10¸ö°×µÆ
-	Power_Display_Flag = 2£» 4.05V~4.08V 9¸ö°×µÆ
-	Power_Display_Flag = 3£» 3.96V~4.05V 8¸ö°×µÆ
-	Power_Display_Flag = 4£» 3.87V~3.96V 7¸ö°×µÆ
-	Power_Display_Flag = 5£» 3.78V~3.87V 7¸ö°×µÆ
-	Power_Display_Flag = 6£» 3.70V~3.78V 5¸ö°×µÆ
-	Power_Display_Flag = 7£» 3.62V~3.70V 4¸ö°×µÆ
-	Power_Display_Flag = 8£» 3.50V~3.62V 3¸ö°×µÆ
-	Power_Display_Flag = 9£» 3.35V~3.50V 2¸öºìµÆ
-	Power_Display_Flag = 10; 2.80V~3.35V 1¸öºìµÆ
+	Power_Display_Flag = 0; Default state.
+	Power_Display_Flag = 1; Full charge: 10 white LEDs.
+	Power_Display_Flag = 2; 90%: 9 white LEDs.
+	Power_Display_Flag = 3; 80%: 8 white LEDs.
+	Power_Display_Flag = 4; 70%: 7 white LEDs.
+	Power_Display_Flag = 5; 60%: 7 white LEDs.
+	Power_Display_Flag = 6; 50%: 5 white LEDs.
+	Power_Display_Flag = 7; 40%: 4 white LEDs.
+	Power_Display_Flag = 8; 30%: 3 white LEDs.
+	Power_Display_Flag = 9; 20%: 2 red LEDs.
+	Power_Display_Flag = 10; 10%: 1 red LED.
 */
 uint8_t Power_Display_Flag = 0;
 /*
-	Buzzer_Flag = 0; ¸ÕÉÏµç
-	Buzzer_Flag = 1£»·äÃùÆ÷²»Ïì
-	Buzzer_Flag = 2£»·äÃùÆ÷Ïì
+	Buzzer_Flag = 0; Default state.
+	Buzzer_Flag = 1; Buzzer disabled.
+	Buzzer_Flag = 2; Buzzer enabled.
 */
 uint8_t Buzzer_Flag = 0;
 /*
-	Usart_Flag = 0; ¸ÕÉÏµç
-	Usart_Flag = 1£»½âÎö³É¹¦
-	Usart_Flag = 2£»½âÎöÊ§°Ü»òµÈ´ıÏÂÒ»´Î½âÎö
+	Usart_Flag = 0; Default state.
+	Usart_Flag = 1; Parsing successful.
+	Usart_Flag = 2; Parsing failed or waiting for the next parsing.
 */
 uint8_t Usart_Flag = 0;
 
-/*
-	VESC¿ª»úÊ±¼ä
-*/
-uint16_t VESC_Boot_Time = 0;
+uint16_t VESC_Boot_Time = 0; // VESC boot time.
 
+uint16_t Buzzer_Time = 0; // Buzzer sounding time.
+
+uint16_t Charge_Time = 0; // Charging time.
+
+uint16_t Flashlight_Time = 0; // Flashlight time.
+
+uint16_t Power_Time = 0; // Power on time.
+
+uint16_t Usart_Time = 0; // USART communication time.
+
+uint16_t ADC_Time = 0; // ADC sampling time.
+
+uint16_t Shutdown_Time_S = 0; // Shutdown time in seconds.
+
+uint8_t Shutdown_Time_M = 0; // Shutdown time in minutes.
 /*
-	·äÃùÆ÷ÏìµÄÊ±¼ä
-*/
-uint16_t Buzzer_Time = 0;
-/*
-	³äµç¼ÆÊ±
-*/
-uint16_t Charge_Time = 0;
-/*
-	ÕÕÃ÷µÆ
-*/
-uint16_t Flashlight_Time = 0;
-/*
-	¿ª»úÊ±¼ä
-*/
-uint16_t Power_Time = 0;
-/*
-	´®¿ÚÍ¨ĞÅ
-*/
-uint16_t Usart_Time = 0;
-/*
-	ADC²ÉÑùÊ±¼ä
-*/
-uint16_t ADC_Time = 0;
-/*
-	¹Ø»úÊ±¼ä Ãë
-*/
-uint16_t Shutdown_Time_S = 0;
-/*
-	¹Ø»úÊ±¼ä ·ÖÖÓ
-*/
-uint8_t Shutdown_Time_M = 0;
-/*
-	µç³ØµçÑ¹
+	ï¿½ï¿½Øµï¿½Ñ¹
 */
 //float Battery_Voltage = 0;
 /*
@@ -124,55 +104,42 @@ float ADC1_Val = 0;
 */
 float ADC2_Val = 0;
 /*
-	×ªËÙ
+	×ªï¿½ï¿½
 */
 //long VESC_Rpm = 0;
 /*
-	Ä¸ÏßµçÁ÷
+	Ä¸ï¿½ßµï¿½ï¿½ï¿½
 */
 //float AvgInputCurrent = 0;
 /*
-	Õ¼¿Õ±È
+	Õ¼ï¿½Õ±ï¿½
 */
 //float DutyCycleNow = 0;
+
+float Charge_Voltage = 0; // Charging Port Voltage
+
 /*
-	³äµç¿ÚµçÑ¹
-*/
-float Charge_Voltage = 0;
-/*
-	Gear_Position = 0 ¸Õ¿ª»ú
-	Gear_Position = 1 ´óµÆ×î°µ WS2812×îÁÁ ·äÃùÆ÷ÏìÒ»Éù
-	Gear_Position = 2 ´óµÆÖĞµµ WS2812ÖĞµµ ·äÃùÆ÷ÏìÁ½Éù
-	Gear_Position = 3 ´óµÆ×îÁÁ WS2812×î°µ ·äÃùÆ÷ÏìÈıÉù
+	Gear_Position = 0; Default state.
+	Gear_Position = 1; Headlight bightness low, Lightpad brightness high, beep once
+	Gear_Position = 2; Headlight bightness mid, Lightpad brightness mid, beep twice
+	Gear_Position = 3; Headlight bightness high, Lightpad brightness low, beep thrice
 */
 uint8_t Gear_Position = 0;
+
+uint8_t WS2812_Measure = 0; // Lightbar runtime brightness setting (0-255)
+
+uint8_t Buzzer_Frequency = 0; // Buzzer frequency in BPM, beats per minute, ranging from 60 to 180, corresponding to a duty cycle of 70 to 100)
+
+uint16_t Flashlight_Detection_Time = 0; // When the button is double-clicked without pressing it, the headlight stays on for 3 seconds.
+
+float Charge_Current = 0; // Charging Port Current
+
 /*
-	WS2812Á¿¶È
-*/
-uint8_t WS2812_Measure = 0;
-/*
-	·äÃùÆ÷ bpm 60-180 ¶ÔÓ¦Õ¼¿Õ±È 70-100
-*/
-uint8_t Buzzer_Frequency = 0;
-/*
-	°´¼üË«»÷½ÅÌ¤°åÃ»²ÈÏÂ ´óµÆÁÁ3S
-*/
-uint16_t Flashlight_Detection_Time = 0;
-/*
-	³äµçµçÑ¹ºÍ³äµçµÄµçÁ÷µÄÔ­Ê¼Öµ
-*/
-float Charge_Current = 0;
-/*
-	0 ²ÉÑù³äµçµçÁ÷
-	1 ²ÉÑù³äµçµçÑ¹
+	V_I = 0: Sampling charging current.
+	V_I = 1: Sampling charging voltage.
 */
 uint8_t V_I = 1;
-/*
-	µçÁ÷´ïµ½¹Ø»úµÄ´ÎÊı
-*/
-uint8_t Shutdown_Cnt = 0;
-/*
-	³äµçÆ÷¼ì²âÊ±¼ä
-*/
-uint16_t Charger_Detection_1ms = 0;
 
+uint8_t Shutdown_Cnt = 0; // Number of times the current reaches the shutdown value.
+
+uint16_t Charger_Detection_1ms = 0; // Charger detection time.

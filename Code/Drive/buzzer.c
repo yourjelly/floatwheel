@@ -3,10 +3,10 @@
 uint16_t Buzzer_Counter = 0;
 
 /**************************************************
- * @brie   :Buzzer_Init()
- * @note   :·äÃùÆ÷³õÊ¼»¯
- * @param  :ÎÞ
- * @retval :ÎÞ
+ * @brief  :Buzzer_Init()
+ * @note   :ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¼ï¿½ï¿½
+ * @param  :ï¿½ï¿½
+ * @retval :ï¿½ï¿½
  **************************************************/
 void Buzzer_Init(void)
 {
@@ -24,10 +24,10 @@ void Buzzer_Init(void)
 }
 
 /**************************************************
- * @brie   :Buzzer_Scan()
- * @note   :·äÃùÆ÷É¨Ãè
- * @param  :ÎÞ
- * @retval :ÎÞ
+ * @brief  :Buzzer_Scan()
+ * @note   :ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½É¨ï¿½ï¿½
+ * @param  :ï¿½ï¿½
+ * @retval :ï¿½ï¿½
  **************************************************/
 void Buzzer_Scan(void)
 {
@@ -53,10 +53,10 @@ void Buzzer_Scan(void)
 }
 
 /**************************************************
- * @brie   :Buzzer_Ring()
- * @note   :·äÃùÆ÷Ïì
- * @param  :ring_time ÏìµÄÊ±¼ä
- * @retval :ÎÞ
+ * @brief  :Buzzer_Ring()
+ * @note   :ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+ * @param  :ring_time ï¿½ï¿½ï¿½Ê±ï¿½ï¿½
+ * @retval :ï¿½ï¿½
  **************************************************/
 void Buzzer_Ring(uint16_t ring_time)
 {

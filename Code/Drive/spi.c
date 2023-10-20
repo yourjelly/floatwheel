@@ -2,10 +2,10 @@
 
 
 /**************************************************
- * @brie   :SPI_Config()
- * @note   :SPIÅäÖÃ 
- * @param  :ÎÞ
- * @retval :ÎÞ
+ * @brief  :SPI_Config()
+ * @note   :SPIï¿½ï¿½ï¿½ï¿½ 
+ * @param  :ï¿½ï¿½
+ * @retval :ï¿½ï¿½
  **************************************************/
 void SPI_Config(void)
 {
@@ -36,13 +36,13 @@ void SPI_Config(void)
 }
 
 /**************************************************
- * @brie   :SPI1_Send_Byte()
- * @note   :SPI1·¢ËÍÒ»¸ö×Ö½Ú
- * @param  :data ·¢ËÍµÄÊý¾Ý
- * @retval :ÎÞ
+ * @brief  :SPI1_Send_Byte()
+ * @note   :SPI1ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½Ö½ï¿½
+ * @param  :data ï¿½ï¿½ï¿½Íµï¿½ï¿½ï¿½ï¿½ï¿½
+ * @retval :ï¿½ï¿½
  **************************************************/
 void SPI1_Send_Byte(uint8_t data)
 {
 	SPI1->DR = data;
-	while(((SPI1->SR) & SPI_I2S_FLAG_TXE) == 0);  //µÈ´ý·¢ËÍÍê³É
+	while(((SPI1->SR) & SPI_I2S_FLAG_TXE) == 0);  //ï¿½È´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 }

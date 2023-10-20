@@ -1,7 +1,7 @@
 #include "task.h"
 
 /**************************************************
- * @brie   :LED_Task()
+ * @brief  :LED_Task()
  * @note   :LED���� 
  * @param  :��
  * @retval :��
@@ -16,10 +16,8 @@ void LED_Task(void)
 }
 
 /**************************************************
- * @brie   :KEY1_Task()
+ * @brief  :KEY1_Task()
  * @note   :KEY1����
- * @param  :��
- * @retval :��
  **************************************************/
 void KEY1_Task(void)
 {
@@ -30,14 +28,14 @@ void KEY1_Task(void)
 	
 	switch(KEY1_State)
 	{
-		case 1:  	//����
+		case 1:  	// Click
 			if(Power_Flag != 2)
 			{
 				Power_Flag = 1;  //VESC����
 			}	
 		break;
 		
-		case 2:		//˫��	
+		case 2:		// Double Click	
 			if(Power_Flag == 2) //�������
 			{
 				Gear_Position++;
@@ -49,13 +47,13 @@ void KEY1_Task(void)
 			}
 		break;
 		
-		case 3:		//����
+		case 3:		// Press
 			Power_Flag = 3;  //VESC�ػ�
 			Flashlight_Flag = 0;
 			WS2812_Display_Flag =0;
 		break;
 		
-		case 4:		//����
+		case 4:		// Triple Click
 			if(Power_Flag == 2) //�������
 			{
 				if(Buzzer_Flag == 2)
@@ -74,10 +72,8 @@ void KEY1_Task(void)
 }
 
 /**************************************************
- * @brie   :Power_Display()
- * @note   :������ʾ
- * @param  :��
- * @retval :��
+ * @brief  :Power_Display()
+ * @note   :Displays current power level on lightbar
  **************************************************/
 void Power_Display(void)
 {
@@ -214,10 +210,8 @@ void Power_Display(void)
 }
 
 /**************************************************
- * @brie   :WS2812()
- * @note   :����ʾ����WS2812
- * @param  :��
- * @retval :��
+ * @brief  :WS2812()
+ * @note   :Displays current footpad sensor activation on the lightbar
  **************************************************/
 void WS2812(void)
 {
@@ -273,10 +267,8 @@ void WS2812(void)
 
 
 /**************************************************
- * @brie   :WS2812_Boot()
- * @note   :��ʾ����
- * @param  :��
- * @retval :��
+ * @brief  :WS2812_Boot()
+ * @note   :Displays the boot animation on the lightbar
  **************************************************/
 void WS2812_Boot(void)
 {
@@ -411,7 +403,7 @@ void WS2812_Boot(void)
 
 uint8_t brightness = 1;
 /**************************************************
- * @brie   :WS2812_Cal_Bri()
+ * @brief  :WS2812_Cal_Bri()
  * @note   :��������
  * @param  :���� 1�α�ʾ200ms
  * @retval :����
@@ -499,10 +491,8 @@ uint8_t WS2812_Cal_Bri(uint8_t cnt)
 }
 
 /**************************************************
- * @brie   :WS2812_Charge()
- * @note   :��ʾ���
- * @param  :��
- * @retval :��
+ * @brief  :WS2812_Charge()
+ * @note   :Shows the current battery % when the board is charging
  **************************************************/
 void WS2812_Charge(void)
 {
@@ -651,10 +641,8 @@ void WS2812_Charge(void)
 }	
 
 /**************************************************
- * @brie   :WS2812_Task()
+ * @brief  :WS2812_Task()
  * @note   :WS2812���� 
- * @param  :��
- * @retval :��
  **************************************************/
 void WS2812_Task(void)
 {
@@ -753,10 +741,8 @@ void WS2812_Task(void)
 }
 
 /**************************************************
- * @brie   :Power_Task()
+ * @brief  :Power_Task()
  * @note   :��Դ���� 
- * @param  :��
- * @retval :��
  **************************************************/
 void Power_Task(void)
 {
@@ -807,7 +793,7 @@ void Power_Task(void)
 }
 
 /**************************************************
- * @brie   :Charge_Task()
+ * @brief  :Charge_Task()
  * @note   :������� 
  * @param  :��
  * @retval :��
@@ -877,13 +863,12 @@ void Charge_Task(void)
 uint8_t val = 0;
 uint8_t flashlight_flag_last_2 = 0;
 /**************************************************
- * @brie   :Flashlight_Bright()
- * @note   :����������
- * @param  :red_white = 1 ǰ�����ư� �������ƺ�
- *          red_white = 2 ǰ�����ƺ� �������ư�
- *          bright = 1    ���ȴ�0% -10% 2��
- *          bright = 2    ���ȴ�10%-100% 2��
- * @retval :��
+ * @brief  :Flashlight_Bright()
+ * @note   :Flashlight brightness control
+ * @param  :red_white = 1: Forward
+ *          red_white = 2: Reverse
+ *          bright = 1: Transition from 0% to 10%
+ *          bright = 2: Transition from 10% to 100%
  **************************************************/
 void Flashlight_Bright(uint8_t red_white,uint8_t bright)
 {
@@ -1019,10 +1004,8 @@ void Flashlight_Bright(uint8_t red_white,uint8_t bright)
 }
 	
 /**************************************************
- * @brie   :Flashlight_Task()
- * @note   :���������� 
- * @param  :��
- * @retval :��
+ * @brief  :Flashlight_Task()
+ * @note   :Controls headlight/taillight brightness multiplier and direction
  **************************************************/
 void Flashlight_Task(void)
 {
@@ -1143,10 +1126,8 @@ void Flashlight_Detection(void)
 	}
 }
 /**************************************************
- * @brie   :Buzzer_Task()
- * @note   :���������� 
- * @param  :��
- * @retval :��
+ * @brief  :Buzzer_Task()
+ * @note   :����������
  **************************************************/
 void Buzzer_Task(void)
 {
@@ -1232,10 +1213,8 @@ void Buzzer_Task(void)
 }
 
 /**************************************************
- * @brie   :Usart_Task()
- * @note   :�������� 
- * @param  :��
- * @retval :��
+ * @brief  :Usart_Task()
+ * @note   :Sends commands to VESC controller to get data
  **************************************************/
 void Usart_Task(void)
 {
@@ -1316,10 +1295,8 @@ void Usart_Task(void)
 }
 //float k = 0.15;
 /**************************************************
- * @brie   :ADC_Task()
- * @note   :ADC���� 
- * @param  :��
- * @retval :��
+ * @brief  :ADC_Task()
+ * @note   :Sets appropriate flags for current ADC/footpad sensor state
  **************************************************/
 void ADC_Task(void)
 {
@@ -1437,10 +1414,8 @@ void ADC_Task(void)
 }
 
 /**************************************************
- * @brie   :Conditional_Judgment()
- * @note   :�����ж�
- * @param  :��
- * @retval :��
+ * @brief  :Conditional_Judgment()
+ * @note   :The main task for determining how to display the lights
  **************************************************/
 void Conditional_Judgment(void)
 {

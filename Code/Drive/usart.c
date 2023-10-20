@@ -2,10 +2,10 @@
 
 
 /**************************************************
- * @brie   :USART1_Init()
- * @note   :USART1³õÊ¼»¯
- * @param  :Baud ²¨ÌØÂÊ
- * @retval :ÎÞ
+ * @brief  :USART1_Init()
+ * @note   :USART1ï¿½ï¿½Ê¼ï¿½ï¿½
+ * @param  :Baud ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+ * @retval :ï¿½ï¿½
  **************************************************/
 void USART1_Init(uint32_t Baud)
 {
@@ -39,8 +39,8 @@ void USART1_Init(uint32_t Baud)
 	USART_Init(USART1, &USART_InitStructure);
 	USART_Cmd(USART1, ENABLE);
 	
-	USART_ITConfig(USART1, USART_IT_RXNE, ENABLE);  //½ÓÊÕÖÐ¶Ï
-	USART_ITConfig(USART1, USART_IT_IDLE, ENABLE);  //¿ÕÏÐÖÐ¶Ï
+	USART_ITConfig(USART1, USART_IT_RXNE, ENABLE);  //ï¿½ï¿½ï¿½ï¿½ï¿½Ð¶ï¿½
+	USART_ITConfig(USART1, USART_IT_IDLE, ENABLE);  //ï¿½ï¿½ï¿½ï¿½ï¿½Ð¶ï¿½
 	
 	NVIC_InitStructure.NVIC_IRQChannel = USART1_IRQn;
 	NVIC_InitStructure.NVIC_IRQChannelPriority = 0;
@@ -49,10 +49,10 @@ void USART1_Init(uint32_t Baud)
 }
 
 /**************************************************
- * @brie   :USART1_Send_Byte()
- * @note   :USART1·¢ËÍÒ»¸ö×Ö½Ú
- * @param  :byte ×Ö½Ú
- * @retval :ÎÞ
+ * @brief  :USART1_Send_Byte()
+ * @note   :USART1ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½Ö½ï¿½
+ * @param  :byte ï¿½Ö½ï¿½
+ * @retval :ï¿½ï¿½
  **************************************************/
 void USART1_Send_Byte(uint8_t byte)
 {
@@ -61,10 +61,10 @@ void USART1_Send_Byte(uint8_t byte)
 }
 
 /**************************************************
- * @brie   :USART1_Send_Bytes()
- * @note   :USART1·¢ËÍ¶à¸ö×Ö½Ú
- * @param  :pbyte ×Ö½ÚµØÖ·
- * @retval :ÎÞ
+ * @brief  :USART1_Send_Bytes()
+ * @note   :USART1ï¿½ï¿½ï¿½Í¶ï¿½ï¿½ï¿½Ö½ï¿½
+ * @param  :pbyte ï¿½Ö½Úµï¿½Ö·
+ * @retval :ï¿½ï¿½
  **************************************************/
 void USART1_Send_Bytes(uint8_t *pbyte,uint8_t len)
 {

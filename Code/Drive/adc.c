@@ -2,10 +2,10 @@
 
 
 /**************************************************
- * @brie   :ADC1_Init()
- * @note   :ADC³õÊ¼»¯
- * @param  :ÎÞ
- * @retval :ÎÞ
+ * @brief  :ADC1_Init()
+ * @note   :ADCï¿½ï¿½Ê¼ï¿½ï¿½
+ * @param  :ï¿½ï¿½
+ * @retval :ï¿½ï¿½
  **************************************************/
 void ADC1_Init(void)
 {
@@ -50,10 +50,10 @@ void ADC1_Init(void)
 }
 
 /**************************************************
- * @brie   :Read_ADC_Value()
- * @note   :¶ÁADCÍ¨µÀµÄÊý¾Ý
- * @param  :ch Í¨µÀ
- * @retval :ÎÞ
+ * @brief  :Read_ADC_Value()
+ * @note   :ï¿½ï¿½ADCÍ¨ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+ * @param  :ch Í¨ï¿½ï¿½
+ * @retval :ï¿½ï¿½
  **************************************************/
 uint16_t Read_ADC_Value(uint8_t ch)
 {
@@ -77,10 +77,10 @@ uint16_t Read_ADC_Value(uint8_t ch)
 		break;
 	}
 
-	while(!ADC_GetFlagStatus(ADC1, ADC_FLAG_ADRDY)); //ADC¾ÍÐ÷±êÖ¾
-	ADC_StartOfConversion(ADC1);//ÎªÑ¡¶¨µÄ ADC Í¨µÀÆô¶¯×ª»»¡£
+	while(!ADC_GetFlagStatus(ADC1, ADC_FLAG_ADRDY)); //ADCï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¾
+	ADC_StartOfConversion(ADC1);//ÎªÑ¡ï¿½ï¿½ï¿½ï¿½ ADC Í¨ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×ªï¿½ï¿½ï¿½ï¿½
 	
-	while(ADC_GetFlagStatus(ADC1, ADC_FLAG_EOC) == RESET); //×ª»»½áÊø±êÖ¾
+	while(ADC_GetFlagStatus(ADC1, ADC_FLAG_EOC) == RESET); //×ªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¾
 	adc_value =ADC_GetConversionValue(ADC1);
 
 	return adc_value;

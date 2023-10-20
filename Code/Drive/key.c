@@ -1,19 +1,19 @@
 #include "key.h"
 
 /*
- *	KEY1_State = 0  °´¼üÃ»°´ÏÂ
- *	KEY1_State = 1  µ¥»÷
- *	KEY1_State = 2  Ë«»÷
- *  KEY1_State = 3  ³¤°´
- *  KEY1_State = 4  Èý°´
+ *	KEY1_State = 0  Not Pressed
+ *	KEY1_State = 1  Click
+ *	KEY1_State = 2  Double Click
+ *  KEY1_State = 3  Press
+ *  KEY1_State = 4  Tripple Click
  */
 uint8_t KEY1_State = 0;  
 
 /**************************************************
- * @brie   :KEY_Init()
- * @note   :KEYÈÎÎñ 
- * @param  :ÎÞ
- * @retval :ÎÞ
+ * @brief  :KEY_Init()
+ * @note   :KEYï¿½ï¿½ï¿½ï¿½ 
+ * @param  :ï¿½ï¿½
+ * @retval :ï¿½ï¿½
  **************************************************/
 void KEY_Init(void)
 {
@@ -28,10 +28,10 @@ void KEY_Init(void)
 }
 
 /**************************************************
- * @brie   :KEY1_Scan()
- * @note   :KEY1É¨Ãè
- * @param  :ÎÞ
- * @retval :ÎÞ
+ * @brief  :KEY1_Scan()
+ * @note   :KEY1É¨ï¿½ï¿½
+ * @param  :ï¿½ï¿½
+ * @retval :ï¿½ï¿½
  **************************************************/
 void KEY1_Scan(void)
 {
@@ -47,7 +47,7 @@ void KEY1_Scan(void)
 			if(KEY1 == 0)
 			{
 				key1_cnt++;
-				if(key1_cnt == 20) //Ïû¶¶
+				if(key1_cnt == 20) //ï¿½ï¿½ï¿½ï¿½
 				{
 					key1_cnt = 0;
 					key1_st = 1;
@@ -64,14 +64,14 @@ void KEY1_Scan(void)
 		case 1:
 			key1_cnt++;   
 		    key1_cnt_2++;
-			if(KEY1 == 1) //°´¼üÒÑ¾­Ì§Æð ×îÉÙÊÇ¸öµ¥»÷ 
+			if(KEY1 == 1) //ï¿½ï¿½ï¿½ï¿½ï¿½Ñ¾ï¿½Ì§ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ç¸ï¿½ï¿½ï¿½ï¿½ï¿½ 
 			{
 				key1_num++;
 				key1_st = 2;
 				key1_cnt = 0;
 				
 			}
-			else if (key1_cnt > 1500)  //³¤°´ÓÐÐ§
+			else if (key1_cnt > 1500)  //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð§
 			{
 				key1_cnt = 0;
 				key1_st = 3;
@@ -84,12 +84,12 @@ void KEY1_Scan(void)
 		case 2:
 			key1_cnt_2++;
 			
-			if(key1_cnt_2 < 500) //250msÄÚ¿´°´¼ü°´ÁË¶àÉÙ´Î
+			if(key1_cnt_2 < 500) //250msï¿½Ú¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ë¶ï¿½ï¿½Ù´ï¿½
 			{
 				if(KEY1 == 0)
 				{
 					key1_cnt++;
-					if(key1_cnt == 2) //Ïû¶¶
+					if(key1_cnt == 2) //ï¿½ï¿½ï¿½ï¿½
 					{
 						key1_cnt = 0;
 						key1_st = 1;
@@ -110,7 +110,7 @@ void KEY1_Scan(void)
 		
 		case 3:
 			
-			if(KEY1 == 1) //³¤°´ÍêµÈ´ý°´¼üÌ§Æð
+			if(KEY1 == 1) //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È´ï¿½ï¿½ï¿½ï¿½ï¿½Ì§ï¿½ï¿½
 			{
 				key1_st = 0;
 			}
@@ -121,20 +121,20 @@ void KEY1_Scan(void)
 			
 			switch(key1_num)
 			{
-				case 1: //µ¥»÷
+				case 1: //ï¿½ï¿½ï¿½ï¿½
 					KEY1_State = 1;
 				break;
 				
-				case 2: //Ë«»÷
+				case 2: //Ë«ï¿½ï¿½
 					KEY1_State = 2;
 				break;
 				
-				case 3: //Èý»÷
+				case 3: //ï¿½ï¿½ï¿½ï¿½
 					KEY1_State = 4;
 				break;
-				//ËÄ»÷ Îå»÷ ...×ÔÐÐÌí¼Ó
+				//ï¿½Ä»ï¿½ ï¿½ï¿½ï¿½ ...ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 				
-				default: //key3_numµÄÖµ ¿ÉÄÜ²»ÊÇ1 2 3 ×îºÃ¼ÓÕâÒ»¾ä Ô¤·Àbug
+				default: //key3_numï¿½ï¿½Öµ ï¿½ï¿½ï¿½Ü²ï¿½ï¿½ï¿½1 2 3 ï¿½ï¿½Ã¼ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ Ô¤ï¿½ï¿½bug
 					
 				break;
 			}
