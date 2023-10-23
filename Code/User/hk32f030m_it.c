@@ -137,7 +137,6 @@ void TIM6_IRQHandler(void)
 		TIM_ClearITPendingBit(TIM6, TIM_IT_Update);
 		LED_Counter++;
 		WS2812_Counter++;
-		VESC_Boot_Time++;
 		Buzzer_Time++;
 		Charge_Time++;
 		Flashlight_Time++;
@@ -156,19 +155,19 @@ void USART1_IRQHandler(void)
 {
 	static uint8_t count = 0;
 	
-	if((USART1->ISR & USART_ISR_RXNE) != 0)	//½ÓÊÕÖÐ¶Ï
+	if((USART1->ISR & USART_ISR_RXNE) != 0)	//ï¿½ï¿½ï¿½ï¿½ï¿½Ð¶ï¿½
 	{
 		USART_ClearFlag(USART1,USART_FLAG_RXNE);
-		VESC_RX_Buff[count++] = USART1->RDR; //½«ÊÕµ½µÄÊý¾Ý·¢Èë½ÓÊÕ»º³åÇø
+		VESC_RX_Buff[count++] = USART1->RDR; //ï¿½ï¿½ï¿½Õµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ý·ï¿½ï¿½ï¿½ï¿½ï¿½Õ»ï¿½ï¿½ï¿½ï¿½ï¿½
 	}
-	if((USART1->ISR & USART_ISR_IDLE) != 0) //¿ÕÏÐÖÐ¶Ï
+	if((USART1->ISR & USART_ISR_IDLE) != 0) //ï¿½ï¿½ï¿½ï¿½ï¿½Ð¶ï¿½
 	{
-		count = 0; //Ò»Ö¡Êý¾Ý½ÓÊÜÍê ÏÂ±êÇåÁã
-		VESC_RX_Flag = 1; //½ÓÊÕ±êÖ¾Î»ÖÃ1
+		count = 0; //Ò»Ö¡ï¿½ï¿½ï¿½Ý½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Â±ï¿½ï¿½ï¿½ï¿½ï¿½
+		VESC_RX_Flag = 1; //ï¿½ï¿½ï¿½Õ±ï¿½Ö¾Î»ï¿½ï¿½1
 		USART_ClearFlag(USART1,USART_ISR_IDLE);
 		USART_ReceiveData(USART1);
 	}
-	if((USART1->ISR & USART_ISR_ORE) != 0)  //Òç³öÖÐ¶Ï
+	if((USART1->ISR & USART_ISR_ORE) != 0)  //ï¿½ï¿½ï¿½ï¿½Ð¶ï¿½
 	{
 		USART_ClearFlag(USART1,USART_FLAG_ORE);
 		USART_ReceiveData(USART1);

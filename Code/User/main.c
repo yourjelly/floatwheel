@@ -35,11 +35,6 @@
 #include "task.h"
 #include "io_ws2812.h"
 
-//RCC_ClocksTypeDef RCC_Clock;
-
-/*
-										
-*/
 
 /**************************************************
  * @brief  :main()
@@ -65,7 +60,6 @@ int main(void)
 	}
 	while(1)
 	{
-//		LED_Task();
 		KEY1_Task();
 		WS2812_Task();
 		Power_Task();

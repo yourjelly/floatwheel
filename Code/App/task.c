@@ -1,19 +1,5 @@
 #include "task.h"
 
-/**************************************************
- * @brief  :LED_Task()
- * @note   :LED���� 
- * @param  :��
- * @retval :��
- **************************************************/
-void LED_Task(void)
-{
-//	if(LED_Counter >= LED_Filp_Time)
-//	{
-//		LED_Counter = 0;
-//		LED1_FILP;
-//	}
-}
 
 /**************************************************
  * @brief  :KEY1_Task()
@@ -430,63 +416,7 @@ uint8_t WS2812_Cal_Bri(uint8_t cnt)
 	{
 		brightness = 50;
 	}
-	
-//	if(cnt == 50)
-//	{
-//	brightness = brightness;
-//	}
-//	
-//	if(cnt == 99)
-//	{
-//	brightness = brightness;
-//	}
-//	switch(cnt)
-//	{
-//		case 0:
-//			brightness = 0x03;
-//		break;
-//		
-//		case 1:
-//			brightness = 0x04;
-//		break;
-//		
-//		case 2:
-//			brightness = 0x05;
-//		break;
-//		
-//		case 3:
-//			brightness = 0x06;
-//		break;
-//		
-//		case 4:
-//			brightness = 0x07;
-//		break;
-//		
-//		case 5:
-//			brightness = 0x08;
-//		break;
-//		
-//		case 6:
-//			brightness = 0x07;
-//		break;
-//		
-//		case 7:
-//			brightness = 0x06;
-//		break;
-//		
-//		case 8:
-//			brightness = 0x05;
-//		break;
-//		
-//		case 9:
-//			brightness = 0x04;
-//		break;
-//		
-//		case 10:
-//			brightness = 0x03;
-//		break;
-//	}
-	
+		
 	return brightness;
 }
 
@@ -713,28 +643,10 @@ void WS2812_Task(void)
 	
 	if(WS2812_Display_Flag == 1)  //��ʾ����
 	{
-//		if(Power_Display_Flag == power_display_flag_last) //��һ�κ���һ��һ��ֱ���˳�
-//		{
-//			return;
-//		}
-//		else
-//		{
-//			power_display_flag_last = Power_Display_Flag;
-//			Power_Display();// ������ʾ
-//		}
 		Power_Display();// ������ʾ
 	}
 	else //����ʾ����
 	{
-//		if(ws2812_flag_last == WS2812_Flag) //��һ�κ���һ��һ��ֱ���˳�
-//		{
-//			return;
-//		}
-//		else
-//		{
-//			ws2812_flag_last = WS2812_Flag;
-//			WS2812();//����ʾ����WS2812
-//		}
 		WS2812();//����ʾ����WS2812
 	}
 	
@@ -1293,7 +1205,7 @@ void Usart_Task(void)
 	}
 	
 }
-//float k = 0.15;
+
 /**************************************************
  * @brief  :ADC_Task()
  * @note   :Sets appropriate flags for current ADC/footpad sensor state
@@ -1307,15 +1219,6 @@ void ADC_Task(void)
 	static uint16_t adc1_val_sum_ave = 0;
 	static uint16_t adc2_val_sum_ave = 0;
 //	float old_charge_current = 0;
-	
-//	if(Power_Flag != 2)
-//	{
-//		Charge_Voltage = 0;
-//		ADC1_Val = 0;
-//		ADC2_Val = 0;
-//		adc_step = 0;
-//		return;
-//	}
 	
 	switch(adc_step)
 	{
@@ -1336,40 +1239,6 @@ void ADC_Task(void)
 				ADC1_Val = (float)(adc1_val_sum_ave*0.0012890625F);
 				ADC2_Val = (float)(adc2_val_sum_ave*0.0012890625F);
 				
-//				if(Charge_Flag == 3)
-//				{
-//					if(V_I == 1)
-//					{
-//						V_I = 0;
-//						Charge_Time = 0;
-//						Sampling_Completion = 0;
-//						LED1_OFF; //�ɼ������
-//						Charge_Voltage = (float)(adc_charge_sum_ave*0.0257080078125);
-//					
-//					}
-//					else
-//					{
-//						if(Charge_Time>100)
-//						{
-//							adc_charge_sum[i] = adc_charge_sum_ave;
-//							i++;
-//							
-//							if(i == 10)
-//							{
-//								LED1_ON; //�ɼ����ѹ
-//								Charge_Time = 0;
-//								Sampling_Completion = 1;
-//								V_I = 1;
-//								i = 0;
-//							}
-//						}
-//					}
-//				}
-//				else
-//				{
-//					Charge_Voltage = (float)(adc_charge_sum_ave*0.0257080078125);
-//				}
-				
 				if(V_I == 0)
 				{
 					if(Charge_Time>100)
@@ -1387,23 +1256,6 @@ void ADC_Task(void)
 					}
 				}
 			}
-			
-//			if(i == 8)
-//			{
-//				adc_charge_sum_ave >>= 3;
-//				// y=kx+b 0=k*2048+b  10=k*(0.65/3.3*4096)+b
-//				if(V_I == 0)
-//				{
-//					Charge_Current = (float)(-0.00806*adc_charge_sum_ave+16.5);
-//				}
-//				else
-//				{
-//					Charge_Voltage = (float)(adc_charge_sum_ave*0.0257080078125);
-//				}
-//				
-//				adc_charge_sum_ave = 0;
-//				i=0;
-//			}
 			
 		break;
 			
@@ -1583,8 +1435,8 @@ void Conditional_Judgment(void)
 					Charger_Detection_1ms = 0;
 				}
 				/*
-					��̤����»�ת�ٴ���1000��ʱ����
-					�����Ƚ�̤��ת�ٵ���1000��ʼ��ʱ�������ػ�ʱ��ػ�
+					BOARD TIMEOUT SHUTDOWN COUNTER
+					Reset if either footpad is activated or if motor rpm excedes 1000
 				*/
 				if(ADC1_Val > 2.9F || ADC2_Val > 2.9F || data.rpm > 1000)
 				{
@@ -1605,10 +1457,10 @@ void Conditional_Judgment(void)
 			}
 		break;
 		
-		case 3: //VESC�ػ�������������ӹ���
+		case 3: // VESC shutdown and charger supplying power to board
 			if(V_I == 0 && Charge_Time > 150)
 			{
-				if(Charge_Current < CHARGE_CURRENT && Charge_Current > 0)
+				if(Charge_Current < CHARGE_CURRENT && Charge_Current > 0) // if the charger current is between 0 & 0.3A
 				//if(Charge_Current > CHARGE_CURRENT_L && Charge_Current < CHARGE_CURRENT_H)
 				{
 					Shutdown_Cnt++;
@@ -1626,7 +1478,7 @@ void Conditional_Judgment(void)
 			}
 			else if(Charge_Time > 150)
 			{
-				battery_voltage = (Charge_Voltage+1)/BATTERY_STRING;//+1Ϊ����ֵ
+				battery_voltage = (Charge_Voltage+1)/BATTERY_STRING; // Divides pack voltage by cells -- +1 is a correction factor - Tony
 				if(Charge_Flag == 2)
 				{
 					if((battery_voltage > (battery_voltage_last+VOLTAGE_RECEIPT)) || (battery_voltage < (battery_voltage_last - VOLTAGE_RECEIPT)))

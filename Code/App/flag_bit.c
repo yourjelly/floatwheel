@@ -14,11 +14,6 @@ uint8_t Power_Flag = 0;
 	Charge_Flag = 3; Battery fully charged.
 */
 uint8_t Charge_Flag = 0;
-///*
-//	VESC_Boot_Flag = 0; Default state.
-//	VESC_Boot_Flag = 1��VESC����
-//*/
-//uint8_t VESC_Boot_Flag = 0;
 /*
 	Flashlight_Flag = 0; Default state.
 	Flashlight_Flag = 1; VESC booting up.
@@ -74,8 +69,6 @@ uint8_t Buzzer_Flag = 0;
 */
 uint8_t Usart_Flag = 0;
 
-uint16_t VESC_Boot_Time = 0; // VESC boot time.
-
 uint16_t Buzzer_Time = 0; // Buzzer sounding time.
 
 uint16_t Charge_Time = 0; // Charging time.
@@ -91,10 +84,7 @@ uint16_t ADC_Time = 0; // ADC sampling time.
 uint16_t Shutdown_Time_S = 0; // Shutdown time in seconds.
 
 uint8_t Shutdown_Time_M = 0; // Shutdown time in minutes.
-/*
-	��ص�ѹ
-*/
-//float Battery_Voltage = 0;
+
 /*
 	ADC1
 */
@@ -103,18 +93,6 @@ float ADC1_Val = 0;
 	ADC2
 */
 float ADC2_Val = 0;
-/*
-	ת��
-*/
-//long VESC_Rpm = 0;
-/*
-	ĸ�ߵ���
-*/
-//float AvgInputCurrent = 0;
-/*
-	ռ�ձ�
-*/
-//float DutyCycleNow = 0;
 
 float Charge_Voltage = 0; // Charging Port Voltage
 

@@ -150,21 +150,3 @@ void WS2812_Refresh(void)
 	__set_PRIMASK(0); // Enable the total interrupt
 	//GPIOD->BSRR = GPIO_Pin_4;
 }
-
-//void WS2812_Refresh(void)
-//{
-//	uint16_t 	i = 0;
-//	uint8_t*	ws2812_buff_add = (uint8_t*)&WS2812_Buff;
-//	
-//	for(i=0; i<250; i++)   //��λ�ź�
-//	{
-//		SPI1_Send_Byte(WS2812_R);
-//	}
-//	
-//	for(i=0; i<(WS2812_N*24); i++)
-//	{
-//		SPI1_Send_Byte((uint8_t)(*(ws2812_buff_add)));
-//		ws2812_buff_add++;
-//	}
-//	
-//}

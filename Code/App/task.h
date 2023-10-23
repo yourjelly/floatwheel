@@ -25,7 +25,6 @@
 #define   DETECTION_SWITCH_TIME     500         // Detection switch time unit ms
 #define   CHARGER_DETECTION_DELAY	1000        // Charger detection delay unit ms
 
-void LED_Task(void);
 void KEY1_Task(void);
 void WS2812_Task(void);
 void Power_Task(void);
