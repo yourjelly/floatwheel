@@ -34,13 +34,13 @@ void WS2812_Init(void)
  * @param	blue    0-255
  * @retval	None
  **************************************************/
-void WS2812_Set_Colour(uint8_t num,uint8_t green,uint8_t red,uint8_t blue)
+void WS2812_Set_Colour(uint8_t num,uint8_t red,uint8_t green,uint8_t blue)
 {
 	uint8_t i = 0;
 	
 	for(i=0; i<24; i++)
 	{
-		if(i<8)   // red light
+		if(i<8)   // green light
 		{
 			if(green&0x80)
 			{
@@ -52,7 +52,7 @@ void WS2812_Set_Colour(uint8_t num,uint8_t green,uint8_t red,uint8_t blue)
 			}
 			green <<= 1;
 		}
-		else if(i<16)  // green light
+		else if(i<16)  // red light
 		{
 			if(red&0x80)
 			{
