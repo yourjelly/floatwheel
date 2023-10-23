@@ -24,10 +24,10 @@ void KEY1_Task(void)
 		case 2:		// Double Click	
 			if(Power_Flag == 2) //�������
 			{
-				Gear_Position++;
-				if(Gear_Position == 4)
+				Light_Profile++;
+				if(Light_Profile == 4)
 				{
-					Gear_Position = 1;
+					Light_Profile = 1;
 				}
 				
 			}
@@ -36,7 +36,7 @@ void KEY1_Task(void)
 		case 3:		// Press
 			Power_Flag = 3;  //VESC�ػ�
 			Flashlight_Flag = 0;
-			WS2812_Display_Flag =0;
+			Lightbar_Battery_Flag =0;
 		break;
 		
 		case 4:		// Triple Click
@@ -72,7 +72,7 @@ void Power_Display(void)
 			num = 10;
 			for(i=0;i<num;i++)
 			{
-				WS2812_Set_Colour(i,WS2812_Measure,WS2812_Measure,WS2812_Measure);
+				WS2812_Set_Colour(i,Lightbar_Brightness,Lightbar_Brightness,Lightbar_Brightness);
 			}
 		break;
 		
@@ -80,7 +80,7 @@ void Power_Display(void)
 			num = 9;
 			for(i=0;i<num;i++)
 			{
-				WS2812_Set_Colour(i,WS2812_Measure,WS2812_Measure,WS2812_Measure);
+				WS2812_Set_Colour(i,Lightbar_Brightness,Lightbar_Brightness,Lightbar_Brightness);
 			}
 			for(i=num;i<10;i++)
 			{
@@ -92,7 +92,7 @@ void Power_Display(void)
 			num = 8;
 			for(i=0;i<num;i++)
 			{
-				WS2812_Set_Colour(i,WS2812_Measure,WS2812_Measure,WS2812_Measure);
+				WS2812_Set_Colour(i,Lightbar_Brightness,Lightbar_Brightness,Lightbar_Brightness);
 			}
 			for(i=num;i<10;i++)
 			{
@@ -104,7 +104,7 @@ void Power_Display(void)
 			num = 7;
 			for(i=0;i<num;i++)
 			{
-				WS2812_Set_Colour(i,WS2812_Measure,WS2812_Measure,WS2812_Measure);
+				WS2812_Set_Colour(i,Lightbar_Brightness,Lightbar_Brightness,Lightbar_Brightness);
 			}
 			for(i=num;i<10;i++)
 			{
@@ -116,7 +116,7 @@ void Power_Display(void)
 			num = 6;
 			for(i=0;i<num;i++)
 			{
-				WS2812_Set_Colour(i,WS2812_Measure,WS2812_Measure,WS2812_Measure);
+				WS2812_Set_Colour(i,Lightbar_Brightness,Lightbar_Brightness,Lightbar_Brightness);
 			}
 			for(i=num;i<10;i++)
 			{
@@ -128,7 +128,7 @@ void Power_Display(void)
 			num = 5;
 			for(i=0;i<num;i++)
 			{
-				WS2812_Set_Colour(i,WS2812_Measure,WS2812_Measure,WS2812_Measure);
+				WS2812_Set_Colour(i,Lightbar_Brightness,Lightbar_Brightness,Lightbar_Brightness);
 			}
 			for(i=num;i<10;i++)
 			{
@@ -140,7 +140,7 @@ void Power_Display(void)
 			num = 4;
 			for(i=0;i<num;i++)
 			{
-				WS2812_Set_Colour(i,WS2812_Measure,WS2812_Measure,WS2812_Measure);
+				WS2812_Set_Colour(i,Lightbar_Brightness,Lightbar_Brightness,Lightbar_Brightness);
 			}
 			for(i=num;i<10;i++)
 			{
@@ -152,7 +152,7 @@ void Power_Display(void)
 			num = 3;
 			for(i=0;i<num;i++)
 			{
-				WS2812_Set_Colour(i,WS2812_Measure,WS2812_Measure,WS2812_Measure);
+				WS2812_Set_Colour(i,Lightbar_Brightness,Lightbar_Brightness,Lightbar_Brightness);
 			}
 			for(i=num;i<10;i++)
 			{
@@ -164,7 +164,7 @@ void Power_Display(void)
 			num = 2;
 			for(i=0;i<num;i++)
 			{
-				WS2812_Set_Colour(i,0,WS2812_Measure,0);
+				WS2812_Set_Colour(i,0,Lightbar_Brightness,0);
 			}
 			for(i=num;i<10;i++)
 			{
@@ -176,7 +176,7 @@ void Power_Display(void)
 			num = 1;
 			for(i=0;i<num;i++)
 			{
-				WS2812_Set_Colour(i,0,WS2812_Measure,0);
+				WS2812_Set_Colour(i,0,Lightbar_Brightness,0);
 			}
 			for(i=num;i<10;i++)
 			{
@@ -196,19 +196,19 @@ void Power_Display(void)
 }
 
 /**************************************************
- * @brief  :WS2812()
+ * @brief  :Sensor_Activation_Display()
  * @note   :Displays current footpad sensor activation on the lightbar
  **************************************************/
-void WS2812(void)
+void Sensor_Activation_Display(void)
 {
 	uint8_t i;
 	
-	switch(WS2812_Flag)
+	switch(Sensor_Activation_Display_Flag)
 	{
 		case 1://���5������     �Ҳ�5���Ʋ�����   adc1>2.5V  adc2<2.5V
 			for(i=0;i<5;i++)
 			{
-				WS2812_Set_Colour(i,0,0,WS2812_Measure);
+				WS2812_Set_Colour(i,0,0,Lightbar_Brightness);
 			}
 				for(i=5;i<10;i++)
 			{
@@ -223,14 +223,14 @@ void WS2812(void)
 			}
 				for(i=5;i<10;i++)
 			{
-				WS2812_Set_Colour(i,0,0,WS2812_Measure);
+				WS2812_Set_Colour(i,0,0,Lightbar_Brightness);
 			}
 		break;
 		
 		case 3://10���ƶ�������                    adc1>2.5V  adc2>2.5V
 			for(i=0;i<10;i++)
 			{
-				WS2812_Set_Colour(i,0,0,WS2812_Measure);
+				WS2812_Set_Colour(i,0,0,Lightbar_Brightness);
 			}
 		break;
 			
@@ -253,10 +253,10 @@ void WS2812(void)
 
 
 /**************************************************
- * @brief  :WS2812_Boot()
+ * @brief  :Boot_Animation()
  * @note   :Displays the boot animation on the lightbar
  **************************************************/
-void WS2812_Boot(void)
+void Boot_Animation(void)
 {
 	uint8_t i;
 	uint8_t num;
@@ -576,7 +576,7 @@ void WS2812_Charge(void)
  **************************************************/
 void WS2812_Task(void)
 {
-//	static uint8_t ws2812_flag_last = 0; //��һ�ε�״̬
+//	static uint8_t Sensor_Activation_Display_Flag_last = 0; //��һ�ε�״̬
 //	static uint8_t power_display_flag_last = 0; //��һ�ε�״̬
 	uint8_t i;
 
@@ -594,8 +594,8 @@ void WS2812_Task(void)
 			}
 			WS2812_Refresh();//ˢ����ʾ
 			
-			WS2812_Display_Flag = 0;
-			WS2812_Flag = 0;
+			Lightbar_Battery_Flag = 0;
+			Sensor_Activation_Display_Flag = 0;
 			Power_Display_Flag = 0;
 			
 			return;
@@ -603,7 +603,7 @@ void WS2812_Task(void)
 	
 	if(Power_Flag == 1)
 	{
-		WS2812_Boot();  //��������
+		Boot_Animation();  //��������
 		return;
 	}
 	
@@ -622,18 +622,18 @@ void WS2812_Task(void)
 		return;
 	}
 	
-	switch(Gear_Position)
+	switch(Light_Profile)
 	{
 		case 1: //1��
-			WS2812_Measure = WS2812_1_BRIGHTNESS;
+			Lightbar_Brightness = WS2812_1_BRIGHTNESS;
 		break;
 		
 		case 2:	//2��
-			WS2812_Measure = WS2812_2_BRIGHTNESS;
+			Lightbar_Brightness = WS2812_2_BRIGHTNESS;
 		break;
 		
 		case 3: //3��
-			WS2812_Measure = WS2812_3_BRIGHTNESS;
+			Lightbar_Brightness = WS2812_3_BRIGHTNESS;
 		break;
 		
 		default:
@@ -641,13 +641,13 @@ void WS2812_Task(void)
 		break;
 	}
 	
-	if(WS2812_Display_Flag == 1)  //��ʾ����
+	if(Lightbar_Battery_Flag == 1)  //��ʾ����
 	{
 		Power_Display();// ������ʾ
 	}
 	else //����ʾ����
 	{
-		WS2812();//����ʾ����WS2812
+		Sensor_Activation_Display();//����ʾ����WS2812
 	}
 	
 }
@@ -683,7 +683,7 @@ void Power_Task(void)
 					if(Power_Time > VESC_BOOT_TIME)
 					{
 						Power_Flag = 2; //�������
-						Gear_Position = 1; //������Ĭ����1��
+						Light_Profile = 1; //������Ĭ����1��
 						Buzzer_Flag = 2;    //����Ĭ�Ϸ�������
 						power_step = 0;
 					}
@@ -854,7 +854,7 @@ void Flashlight_Bright(uint8_t red_white,uint8_t bright)
 		
 			if(Flashlight_Time%2 == 0)
 			{
-				switch(Gear_Position)
+				switch(Light_Profile)
 				{
 					case 1:
 						brightness = (Flashlight_Time*1.0F)+1000;
@@ -880,7 +880,7 @@ void Flashlight_Bright(uint8_t red_white,uint8_t bright)
 			}
 			if(Flashlight_Time >= 2000)
 			{
-				switch(Gear_Position)
+				switch(Light_Profile)
 				{
 					case 1:
 						TIM_SetCompare2(TIM1,7000);
@@ -904,7 +904,7 @@ void Flashlight_Bright(uint8_t red_white,uint8_t bright)
 		break;
 		
 		case 5://���ȵ�����
-			Brightness_Flag = 2;
+			Brightness_Adjustment_Flag = 2;
 			flashlight_bright_step = 0;
 		break;
 		
@@ -931,14 +931,14 @@ void Flashlight_Task(void)
 		return;
 	}
 	
-	if(flashlight_flag_last == Flashlight_Flag && Brightness_Flag == 2) //�����Ѿ�������
+	if(flashlight_flag_last == Flashlight_Flag && Brightness_Adjustment_Flag == 2) //�����Ѿ�������
 	{
 		return;
 	}
 	else if(flashlight_flag_last != Flashlight_Flag)
 	{
 		flashlight_flag_last = Flashlight_Flag;
-		Brightness_Flag = 1;
+		Brightness_Adjustment_Flag = 1;
 	}
 	
 	switch(Flashlight_Flag)
@@ -957,7 +957,7 @@ void Flashlight_Task(void)
 		
 		case 4://VESCǰ���ƺ���׵�(��ת)
 			Flashlight_Bright(2,2);
-			Brightness_Flag = 2;
+			Brightness_Adjustment_Flag = 2;
 			val = 3;
 		break;
 		
@@ -969,20 +969,20 @@ void Flashlight_Task(void)
 
 void Flashlight_Detection(void)
 {
-	static uint8_t gear_position_last = 0;
+	static uint8_t Light_Profile_last = 0;
 		
-	if(gear_position_last == Gear_Position && Flashlight_Detection_Time >= 3100)
+	if(Light_Profile_last == Light_Profile && Flashlight_Detection_Time >= 3100)
 	{
 		Flashlight_Detection_Time = 3100;
 		return;
 	}
 	else
 	{
-		if(gear_position_last != Gear_Position)
+		if(Light_Profile_last != Light_Profile)
 		{
 			if(ADC1_Val < 2.5F && ADC2_Val < 2.5F)
 			{
-				switch(Gear_Position)
+				switch(Light_Profile)
 				{
 					case 1:
 						TIM_SetCompare2(TIM1,7000);
@@ -1004,7 +1004,7 @@ void Flashlight_Detection(void)
 			}
 			else
 			{
-				switch(Gear_Position)
+				switch(Light_Profile)
 				{
 					case 1:
 						TIM_SetCompare2(TIM1,7000);
@@ -1024,7 +1024,7 @@ void Flashlight_Detection(void)
 				}
 				Flashlight_Detection_Time = 3100;
 			}
-			gear_position_last = Gear_Position;
+			Light_Profile_last = Light_Profile;
 		}
 		else
 		{
@@ -1044,7 +1044,7 @@ void Flashlight_Detection(void)
 void Buzzer_Task(void)
 {
 	static uint8_t buzzer_step = 0;
-	static uint8_t gear_position_last = 0; //��һ�εĵ�λ
+	static uint8_t Light_Profile_last = 0; //��һ�εĵ�λ
 	static uint8_t ring_frequency = 0;
 	static uint16_t sound_frequency = 0;
 	
@@ -1055,7 +1055,7 @@ void Buzzer_Task(void)
 		return;
 	}
 	
-	if(Buzzer_Frequency == 0 && gear_position_last == Gear_Position) //���������Ƶ��Ϊ0����һ�εĵ�λ������εĵ�λ
+	if(Buzzer_Frequency == 0 && Light_Profile_last == Light_Profile) //���������Ƶ��Ϊ0����һ�εĵ�λ������εĵ�λ
 	{
 		BUZZER_OFF;
 		buzzer_step = 0;
@@ -1108,10 +1108,10 @@ void Buzzer_Task(void)
 				{	
 					ring_frequency++;
 					buzzer_step = 0;
-					if(ring_frequency == Gear_Position)
+					if(ring_frequency == Light_Profile)
 					{
 						ring_frequency = 0;
-						gear_position_last = Gear_Position;
+						Light_Profile_last = Light_Profile;
 					}
 					
 				}
@@ -1388,34 +1388,34 @@ void Conditional_Judgment(void)
 				{
 					if(ADC1_Val < 2.9F && ADC2_Val <2.9F)
 					{
-						WS2812_Display_Flag = 1;  //��ʾ����
+						Lightbar_Battery_Flag = 1;  //��ʾ����
 					}
 					else if(ADC1_Val > 2.9F && ADC2_Val > 2.9F)
 					{
-						WS2812_Display_Flag = 2;  //����ʾ����
-						WS2812_Flag = 3;  //10���ƶ�������
+						Lightbar_Battery_Flag = 2;  //����ʾ����
+						Sensor_Activation_Display_Flag = 3;  //10���ƶ�������
 					}
 					else if(ADC1_Val >2.9F)
 					{
-						WS2812_Display_Flag = 2;//����ʾ����
-						WS2812_Flag = 1;  //���5������     �Ҳ�5���Ʋ�����
+						Lightbar_Battery_Flag = 2;//����ʾ����
+						Sensor_Activation_Display_Flag = 1;  //���5������     �Ҳ�5���Ʋ�����
 					}
 					else
 					{
-						WS2812_Display_Flag = 2;//����ʾ����
-						WS2812_Flag = 2;  //���5���Ʋ����� �Ҳ�5������
+						Lightbar_Battery_Flag = 2;//����ʾ����
+						Sensor_Activation_Display_Flag = 2;  //���5���Ʋ����� �Ҳ�5������
 					}
 				}
 				else
 				{
 					if(data.avgInputCurrent < 0.8F && data.rpm < 6000)
 					{
-						WS2812_Display_Flag = 1; //��ʾ����
+						Lightbar_Battery_Flag = 1; //��ʾ����
 					}
 					else
 					{
-						WS2812_Display_Flag = 2; //����ʾ����
-						WS2812_Flag = 4; //��10����
+						Lightbar_Battery_Flag = 2; //����ʾ����
+						Sensor_Activation_Display_Flag = 4; //��10����
 					}
 				}
 				
@@ -1426,7 +1426,7 @@ void Conditional_Judgment(void)
 						Power_Flag = 3;
 						Charge_Flag = 1;
 						Flashlight_Flag = 0;
-						WS2812_Display_Flag =0;
+						Lightbar_Battery_Flag =0;
 					}
 					
 				}

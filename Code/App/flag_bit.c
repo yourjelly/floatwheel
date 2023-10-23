@@ -23,25 +23,25 @@ uint8_t Charge_Flag = 0;
 */
 uint8_t Flashlight_Flag = 0;
 /*
-	Brightness_Flag = 0; Default state.
-	Brightness_Flag = 1; Starting brightness adjustment.
-	Brightness_Flag = 2; Brightness adjustment completed.
+	Brightness_Adjustment_Flag = 0; Default state.
+	Brightness_Adjustment_Flag = 1; Starting brightness adjustment.
+	Brightness_Adjustment_Flag = 2; Brightness adjustment completed.
 */
-uint8_t Brightness_Flag = 0;
+uint8_t Brightness_Adjustment_Flag = 0;
 /*
-	WS2812_Display_Flag = 0; Default state.
-	WS2812_Display_Flag = 1; Display battery level.
-	WS2812_Display_Flag = 2; Do not display battery level.
+	Lightbar_Battery_Flag = 0; Default state.
+	Lightbar_Battery_Flag = 1; Display battery level.
+	Lightbar_Battery_Flag = 2; Do not display battery level.
 */
-uint8_t WS2812_Display_Flag = 0;
+uint8_t Lightbar_Battery_Flag = 0;
 /*
-	WS2812_Flag = 0; Default state.
-	WS2812_Flag = 1; Left 5 LEDs blue, Right 5 LEDs off (adc1 > 2.5V, adc2 < 2.5V)
-	WS2812_Flag = 2; Left 5 LEDs off, Right 5 LEDs blue (adc1 < 2.5V, adc2 > 2.5V)
-	WS2812_Flag = 3; All 10 LEDs blue (adc1 > 2.5V, adc2 > 2.5V)
-	WS2812_Flag = 4; All 10 LEDs off.
+	Sensor_Activation_Display_Flag = 0; Default state.
+	Sensor_Activation_Display_Flag = 1; Left 5 LEDs blue, Right 5 LEDs off (adc1 > 2.5V, adc2 < 2.5V)
+	Sensor_Activation_Display_Flag = 2; Left 5 LEDs off, Right 5 LEDs blue (adc1 < 2.5V, adc2 > 2.5V)
+	Sensor_Activation_Display_Flag = 3; All 10 LEDs blue (adc1 > 2.5V, adc2 > 2.5V)
+	Sensor_Activation_Display_Flag = 4; All 10 LEDs off.
 */
-uint8_t WS2812_Flag = 0;
+uint8_t Sensor_Activation_Display_Flag = 0;
 /*
 	Power_Display_Flag = 0; Default state.
 	Power_Display_Flag = 1; Full charge: 10 white LEDs.
@@ -97,14 +97,14 @@ float ADC2_Val = 0;
 float Charge_Voltage = 0; // Charging Port Voltage
 
 /*
-	Gear_Position = 0; Default state.
-	Gear_Position = 1; Headlight bightness low, Lightpad brightness high, beep once
-	Gear_Position = 2; Headlight bightness mid, Lightpad brightness mid, beep twice
-	Gear_Position = 3; Headlight bightness high, Lightpad brightness low, beep thrice
+	Light_Profile = 0; Default state.
+	Light_Profile = 1; Headlight bightness low, Lightpad brightness high, beep once
+	Light_Profile = 2; Headlight bightness mid, Lightpad brightness mid, beep twice
+	Light_Profile = 3; Headlight bightness high, Lightpad brightness low, beep thrice
 */
-uint8_t Gear_Position = 0;
+uint8_t Light_Profile = 0;
 
-uint8_t WS2812_Measure = 0; // Lightbar runtime brightness setting (0-255)
+uint8_t Lightbar_Brightness = 0; // Lightbar runtime brightness setting (0-255)
 
 uint8_t Buzzer_Frequency = 0; // Buzzer frequency in BPM, beats per minute, ranging from 60 to 180, corresponding to a duty cycle of 70 to 100)
 
