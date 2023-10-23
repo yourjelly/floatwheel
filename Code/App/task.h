@@ -16,9 +16,9 @@
 #define   VOLTAGE_RECEIPT     		0.02F 		// Voltage receipt unit V
 /*******************************************************************************/
 #define   VESC_RPM_WIDTH      		-200 		// When the rotation speed is ± this value, do not switch the travel direction
-#define   WS2812_1_BRIGHTNESS 		204			// High brightness value (0-255) -- Stock (204)
-#define   WS2812_2_BRIGHTNESS 		128			// Medium brightness value (0-255) -- Stock (128)
-#define   WS2812_3_BRIGHTNESS 		30			// Low brightness value (0-255) -- Stock (30)
+#define   LIGHTBAR_BRIGHTNESS_HIGH 	204			// High brightness value (0-255) -- Stock (204)
+#define   LIGHTBAR_BRIGHTNESS_MED	128			// Medium brightness value (0-255) -- Stock (128)
+#define   LIGHTBAR_BRIGHTNESS_LOW 	30			// Low brightness value (0-255) -- Stock (30)
 #define   CHARGE_CURRENT			0.3F        // Charging current unit A
 #define   CHARGE_CURRENT_L			0.1F        // Low Charging current unit A
 #define   CHARGE_CURRENT_H			0.24F       // High Charging current unit A

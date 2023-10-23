@@ -64,135 +64,26 @@ void KEY1_Task(void)
 void Power_Display(void)
 {
 	uint8_t i;
-	uint8_t num;
-	
-	switch(Power_Display_Flag)
-	{
-		case 1://4.08V~4.2V 	10���׵�
-			num = 10;
-			for(i=0;i<num;i++)
-			{
-				WS2812_Set_Colour(i,Lightbar_Brightness,Lightbar_Brightness,Lightbar_Brightness);
-			}
-		break;
-		
-		case 2://4.05V~4.08V 9���׵�
-			num = 9;
-			for(i=0;i<num;i++)
-			{
-				WS2812_Set_Colour(i,Lightbar_Brightness,Lightbar_Brightness,Lightbar_Brightness);
-			}
-			for(i=num;i<10;i++)
-			{
+	uint8_t num = 10 - (Power_Display_Flag - 1);
+
+	for (i=0;i<10;i++) {
+		if (Power_Display_Flag == 0) {
+			// Something is wrong - set all LEDs to red
+			WS2812_Set_Colour(i,Lightbar_Brightness,0,0);
+		} else {
+			if (i < num) {
+				if (num <= 2) {
+					WS2812_Set_Colour(i,Lightbar_Brightness,0,0);
+				} else {
+					WS2812_Set_Colour(i,Lightbar_Brightness,Lightbar_Brightness,Lightbar_Brightness);
+				}
+			} else {
 				WS2812_Set_Colour(i,0,0,0);
 			}
-		break;
-		
-		case 3://3.96V~4.05V 8���׵�
-			num = 8;
-			for(i=0;i<num;i++)
-			{
-				WS2812_Set_Colour(i,Lightbar_Brightness,Lightbar_Brightness,Lightbar_Brightness);
-			}
-			for(i=num;i<10;i++)
-			{
-				WS2812_Set_Colour(i,0,0,0);
-			}
-		break;
-		
-		case 4://3.87V~3.96V 7���׵�
-			num = 7;
-			for(i=0;i<num;i++)
-			{
-				WS2812_Set_Colour(i,Lightbar_Brightness,Lightbar_Brightness,Lightbar_Brightness);
-			}
-			for(i=num;i<10;i++)
-			{
-				WS2812_Set_Colour(i,0,0,0);
-			}
-		break;
-		
-		case 5://3.78V~3.87V 6���׵�
-			num = 6;
-			for(i=0;i<num;i++)
-			{
-				WS2812_Set_Colour(i,Lightbar_Brightness,Lightbar_Brightness,Lightbar_Brightness);
-			}
-			for(i=num;i<10;i++)
-			{
-				WS2812_Set_Colour(i,0,0,0);
-			}
-		break;
-		
-		case 6://3.70V~3.78V 5���׵�
-			num = 5;
-			for(i=0;i<num;i++)
-			{
-				WS2812_Set_Colour(i,Lightbar_Brightness,Lightbar_Brightness,Lightbar_Brightness);
-			}
-			for(i=num;i<10;i++)
-			{
-				WS2812_Set_Colour(i,0,0,0);
-			}
-		break;
-		
-		case 7://3.62V~3.70V 4���׵�
-			num = 4;
-			for(i=0;i<num;i++)
-			{
-				WS2812_Set_Colour(i,Lightbar_Brightness,Lightbar_Brightness,Lightbar_Brightness);
-			}
-			for(i=num;i<10;i++)
-			{
-				WS2812_Set_Colour(i,0,0,0);
-			}
-		break;
-		
-		case 8://3.50V~3.62V 3���׵�
-			num = 3;
-			for(i=0;i<num;i++)
-			{
-				WS2812_Set_Colour(i,Lightbar_Brightness,Lightbar_Brightness,Lightbar_Brightness);
-			}
-			for(i=num;i<10;i++)
-			{
-				WS2812_Set_Colour(i,0,0,0);
-			}
-		break;
-		
-		case 9://3.35V~3.50V 2�����
-			num = 2;
-			for(i=0;i<num;i++)
-			{
-				WS2812_Set_Colour(i,0,Lightbar_Brightness,0);
-			}
-			for(i=num;i<10;i++)
-			{
-				WS2812_Set_Colour(i,0,0,0);
-			}
-		break;
-		
-		case 10://2.80V~3.35V 1�����
-			num = 1;
-			for(i=0;i<num;i++)
-			{
-				WS2812_Set_Colour(i,0,Lightbar_Brightness,0);
-			}
-			for(i=num;i<10;i++)
-			{
-				WS2812_Set_Colour(i,0,0,0);
-			}
-		break;
-		
-		default:
-			for(i=0;i<10;i++)
-			{
-				WS2812_Set_Colour(i,0,0,0);
-			}
-		break;
-		
+		}
 	}
-	WS2812_Refresh();//ˢ����ʾ
+
+	WS2812_Refresh();
 }
 
 /**************************************************
@@ -258,129 +149,21 @@ void Sensor_Activation_Display(void)
 void Boot_Animation(void)
 {
 	uint8_t i;
-	uint8_t num;
+	uint8_t num = floor(Power_Time / 500) + 1;
 	
-	if(Power_Time <= 500)
-	{
-		num = 1;
-		for(i=0;i<num;i++)
-		{
-			WS2812_Set_Colour(i,255,0,255);
-		}
-		for(i=num;i<10;i++)
-		{
-			WS2812_Set_Colour(i,0,0,0);
-		}
-	}
-	else if(Power_Time <= 1000)
-	{
-		num = 2;
-		for(i=0;i<num;i++)
-		{
-			WS2812_Set_Colour(i,255,0,255);
-		}
-		for(i=num;i<10;i++)
-		{
-			WS2812_Set_Colour(i,0,0,0);
-		}	
-	}
-	else if(Power_Time <= 1500)
-	{
-		num = 3;
-		for(i=0;i<num;i++)
-		{
-			WS2812_Set_Colour(i,255,0,255);
-		}
-		for(i=num;i<10;i++)
-		{
-			WS2812_Set_Colour(i,0,0,0);
-		}
-	}
-	else if(Power_Time <= 2000)
-	{
-		num = 4;
-		for(i=0;i<num;i++)
-		{
-			WS2812_Set_Colour(i,255,0,255);
-		}
-		for(i=num;i<10;i++)
-		{
-			WS2812_Set_Colour(i,0,0,0);
-		}
-	}
-	else if(Power_Time <= 2500)
-	{
-		num = 5;
-		for(i=0;i<num;i++)
-		{
-			WS2812_Set_Colour(i,255,0,255);
-		}
-		for(i=num;i<10;i++)
-		{
-			WS2812_Set_Colour(i,0,0,0);
-		}
-	}
-	else if(Power_Time <= 3000)
-	{
-		num = 6;
-		for(i=0;i<num;i++)
-		{
-			WS2812_Set_Colour(i,255,0,255);
-		}
-		for(i=num;i<10;i++)
-		{
-			WS2812_Set_Colour(i,0,0,0);
-		}
-	}
-	else if(Power_Time <= 3500)
-	{
-		num = 7;
-		for(i=0;i<num;i++)
-		{
-			WS2812_Set_Colour(i,255,0,255);
-		}
-		for(i=num;i<10;i++)
-		{
-			WS2812_Set_Colour(i,0,0,0);
-		}
-	}
-	else if(Power_Time <= 4000)
-	{
-		num = 8;
-		for(i=0;i<num;i++)
-		{
-			WS2812_Set_Colour(i,255,0,255);
-		}
-		for(i=num;i<10;i++)
-		{
-			WS2812_Set_Colour(i,0,0,0);
-		}
-	}
-	else if(Power_Time <= 4500)
-	{
-		num = 9;
-		for(i=0;i<num;i++)
-		{
-			WS2812_Set_Colour(i,255,0,255);
-		}
-		for(i=num;i<10;i++)
-		{
-			WS2812_Set_Colour(i,0,0,0);
-		}
-	}
-	else 
-	{
+	if (num > 10) {
 		num = 10;
-		for(i=0;i<num;i++)
-		{
-			WS2812_Set_Colour(i,255,0,255);
-		}
-		for(i=num;i<10;i++)
-		{
-			WS2812_Set_Colour(i,0,0,0);
-		}
 	}
-	WS2812_Refresh();//ˢ����ʾ
+
+	for (i=0;i<num;i++) {
+		WS2812_Set_Colour(i,0,255,255);
+	}
+
+	for (i = num; i < 10; i++) {
+		WS2812_Set_Colour(i,0,0,0);
+	}
+
+	WS2812_Refresh();
 }
 
 /**************************************************
@@ -421,137 +204,23 @@ uint8_t WS2812_Cal_Bri(uint8_t cnt)
 void WS2812_Charge(void)
 {
 	uint8_t i;
-	uint8_t num;
+	uint8_t num = 10 - (Power_Display_Flag - 1);
 	static uint8_t cnt = 0;
 	uint8_t brightness = 0;
 	
 	brightness = WS2812_Cal_Bri(cnt);
-	switch(Power_Display_Flag)
-	{
-		case 1://4.08V~4.2V 	10���׵�
-			
-			num = 10;
-			for(i=0;i<num;i++)
-			{
-				WS2812_Set_Colour(i,brightness,brightness,brightness);
-			}
-		break;
-		
-		case 2://4.05V~4.08V 9���׵�
-			num = 9;
-			for(i=0;i<num;i++)
-			{
-				WS2812_Set_Colour(i,brightness,brightness,brightness);
-			}
-			for(i=num;i<10;i++)
-			{
-				WS2812_Set_Colour(i,0,0,0);
-			}
-		break;
-		
-		case 3://3.96V~4.05V 8���׵�
-			num = 8;
-			for(i=0;i<num;i++)
-			{
-				WS2812_Set_Colour(i,brightness,brightness,brightness);
-			}
-			for(i=num;i<10;i++)
-			{
-				WS2812_Set_Colour(i,0,0,0);
-			}
-		break;
-		
-		case 4://3.87V~3.96V 7���׵�
-			num = 7;
-			for(i=0;i<num;i++)
-			{
-				WS2812_Set_Colour(i,brightness,brightness,brightness);
-			}
-			for(i=num;i<10;i++)
-			{
-				WS2812_Set_Colour(i,0,0,0);
-			}
-		break;
-		
-		case 5://3.78V~3.87V 6���׵�
-			num = 6;
-			for(i=0;i<num;i++)
-			{
-				WS2812_Set_Colour(i,brightness,brightness,brightness);
-			}
-			for(i=num;i<10;i++)
-			{
-				WS2812_Set_Colour(i,0,0,0);
-			}
-		break;
-		
-		case 6://3.70V~3.78V 5���׵�
-			num = 5;
-			for(i=0;i<num;i++)
-			{
-				WS2812_Set_Colour(i,brightness,brightness,brightness);
-			}
-			for(i=num;i<10;i++)
-			{
-				WS2812_Set_Colour(i,0,0,0);
-			}
-		break;
-		
-		case 7://3.62V~3.70V 4���׵�
-			num = 4;
-			for(i=0;i<num;i++)
-			{
-				WS2812_Set_Colour(i,brightness,brightness,brightness);
-			}
-			for(i=num;i<10;i++)
-			{
-				WS2812_Set_Colour(i,0,0,0);
-			}
-		break;
-		
-		case 8://3.50V~3.62V 3���׵�
-			num = 3;
-			for(i=0;i<num;i++)
-			{
-				WS2812_Set_Colour(i,brightness,brightness,brightness);
-			}
-			for(i=num;i<10;i++)
-			{
-				WS2812_Set_Colour(i,0,0,0);
-			}
-		break;
-		
-		case 9://3.35V~3.50V 2�����
-			num = 2;
-			for(i=0;i<num;i++)
-			{
+	for (i=0;i<10; i++) {
+		if (i <= num) {
+			if (num >= 10) { // Full charged
 				WS2812_Set_Colour(i,0,brightness,0);
+			} else if (num <= 2) { // Low battery
+				WS2812_Set_Colour(i,brightness,0,0);
+			} else { // Normal charging
+				WS2812_Set_Colour(i,brightness,brightness,brightness);
 			}
-			for(i=num;i<10;i++)
-			{
-				WS2812_Set_Colour(i,0,0,0);
-			}
-		break;
-		
-		case 10://2.80V~3.35V 1�����
-			num = 1;
-			for(i=0;i<num;i++)
-			{
-				WS2812_Set_Colour(i,0,brightness,0);
-			}
-			for(i=num;i<10;i++)
-			{
-				WS2812_Set_Colour(i,0,0,0);
-			}
-		break;
-		
-		default:
-			for(i=0;i<10;i++)
-			{
-				WS2812_Set_Colour(i,0,0,0);
-			}
-		break;
-		
+		} else {
+			WS2812_Set_Colour(i,0,0,0);
+		}
 	}
 	
 	cnt++;
@@ -561,7 +230,7 @@ void WS2812_Charge(void)
 		cnt = 0;
 	}
 	
-	WS2812_Refresh();//ˢ����ʾ
+	WS2812_Refresh();
 }	
 
 /**************************************************
@@ -618,16 +287,16 @@ void WS2812_Task(void)
 	
 	switch(Light_Profile)
 	{
-		case 1: //1��
-			Lightbar_Brightness = WS2812_1_BRIGHTNESS;
+		case 1: // Low Headlights; High lightbar
+			Lightbar_Brightness = LIGHTBAR_BRIGHTNESS_HIGH;
 		break;
 		
-		case 2:	//2��
-			Lightbar_Brightness = WS2812_2_BRIGHTNESS;
+		case 2:	// Medium headlights; Medium lightbar
+			Lightbar_Brightness = LIGHTBAR_BRIGHTNESS_MED;
 		break;
 		
-		case 3: //3��
-			Lightbar_Brightness = WS2812_3_BRIGHTNESS;
+		case 3: // High headlights; Low lightbar
+			Lightbar_Brightness = LIGHTBAR_BRIGHTNESS_LOW;
 		break;
 		
 		default:
@@ -644,6 +313,21 @@ void WS2812_Task(void)
 		Sensor_Activation_Display();//����ʾ����WS2812
 	}
 	
+}
+
+/**************************************************
+ * @note Apply the corresponding battery level based on current voltage
+ * @param battery_volatage float of the voltage of the battery cells
+ **************************************************/
+void Apply_BatteryPowerFlag(float battery_voltage) {
+	float battVoltages[] = {4.07, 4.025, 3.91, 3.834, 3.746, 3.607, 3.49, 3.351, 3.168, 2.81};
+
+	for (int i=0;i<10;i++) {
+		if (battery_voltage > battVoltages[i]) {
+			Power_Display_Flag = i + 1;
+			break;
+		}
+	}
 }
 
 /**************************************************
@@ -1322,48 +1006,8 @@ void Conditional_Judgment(void)
 				
 				battery_voltage = (data.inpVoltage+1)/BATTERY_STRING;//+1Ϊ����ֵ
 				
-				if((battery_voltage > (battery_voltage_last+VOLTAGE_RECEIPT)) || (battery_voltage < (battery_voltage_last - VOLTAGE_RECEIPT)))
-				{
-					if(battery_voltage>4.07F)
-					{
-						Power_Display_Flag = 1;
-					}
-					else if(battery_voltage>4.025F)
-					{
-						Power_Display_Flag = 2;
-					}
-					else if(battery_voltage>3.91F)
-					{
-						Power_Display_Flag = 3;
-					}
-					else if(battery_voltage>3.834F)
-					{
-						Power_Display_Flag = 4;
-					}
-					else if(battery_voltage>3.746F)
-					{
-						Power_Display_Flag = 5;
-					}
-					else if(battery_voltage>3.607F)
-					{
-						Power_Display_Flag = 6;
-					}
-					else if(battery_voltage>3.49F)
-					{
-						Power_Display_Flag = 7;
-					}
-					else if(battery_voltage>3.351F)
-					{
-						Power_Display_Flag = 8;
-					}
-					else if(battery_voltage>3.168F)
-					{
-						Power_Display_Flag = 9;
-					}
-					else if(battery_voltage>2.81F)
-					{
-						Power_Display_Flag = 10;
-					}
+				if((battery_voltage > (battery_voltage_last+VOLTAGE_RECEIPT)) || (battery_voltage < (battery_voltage_last - VOLTAGE_RECEIPT))) {
+					Apply_BatteryPowerFlag(battery_voltage);
 					
 					battery_voltage_last = battery_voltage;
 				}
@@ -1472,48 +1116,8 @@ void Conditional_Judgment(void)
 				battery_voltage = (Charge_Voltage+1)/BATTERY_STRING; // Divides pack voltage by cells -- +1 is a correction factor - Tony
 				if(Charge_Flag == 2)
 				{
-					if((battery_voltage > (battery_voltage_last+VOLTAGE_RECEIPT)) || (battery_voltage < (battery_voltage_last - VOLTAGE_RECEIPT)))
-					{
-						if(battery_voltage>4.07F)
-						{
-							Power_Display_Flag = 1;
-						}
-						else if(battery_voltage>4.025F)
-						{
-							Power_Display_Flag = 2;
-						}
-						else if(battery_voltage>3.91F)
-						{
-							Power_Display_Flag = 3;
-						}
-						else if(battery_voltage>3.834F)
-						{
-							Power_Display_Flag = 4;
-						}
-						else if(battery_voltage>3.746F)
-						{
-							Power_Display_Flag = 5;
-						}
-						else if(battery_voltage>3.607F)
-						{
-							Power_Display_Flag = 6;
-						}
-						else if(battery_voltage>3.49F)
-						{
-							Power_Display_Flag = 7;
-						}
-						else if(battery_voltage>3.351F)
-						{
-							Power_Display_Flag = 8;
-						}
-						else if(battery_voltage>3.168F)
-						{
-							Power_Display_Flag = 9;
-						}
-						else if(battery_voltage>2.81F)
-						{
-							Power_Display_Flag = 10;
-						}
+					if((battery_voltage > (battery_voltage_last+VOLTAGE_RECEIPT)) || (battery_voltage < (battery_voltage_last - VOLTAGE_RECEIPT))) {
+						Apply_BatteryPowerFlag(battery_voltage);
 						battery_voltage_last = battery_voltage;
 					}
 				}
