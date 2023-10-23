@@ -251,7 +251,6 @@ void Sensor_Activation_Display(void)
 	WS2812_Refresh();//ˢ����ʾ
 }
 
-
 /**************************************************
  * @brief  :Boot_Animation()
  * @note   :Displays the boot animation on the lightbar
@@ -384,10 +383,6 @@ void Boot_Animation(void)
 	WS2812_Refresh();//ˢ����ʾ
 }
 
-
-
-
-uint8_t brightness = 1;
 /**************************************************
  * @brief  :WS2812_Cal_Bri()
  * @note   :��������
@@ -396,7 +391,7 @@ uint8_t brightness = 1;
  **************************************************/
 uint8_t WS2812_Cal_Bri(uint8_t cnt)
 {
-	
+	static uint8_t brightness = 1;
 	
 	if(cnt < 50)
 	{
@@ -410,9 +405,8 @@ uint8_t WS2812_Cal_Bri(uint8_t cnt)
 	if(brightness < 1)
 	{
 		brightness = 1;
-	}
-	
-	if(brightness > 50)
+	}	
+	else if(brightness > 50)
 	{
 		brightness = 50;
 	}
@@ -576,8 +570,8 @@ void WS2812_Charge(void)
  **************************************************/
 void WS2812_Task(void)
 {
-//	static uint8_t Sensor_Activation_Display_Flag_last = 0; //��һ�ε�״̬
-//	static uint8_t power_display_flag_last = 0; //��һ�ε�״̬
+    //static uint8_t Sensor_Activation_Display_Flag_last = 0; //��һ�ε�״̬
+    //static uint8_t power_display_flag_last = 0; //��һ�ε�״̬
 	uint8_t i;
 
 	if(WS2812_Counter < 20) //20msˢ��һ��
@@ -772,8 +766,7 @@ void Charge_Task(void)
 	}
 }
 
-uint8_t val = 0;
-uint8_t flashlight_flag_last_2 = 0;
+
 /**************************************************
  * @brief  :Flashlight_Bright()
  * @note   :Flashlight brightness control
@@ -784,6 +777,7 @@ uint8_t flashlight_flag_last_2 = 0;
  **************************************************/
 void Flashlight_Bright(uint8_t red_white,uint8_t bright)
 {
+    static uint8_t flashlight_flag_last_2 = 0;
 	static uint8_t flashlight_bright_step = 0;
 	uint16_t brightness = 0;
 
@@ -807,13 +801,11 @@ void Flashlight_Bright(uint8_t red_white,uint8_t bright)
 				{
 					LED_F_OFF;
 					LED_B_ON;
-					val = 1;
 				}
 				else
 				{
 					LED_B_OFF;
 					LED_F_ON;
-					val = 2;
 				}
 				flashlight_bright_step = 1;
 		break;
@@ -958,7 +950,6 @@ void Flashlight_Task(void)
 		case 4://VESCǰ���ƺ���׵�(��ת)
 			Flashlight_Bright(2,2);
 			Brightness_Adjustment_Flag = 2;
-			val = 3;
 		break;
 		
 		default:
@@ -1160,10 +1151,10 @@ void Usart_Task(void)
 				{
 						//LED1_Filp_Time(500);				
 						Usart_Flag = 1;
-//						Battery_Voltage = data.inpVoltage; //��ص�ѹ
-//						VESC_Rpm = data.rpm;            //ת��
-//						AvgInputCurrent = data.avgInputCurrent;  //ĸ�ߵ���
-//						DutyCycleNow = data.dutyCycleNow;   //ռ�ձ�
+						//Battery_Voltage = data.inpVoltage; //��ص�ѹ
+						//VESC_Rpm = data.rpm;            //ת��
+						//AvgInputCurrent = data.avgInputCurrent;  //ĸ�ߵ���
+						//DutyCycleNow = data.dutyCycleNow;   //ռ�ձ�
 				}
 				else	//����ʧ��
 				{
@@ -1213,12 +1204,12 @@ void Usart_Task(void)
 void ADC_Task(void)
 {
 	static uint8_t adc_step = 0;
-//	static uint8_t i = 0;
-//	static uint16_t adc_charge_sum[10];
+	//static uint8_t i = 0;
+	//static uint16_t adc_charge_sum[10];
 	static uint16_t adc_charge_sum_ave = 0;
 	static uint16_t adc1_val_sum_ave = 0;
 	static uint16_t adc2_val_sum_ave = 0;
-//	float old_charge_current = 0;
+	//float old_charge_current = 0;
 	
 	switch(adc_step)
 	{
@@ -1466,7 +1457,7 @@ void Conditional_Judgment(void)
 					Shutdown_Cnt++;
 					if(Shutdown_Cnt>10)
 					{
-//						Charge_Flag = 3;
+						//Charge_Flag = 3;
 						Shutdown_Cnt = 0;
 						CHARGE_OFF;  //�رճ����
 					}
