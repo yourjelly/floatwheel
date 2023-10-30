@@ -450,145 +450,135 @@ void Charge_Task(void)
 	}
 }
 
+/**************************************************
+ * @note   Cycles through the available lighting profiles
+ * @param  persist (bool): whether to save the current profile to EEPROM
+ **************************************************/
+void Change_Light_Profile(bool persist)
+{
+	// Change light profile
+	Light_Profile++;
+	if (Light_Profile == 4)
+	{
+		Light_Profile = 1;
+	}
+	if (persist)
+	{
+		EEPROM_WriteByte(0, Light_Profile);
+	}
+	Set_Light_Brightness();
+}
+
+/// Only call the when the Light_Profile is changed (either via button or bluetooth) or after first eeprom read
+/// Allows runtime bluetooth changes on Lightbar_Brightness and Main_Brightness
+/**
+* @note Sets light brightness to the current Light_Profile
+**/
+void Set_Light_Brightness()
+{
+	switch (Light_Profile)
+	{
+	// Inversely set the brightness of the lightbar to the brightness of the main lights
+	case 1: // Low
+		Lightbar_Brightness = LIGHTBAR_BRIGHTNESS_HIGH;
+		Main_Brightness = MAIN_BRIGHTNESS_LOW;
+		break;
+
+	case 2: // Med
+		Lightbar_Brightness = LIGHTBAR_BRIGHTNESS_MED;
+		Main_Brightness = MAIN_BRIGHTNESS_MED;
+		break;
+
+	case 3: // High
+		Lightbar_Brightness = LIGHTBAR_BRIGHTNESS_LOW;
+		Main_Brightness = MAIN_BRIGHTNESS_HIGH;
+		break;
+
+	default:
+		Lightbar_Brightness = LIGHTBAR_BRIGHTNESS_HIGH;
+		Main_Brightness = MAIN_BRIGHTNESS_LOW;
+		break;
+	}
+}
+
+/**
+ * @note transitions from current brightness to end brightness
+ * @param target ending brightness
+ * @param time transition time in ms
+ **/
+void Light_Transition(uint16_t target, uint16_t time)
+{
+	static uint16_t brightness = 9999;
+	uint16_t diff = 0;
+	int mod = 1;
+	if (Brightness_Adjustment_Flag == 1) // if target has changed restart timer
+	{
+		Brightness_Adjustment_Flag = 2;
+		Flashlight_Time = 0;
+	}
+	if (brightness > target)
+	{
+		diff = brightness - target;
+		mod = -1;
+	}
+	else {
+		diff = target - brightness;
+	}
+	if (Flashlight_Time >= time)
+	{
+		TIM_SetCompare2(TIM1, target);
+		Brightness_Adjustment_Flag = 3;
+		return;
+	}
+	if (Flashlight_Time % FADE_REFRESH == 0)
+	{
+		brightness = brightness + (round((Flashlight_Time * diff) / time) * mod);
+		TIM_SetCompare2(TIM1, brightness);
+		time -= FADE_REFRESH;
+	}
+	if (Brightness_Adjustment_Flag == 2)
+	{
+		Light_Transition(target, time);
+	}
+}
 
 /**************************************************
  * @brief  :Flashlight_Bright()
  * @note   :Flashlight brightness control
- * @param  :red_white = 1: Forward
- *          red_white = 2: Reverse
- *          bright = 1: Transition from 0% to 10%
- *          bright = 2: Transition from 10% to 100%
+ * @param direction 1=Forward 2=Reverse  
+ * @param bright 1=transition to REST 2=transition from 10% to 100%
  **************************************************/
-void Flashlight_Bright(uint8_t red_white,uint8_t bright)
+void Flashlight_Bright(uint8_t direction, uint8_t bright)
 {
-    static uint8_t flashlight_flag_last_2 = 0;
-	static uint8_t flashlight_bright_step = 0;
-	uint16_t brightness = 0;
-
-	
-	if(flashlight_flag_last_2 != Flashlight_Flag)
-	{
-		flashlight_bright_step = 0;
-		flashlight_flag_last_2 = Flashlight_Flag;
+	static uint8_t direction_last = 0;
+	if (Brightness_Adjustment_Flag == 2)
+	{ 
+		Brightness_Adjustment_Flag = 3;
 	}
-	
-	if(Flashlight_Flag == 4)
+	if (direction == 1) // Direction forward
 	{
-		TIM_SetCompare2(TIM1,9000);//��10%��ʼ
-		return;
+		LED_F_OFF;
+		LED_B_ON;
 	}
-	
-	switch(flashlight_bright_step)
+	else // Direction backward
 	{
-		case 0:
-				if(red_white == 1)
-				{
-					LED_F_OFF;
-					LED_B_ON;
-				}
-				else
-				{
-					LED_B_OFF;
-					LED_F_ON;
-				}
-				flashlight_bright_step = 1;
-		break;
-				
-		case 1:
-				Flashlight_Time = 0;
-				flashlight_bright_step = 2;
-		break;
-		
-		case 2:
-			if(bright == 1)
-			{
-				TIM_SetCompare2(TIM1,9999); //��0%��ʼ
-				flashlight_bright_step = 3;
-			}
-			else
-			{
-				TIM_SetCompare2(TIM1,9000);//��10%��ʼ
-				flashlight_bright_step = 4;
-			}
-		break;
-		
-		case 3://���ȴ�0% -10% 2��
-			if(Flashlight_Time%2 == 0)
-			{
-				brightness = Flashlight_Time/2;
-				brightness = 9999-brightness+1;
-				TIM_SetCompare2(TIM1,brightness);
-			}
-			if(Flashlight_Time >= 2000)
-			{
-				TIM_SetCompare2(TIM1,9000);
-				flashlight_bright_step = 5;
-			}
-		break;
-		
-		case 4://���ȴ�10%-100% 2��
-		
-			if(Flashlight_Time%2 == 0)
-			{
-				switch(Light_Profile)
-				{
-					case 1:
-						brightness = (Flashlight_Time*1.0F)+1000;
-						brightness = 9999-brightness+1;
-					break;
-					
-					case 2:
-						brightness = (Flashlight_Time*2.5F)+1000;
-						brightness = 9999-brightness+1;
-					break;
-					
-					case 3:
-						brightness = (Flashlight_Time*4.5F)+1000;
-						brightness = 9999-brightness+1;
-					break;
-					
-					default:
-						
-					break;
-				}
-				
-				TIM_SetCompare2(TIM1,brightness);
-			}
-			if(Flashlight_Time >= 2000)
-			{
-				switch(Light_Profile)
-				{
-					case 1:
-						TIM_SetCompare2(TIM1,7000);
-					break;
-					
-					case 2:
-						TIM_SetCompare2(TIM1,4000);
-					break;
-					
-					case 3:
-						TIM_SetCompare2(TIM1,0);
-					break;
-					
-					default:
-						
-					break;
-				}
-				
-				flashlight_bright_step = 5;
-			}
-		break;
-		
-		case 5://���ȵ�����
-			Brightness_Adjustment_Flag = 2;
-			flashlight_bright_step = 0;
-		break;
-		
-		default:
-			
-		break;
+		LED_B_OFF;
+		LED_F_ON;
 	}
 
+	if (bright == 1)
+	{
+		if (Main_Brightness > MAIN_BRIGHTNESS_REST) {  // If your light profile is less than rest use that
+			Light_Transition(Main_Brightness, FADE_TIME);
+		} 
+		else {
+			Light_Transition(MAIN_BRIGHTNESS_REST, FADE_TIME);
+		}
+	}
+	else
+	{
+		Light_Transition(Main_Brightness, FADE_TIME);
+	}
 }
 	
 /**************************************************
@@ -598,46 +588,45 @@ void Flashlight_Bright(uint8_t red_white,uint8_t bright)
 void Flashlight_Task(void)
 {
 	static uint8_t flashlight_flag_last = 0;
-	
-	if(Power_Flag == 3 || Power_Flag == 0) //VESC�ϵ������ƹر�
+
+	if(Power_Flag != 2) //When just booting or vesc is off turn lights off
 	{
 		LED_B_OFF;
 		LED_F_OFF;
-		TIM_SetCompare2(TIM1,0);
+		Flashlight_Flag = 0;
+		TIM_SetCompare2(TIM1,9999);
 		return;
 	}
-	
-	if(flashlight_flag_last == Flashlight_Flag && Brightness_Adjustment_Flag == 2) //�����Ѿ�������
+
+	if(flashlight_flag_last == Flashlight_Flag) //Direction isnt changed
 	{
-		return;
+		return; //Dont do anything -> state didnt change
 	}
 	else if(flashlight_flag_last != Flashlight_Flag)
 	{
 		flashlight_flag_last = Flashlight_Flag;
-		Brightness_Adjustment_Flag = 1;
+		Brightness_Adjustment_Flag = 3; // Breaks out of current transition to prepare for the next
+
 	}
-	
 	switch(Flashlight_Flag)
 	{
-		case 1://VESC���ϵ�ǰ�����������ȴ�0%����2��ﵽ10%
+		case 1://VESC booting -> 0% -> 10% in 2 sec
 			Flashlight_Bright(1,1);
-		break; 
-		
-		case 2://VESCǰ��׵ƺ�����(��ת)
+		break;
+
+		case 2:
 			Flashlight_Bright(1,2);
 		break;
-		
+
 		case 3://VESCǰ���ƺ���׵�(��ת)
 			Flashlight_Bright(2,2);
 		break;
-		
-		case 4://VESCǰ���ƺ���׵�(��ת)
-			Flashlight_Bright(2,2);
-			Brightness_Adjustment_Flag = 2;
+
+		case 4:
+			Flashlight_Bright(1,1);
 		break;
-		
+
 		default:
-			
 		break;
 	}
 }
@@ -645,73 +634,37 @@ void Flashlight_Task(void)
 void Flashlight_Detection(void)
 {
 	static uint8_t Light_Profile_last = 0;
-		
-	if(Light_Profile_last == Light_Profile && Flashlight_Detection_Time >= 3100)
+
+	if(Light_Profile_last == Light_Profile && Flashlight_Detection_Time >= 3000)
 	{
-		Flashlight_Detection_Time = 3100;
+		if (ADC1_Val < ADC_THRESHOLD_LOWER && ADC2_Val < ADC_THRESHOLD_LOWER)
+		{
+			Flashlight_Flag = 4;
+		}
 		return;
 	}
 	else
 	{
 		if(Light_Profile_last != Light_Profile)
 		{
-			if(ADC1_Val < 2.5F && ADC2_Val < 2.5F)
+			if(ADC1_Val < ADC_THRESHOLD_LOWER && ADC2_Val < ADC_THRESHOLD_LOWER)
 			{
-				switch(Light_Profile)
-				{
-					case 1:
-						TIM_SetCompare2(TIM1,7000);
-					break;
-					
-					case 2:
-						TIM_SetCompare2(TIM1,4000);
-					break;
-					
-					case 3:
-						TIM_SetCompare2(TIM1,0);
-					break;
-					
-					default:
-						
-					break;	
-				}
+				Set_Light_Brightness();
+				TIM_SetCompare2(TIM1,Main_Brightness);
 				Flashlight_Detection_Time = 0;
 			}
 			else
 			{
-				switch(Light_Profile)
-				{
-					case 1:
-						TIM_SetCompare2(TIM1,7000);
-					break;
-					
-					case 2:
-						TIM_SetCompare2(TIM1,4000);
-					break;
-					
-					case 3:
-						TIM_SetCompare2(TIM1,0);
-					break;
-					
-					default:
-						
-					break;	
-				}
+				Set_Light_Brightness();
+				TIM_SetCompare2(TIM1,Main_Brightness);
+
 				Flashlight_Detection_Time = 3100;
 			}
 			Light_Profile_last = Light_Profile;
 		}
-		else
-		{
-			if(Flashlight_Detection_Time >= 3000)
-			{
-				TIM_SetCompare2(TIM1,9000);
-				Flashlight_Detection_Time = 3100;
-			}
-		}
-		
 	}
 }
+
 /**************************************************
  * @brief  :Buzzer_Task()
  * @note   :����������
@@ -951,7 +904,7 @@ void Conditional_Judgment(void)
 			
 	switch(Power_Flag)
 	{
-		case 1: //����
+		case 1: // Power on check for charging
 			 if(Charge_Voltage > CHARGING_VOLTAGE)
 			 {
 				Power_Flag = 3;
@@ -959,17 +912,16 @@ void Conditional_Judgment(void)
 			 }
 		break;
 		
-		case 2: //�������
+		case 2: // Boot completed
 			if(Usart_Flag == 1)
 			{
 				Usart_Flag = 2;
 				
-				//DutyCycleNow = 0.9;//������Ҫע��
 				if(data.dutyCycleNow < 0)
 				{
 					data.dutyCycleNow = -data.dutyCycleNow;
 				}
-				/*duty cycle > DUTY_CYCLE ���������١����١�����*/
+				/*duty cycle > DUTY_CYCLE buzzer beeps*/
 				if(data.dutyCycleNow >= DUTY_CYCLE)
 				{
 					Buzzer_Frequency = ((((uint8_t)(data.dutyCycleNow*100))*4)-220);
@@ -979,17 +931,15 @@ void Conditional_Judgment(void)
 					Buzzer_Frequency = 0;
 				}
 				
-				//VESC_Rpm = -10;//������Ҫע��
-				
-				if(ADC1_Val>2.9F || ADC2_Val > 2.9F)
+				if(ADC1_Val>ADC_THRESHOLD_UPPER || ADC2_Val > ADC_THRESHOLD_UPPER)
 				{
 					if(data.rpm > VESC_RPM_WIDTH)
 					{
-						Flashlight_Flag = 2;
+						Flashlight_Flag = 2; // Forward
 					}
-					else
+					if(data.rpm < -VESC_RPM_WIDTH)
 					{
-						Flashlight_Flag = 3;
+						Flashlight_Flag = 3; // Backward
 					}
 				}
 				else
@@ -1002,9 +952,7 @@ void Conditional_Judgment(void)
 					data.rpm = -data.rpm;
 				}
 				
-				//Battery_Voltage = 82;//������Ҫע��
-				
-				battery_voltage = (data.inpVoltage+1)/BATTERY_STRING;//+1Ϊ����ֵ
+				battery_voltage = (data.inpVoltage+1)/BATTERY_STRING; // Divides pack voltage by cells -- +1 is the correction factor
 				
 				if((battery_voltage > (battery_voltage_last+VOLTAGE_RECEIPT)) || (battery_voltage < (battery_voltage_last - VOLTAGE_RECEIPT))) {
 					Apply_BatteryPowerFlag(battery_voltage);
@@ -1017,28 +965,27 @@ void Conditional_Judgment(void)
 				{
 					data.avgInputCurrent = -data.avgInputCurrent;
 				}
-				//AvgInputCurrent = 1.0;//������Ҫע��
-				
+
 				if(data.rpm<VESC_RPM)
 				{
-					if(ADC1_Val < 2.9F && ADC2_Val <2.9F)
+					if(ADC1_Val < ADC_THRESHOLD_UPPER && ADC2_Val < ADC_THRESHOLD_UPPER)
 					{
-						Lightbar_Battery_Flag = 1;  //��ʾ����
+						Lightbar_Battery_Flag = 1; // Display Battery Level
 					}
-					else if(ADC1_Val > 2.9F && ADC2_Val > 2.9F)
+					else if(ADC1_Val > ADC_THRESHOLD_UPPER && ADC2_Val > ADC_THRESHOLD_UPPER)
 					{
-						Lightbar_Battery_Flag = 2;  //����ʾ����
-						Sensor_Activation_Display_Flag = 3;  //10���ƶ�������
+						Lightbar_Battery_Flag = 2; // Do not Display Battery Level
+						Sensor_Activation_Display_Flag = 3;  // Both Footpad Sensors Activated
 					}
-					else if(ADC1_Val >2.9F)
+					else if(ADC1_Val >ADC_THRESHOLD_UPPER)
 					{
-						Lightbar_Battery_Flag = 2;//����ʾ����
-						Sensor_Activation_Display_Flag = 1;  //���5������     �Ҳ�5���Ʋ�����
+						Lightbar_Battery_Flag = 2; // Do not Display Battery Level
+						Sensor_Activation_Display_Flag = 1;  // Left Footpad Sensor Activated
 					}
 					else
 					{
-						Lightbar_Battery_Flag = 2;//����ʾ����
-						Sensor_Activation_Display_Flag = 2;  //���5���Ʋ����� �Ҳ�5������
+						Lightbar_Battery_Flag = 2; // Do not Display Battery Level
+						Sensor_Activation_Display_Flag = 2;  // Right Footpad Sensor Activated
 					}
 				}
 				else
@@ -1073,7 +1020,7 @@ void Conditional_Judgment(void)
 					BOARD TIMEOUT SHUTDOWN COUNTER
 					Reset if either footpad is activated or if motor rpm excedes 1000
 				*/
-				if(ADC1_Val > 2.9F || ADC2_Val > 2.9F || data.rpm > 1000)
+				if(ADC1_Val > ADC_THRESHOLD_UPPER || ADC2_Val > ADC_THRESHOLD_UPPER || data.rpm > 1000)
 				{
 					Shutdown_Time_S = 0;
 					Shutdown_Time_M = 0;
@@ -1122,11 +1069,7 @@ void Conditional_Judgment(void)
 					}
 				}
 			}
-				
-				
-			
-				
-				
+
 		break;
 		
 		default:

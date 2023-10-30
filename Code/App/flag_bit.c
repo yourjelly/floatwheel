@@ -63,6 +63,8 @@ uint8_t Sensor_Activation_Display_Flag = 0;
 
 uint8_t Lightbar_Brightness = 0; // Lightbar runtime brightness setting (0-255)
 
+uint16_t Main_Brightness = 0; // Main lights runtime brightness setting (0-9999) -> 9999 = 0% brightness and 0 = 100% brightness
+
 /*
 	Power_Display_Flag = 0; Default state.
 	Power_Display_Flag = 1; Full charge: 10 white LEDs.

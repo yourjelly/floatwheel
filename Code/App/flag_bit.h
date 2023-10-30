@@ -18,6 +18,7 @@ extern uint8_t Lightbar_Battery_Flag;
 extern uint8_t Sensor_Activation_Display_Flag;
 extern uint8_t Lightbar_Brightness;
 extern uint8_t Power_Display_Flag;
+extern uint16_t Main_Brightness;
 
 // FOOTPAD STATE
 
