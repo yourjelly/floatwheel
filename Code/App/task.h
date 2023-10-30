@@ -6,6 +6,8 @@
 #include "ws2812.h"
 #include "flag_bit.h"
 #include "vesc_uasrt.h"
+#include "eeprom.h"
+#include <math.h>
 
 #define	  CHARGING_VOLTAGE	  		40   		// Charging voltage detection. Greater than this value is considered that the charger is plugged in
 #define   BATTERY_STRING      		20    		// Number of battery cells
@@ -14,8 +16,8 @@
 #define   VESC_BOOT_TIME      		6000 		// VESC boot time (ms)
 #define   DUTY_CYCLE          		0.7F  		// When duty cycle greater than this value (%), beep beep beep (sic)
 #define   VOLTAGE_RECEIPT     		0.02F 		// Voltage receipt unit V
-#define   ADC_THRESHOLD_LOWER       2.5F         // Threshold value for footpad activation detection
-#define   ADC_THRESHOLD_UPPER       2.9F         // Threshold value for footpad activation detection
+#define   ADC_THRESHOLD_LOWER       2.5F        // Threshold value for footpad activation detection
+#define   ADC_THRESHOLD_UPPER       2.9F        // Threshold value for footpad activation detection
 /*******************************************************************************/
 #define   VESC_RPM_WIDTH      		-200 		// When the rotation speed is ± this value, do not switch the travel direction
 #define   LIGHTBAR_BRIGHTNESS_HIGH 	204			// High brightness value (0-255) -- Stock (204)

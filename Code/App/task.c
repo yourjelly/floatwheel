@@ -93,10 +93,10 @@ void Power_Display(void)
 void Sensor_Activation_Display(void)
 {
 	uint8_t i;
-	
+
 	switch(Sensor_Activation_Display_Flag)
 	{
-		case 1://���5������     �Ҳ�5���Ʋ�����   adc1>2.5V  adc2<2.5V
+		case 1: // adc1>ADC_THRESHOLD_LOWER  adc2<ADC_THRESHOLD_LOWER
 			for(i=0;i<5;i++)
 			{
 				WS2812_Set_Colour(i,0,0,Lightbar_Brightness);
@@ -106,8 +106,8 @@ void Sensor_Activation_Display(void)
 				WS2812_Set_Colour(i,0,0,0);
 			}
 		break;
-		
-		case 2://���5���Ʋ����� �Ҳ�5������       adc1<2.5V  adc2>2.5V
+
+		case 2: // adc1<ADC_THRESHOLD_LOWER  adc2>ADC_THRESHOLD_LOWER
 			for(i=0;i<5;i++)
 			{
 				WS2812_Set_Colour(i,0,0,0);
@@ -118,14 +118,14 @@ void Sensor_Activation_Display(void)
 			}
 		break;
 		
-		case 3://10���ƶ�������                    adc1>2.5V  adc2>2.5V
+		case 3: // adc1>ADC_THRESHOLD_LOWER  adc2>ADC_THRESHOLD_LOWER
 			for(i=0;i<10;i++)
 			{
 				WS2812_Set_Colour(i,0,0,Lightbar_Brightness);
 			}
 		break;
-			
-		case 4://�ر�10���� 
+
+		case 4: // adc1<ADC_THRESHOLD_LOWER  adc2<ADC_THRESHOLD_LOWER
 			for(i=0;i<10;i++)
 			{
 				WS2812_Set_Colour(i,0,0,0);
@@ -139,7 +139,7 @@ void Sensor_Activation_Display(void)
 			}
 		break;
 	}
-	WS2812_Refresh();//ˢ����ʾ
+	WS2812_Refresh();
 }
 
 /**************************************************
@@ -149,7 +149,7 @@ void Sensor_Activation_Display(void)
 void Boot_Animation(void)
 {
 	uint8_t i;
-	uint8_t num = floor(Power_Time / 500) + 1;
+	uint8_t num = floorf(Power_Time / 500) + 1;
 	
 	if (num > 10) {
 		num = 10;
@@ -532,7 +532,7 @@ void Light_Transition(uint16_t target, uint16_t time)
 	}
 	if (Flashlight_Time % FADE_REFRESH == 0)
 	{
-		brightness = brightness + (round((Flashlight_Time * diff) / time) * mod);
+		brightness = brightness + (roundf((Flashlight_Time * diff) / time) * mod);
 		TIM_SetCompare2(TIM1, brightness);
 		time -= FADE_REFRESH;
 	}
@@ -550,7 +550,7 @@ void Light_Transition(uint16_t target, uint16_t time)
  **************************************************/
 void Flashlight_Bright(uint8_t direction, uint8_t bright)
 {
-	static uint8_t direction_last = 0;
+	// static uint8_t direction_last = 0;
 	if (Brightness_Adjustment_Flag == 2)
 	{ 
 		Brightness_Adjustment_Flag = 3;
@@ -1082,17 +1082,3 @@ void Conditional_Judgment(void)
 			
 	}
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-

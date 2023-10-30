@@ -123,8 +123,6 @@ uint16_t Usart_Time = 0; // USART communication time.
 uint16_t Flashlight_Time = 0; // Flashlight time.
 uint16_t Flashlight_Detection_Time = 0; // When the button is double-clicked without pressing it, the headlight stays on for 3 seconds.
 
-uint16_t ADC_Time = 0; // ADC sampling time.
-
 uint8_t Shutdown_Time_M = 0; // Shutdown time in minutes.
 uint16_t Shutdown_Time_S = 0; // Shutdown time in seconds.
 uint8_t Shutdown_Cnt = 0; // Number of times the current reaches the shutdown value.
