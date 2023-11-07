@@ -47,7 +47,7 @@ void KEY1_Scan(void)
 			if(KEY1 == 0)
 			{
 				key1_cnt++;
-				if(key1_cnt == 20) //����
+				if(key1_cnt == 20) // key is pressed for longer than 20ms count as a state change
 				{
 					key1_cnt = 0;
 					key1_st = 1;
@@ -64,14 +64,14 @@ void KEY1_Scan(void)
 		case 1:
 			key1_cnt++;   
 		    key1_cnt_2++;
-			if(KEY1 == 1) //�����Ѿ�̧�� �����Ǹ����� 
+			if(KEY1 == 1) // The button has been lifted, atleast a click
 			{
 				key1_num++;
 				key1_st = 2;
 				key1_cnt = 0;
 				
 			}
-			else if (key1_cnt > 1500)  //������Ч
+			else if (key1_cnt > 1500)  // Long Press
 			{
 				key1_cnt = 0;
 				key1_st = 3;
@@ -84,12 +84,12 @@ void KEY1_Scan(void)
 		case 2:
 			key1_cnt_2++;
 			
-			if(key1_cnt_2 < 500) //250ms�ڿ��������˶��ٴ�
+			if(key1_cnt_2 < 500) // timeout for sequence of button clicks
 			{
 				if(KEY1 == 0)
 				{
 					key1_cnt++;
-					if(key1_cnt == 2) //����
+					if(key1_cnt == 2) // Eliminate Jitter (less sensitive than first press)
 					{
 						key1_cnt = 0;
 						key1_st = 1;
@@ -110,7 +110,7 @@ void KEY1_Scan(void)
 		
 		case 3:
 			
-			if(KEY1 == 1) //������ȴ�����̧��
+			if(KEY1 == 1) // After long press reset when released
 			{
 				key1_st = 0;
 			}
@@ -121,20 +121,20 @@ void KEY1_Scan(void)
 			
 			switch(key1_num)
 			{
-				case 1: //����
+				case 1: // Click
 					KEY1_State = 1;
 				break;
 				
-				case 2: //˫��
+				case 2: // double click
 					KEY1_State = 2;
 				break;
 				
-				case 3: //����
+				case 3: // triple click
 					KEY1_State = 4;
 				break;
-				//�Ļ� ��� ...��������
+				// 3... 4... add your own
 				
-				default: //key3_num��ֵ ���ܲ���1 2 3 ��ü���һ�� Ԥ��bug
+				default: // exception handling
 					
 				break;
 			}

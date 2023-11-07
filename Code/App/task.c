@@ -7,40 +7,34 @@
  **************************************************/
 void KEY1_Task(void)
 {
-	if(KEY1_State == 0 || Power_Flag == 3)  //��������簴����������
-	{
-		return;
-	}
-	
 	switch(KEY1_State)
 	{
-		case 1:  	// Click
-			if(Power_Flag != 2)
+		case 0:  // No Press return
+			return;
+		break;
+
+		case 1:  	// Click ~~ Boot
+			if(Power_Flag != 2) // If VESC not booted
 			{
-				Power_Flag = 1;  //VESC����
+				Power_Flag = 1;  // Boot VESC
 			}	
 		break;
 		
-		case 2:		// Double Click	
-			if(Power_Flag == 2) //�������
+		case 2:		// Double Click	~~ Increment Light Profile
+			if(Power_Flag == 2 || Power_Flag == 3) // If VESC booted
 			{
-				Light_Profile++;
-				if(Light_Profile == 4)
-				{
-					Light_Profile = 1;
-				}
-				
+				Change_Light_Profile(true);				
 			}
 		break;
 		
-		case 3:		// Press
-			Power_Flag = 3;  //VESC�ػ�
+		case 3:		// Long Press ~~ Power Off
+			Power_Flag = 3;
 			Flashlight_Flag = 0;
-			Lightbar_Battery_Flag =0;
+			Lightbar_Battery_Flag = 2;
 		break;
 		
-		case 4:		// Triple Click
-			if(Power_Flag == 2) //�������
+		case 4:		// Triple Click ~~ Toggle Buzzer
+			if(Power_Flag == 2 || Power_Flag == 3) // If VESC booted
 			{
 				if(Buzzer_Flag == 2)
 				{
@@ -360,7 +354,7 @@ void Power_Task(void)
 				case 1:
 					if(Power_Time > VESC_BOOT_TIME)
 					{
-						Power_Flag = 2; //�������
+						Power_Flag = 2; //�������?
 						Light_Profile = 1; //������Ĭ����1��
 						Buzzer_Flag = 2;    //����Ĭ�Ϸ�������
 						power_step = 0;
@@ -370,10 +364,10 @@ void Power_Task(void)
 			
 		break;	
 		
-		case 3://VESC�ػ�������������ӹ���
+		case 3://VESC�ػ�������������ӹ���?
 			PWR_OFF;
 			//LED1_Filp_Time(1000);	
-			//Charge_Flag = 1; //׼�����
+			//Charge_Flag = 1; //׼�����?
 		break;
 		
 		default:
@@ -384,7 +378,7 @@ void Power_Task(void)
 
 /**************************************************
  * @brief  :Charge_Task()
- * @note   :������� 
+ * @note   :�������? 
  * @param  :��
  * @retval :��
  **************************************************/
@@ -412,7 +406,7 @@ void Charge_Task(void)
 		break;
 		
 		case 2:
-			CHARGE_ON;  //�򿪳����
+			CHARGE_ON;  //�򿪳����?
 			Charge_Flag = 2;
 		    charge_step = 3;
 		break;
@@ -437,7 +431,7 @@ void Charge_Task(void)
 			{
 				V_I = 0;
 				Charge_Time = 0;
-				LED1_OFF; //�ɼ������
+				LED1_OFF; //�ɼ������?
 				charge_step = 4;
 			}		
 		break;
@@ -618,7 +612,7 @@ void Flashlight_Task(void)
 			Flashlight_Bright(1,2);
 		break;
 
-		case 3://VESCǰ���ƺ���׵�(��ת)
+		case 3://VESCǰ���ƺ���׵�?(��ת)
 			Flashlight_Bright(2,2);
 		break;
 
@@ -683,7 +677,7 @@ void Buzzer_Task(void)
 		return;
 	}
 	
-	if(Buzzer_Frequency == 0 && Light_Profile_last == Light_Profile) //���������Ƶ��Ϊ0����һ�εĵ�λ������εĵ�λ
+	if(Buzzer_Frequency == 0 && Light_Profile_last == Light_Profile) //���������Ƶ���?0����һ�εĵ�λ������εĵ��?
 	{
 		BUZZER_OFF;
 		buzzer_step = 0;
@@ -788,7 +782,7 @@ void Usart_Task(void)
 				{
 						//LED1_Filp_Time(500);				
 						Usart_Flag = 1;
-						//Battery_Voltage = data.inpVoltage; //��ص�ѹ
+						//Battery_Voltage = data.inpVoltage; //��ص��?
 						//VESC_Rpm = data.rpm;            //ת��
 						//AvgInputCurrent = data.avgInputCurrent;  //ĸ�ߵ���
 						//DutyCycleNow = data.dutyCycleNow;   //ռ�ձ�
@@ -1050,7 +1044,7 @@ void Conditional_Judgment(void)
 					{
 						//Charge_Flag = 3;
 						Shutdown_Cnt = 0;
-						CHARGE_OFF;  //�رճ����
+						CHARGE_OFF;  //�رճ����?
 					}
 				}
 				else
