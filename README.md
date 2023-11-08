@@ -6,15 +6,20 @@ Board inside the ADV Floatwheel that controls lighting, power, charing and buzze
 
 * Floatwheels's LCM
 * Programmer
-  * J-Link: J-Link OB programmer
-  * PyOCD: DAPLink, J-Link or ST-LINK
-* SEGGER J-Link Software and Documentation pack [https://www.segger.com/downloads/jlink/](https://www.segger.com/downloads/jlink/)
-* PyOCD [https://pyocd.io/](https://pyocd.io/)
-* GNU Arm Embedded Toolchain
+  * J-Link: J-Link OB programmer Software and Documentation pack [https://www.segger.com/downloads/jlink/](https://www.segger.com/downloads/jlink/)
+  * ST-LINK: ST-Link downloads [https://www.st.com/en/development-tools/stsw-link007.html](https://www.st.com/en/development-tools/stsw-link007.html)
+* PyOCD [https://pyocd.io/docs/installing](https://pyocd.io/docs/installing)
+* Compilier
+  * GNU Arm Embedded Toolchain
+  * Keil μVision
 
 # Building
 
-## 1. Install GNU Arm Embedded Toolchain
+## Clone This Repository
+
+Clone this repository to local workspace
+
+## A. Install GNU Arm Embedded Toolchain
 
 Download the toolchain yourself from [Arm GNU Toolchain Downloads](https://developer.arm.com/downloads/-/arm-gnu-toolchain-downloads) according to your pc architecture, extract the files. Or use the provided link in the commands below
 
@@ -28,7 +33,31 @@ sudo mv ~/Downloads/arm-gnu-toolchain-12.2.mpacbti-rel1-x86_64-arm-none-eabi/ .
 sudo chown -R root:root arm-gnu-toolchain-12.2.mpacbti-rel1-x86_64-arm-none-eabi/
 ```
 
-## 2. Option #1: Install SEGGER J-Link
+### Build
+```bash
+# clean source code
+make clean
+# build
+make
+# or make with verbose output
+V=1 make
+```
+
+## B. Install Keil μVision (Windows)
+
+Download Keil μVision from here https://www.keil.com/demo/eval/arm.htm
+
+1: Install Keil μVision
+2: Ignore the package manager of keil, you dont need aditional packages
+3: Ignore the One or more Device Family Pack Devices are not present
+4: In project go to Options for target (Alt + F7) -> In the target window, switch the Arm compiler (V6.19 works)
+5: Start the compiling by going to project -> build target (F7)
+
+
+
+# Flashing
+
+## Option #A: Install SEGGER J-Link
 
 Download and install JLink from [J-Link / J-Trace Downloads](https://www.segger.com/downloads/jlink/).
 
@@ -39,9 +68,13 @@ sudo dpkg -i JLink_Linux_V770a_x86_64.deb
 
 The default installation directory is */opt/SEGGER*
 
-## 2. Option #2: Install PyOCD
+### Flash
 
-Install from pip instead of apt repository because the version is 0.13.1+dfsg-1, which is too low to recognize J-Link probe
+```bash
+make flash
+```
+
+## Option #B: Install pyocd
 
 ```bash
 pip install pyocd
@@ -58,19 +91,16 @@ This will install PyOCD into:
 
 .profile will take care of the PATH, run `source ~/.profile` to make pyocd command available
 
-## 3. Clone This Repository
+### Flash
 
-Clone this repository to local workspace
+Run flash.bat or flash.sh from the repo
 
-## 4. Compiling And Flashing
 
-```bash
-# clean source code
-make clean
-# build
-make
-# or make with verbose output
-V=1 make
-# flash
-make flash
-```
+# Building With Keil μVision (Windows)
+
+
+
+TODO and/or in the works:
+Include Float package buzzer support (let the vesc controll the buzzer).
+Add a delay for switching the direction of the main lights.
+Add a fade / transition to the lights when switching direction. 
