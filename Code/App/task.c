@@ -313,16 +313,44 @@ void WS2812_Task(void)
  * @note Apply the corresponding battery level based on current voltage
  * @param battery_volatage float of the voltage of the battery cells
  **************************************************/
-void Apply_BatteryPowerFlag(float battery_voltage) {
-	float battVoltages[] = {4.07, 4.025, 3.91, 3.834, 3.746, 3.607, 3.49, 3.351, 3.168, 2.81};
+void Apply_BatteryPowerFlag(float battery_voltage)
+{
+	float battVoltages[10] = {4.054, 4.01, 3.908, 3.827, 3.74, 3.651, 3.571, 3.485, 3.38, 3.0}; //P42A
+	float p42aBattVoltages[10] = {4.054, 4.01, 3.908, 3.827, 3.74, 3.651, 3.571, 3.485, 3.38, 3.0};
+	float dg40BattVoltages[10] = {4.07, 4.025, 3.91, 3.834, 3.746, 3.607, 3.49, 3.351, 3.168, 2.81};
+	static uint8_t cell_type_last = 0; //CELL_TYPE P42A equates out to 0
+
+	if (CELL_TYPE != cell_type_last) // If !P42a run once at boot or on change
+	{
+		switch (CELL_TYPE)
+		{
+		case P42A:
+			memcpy(battVoltages, p42aBattVoltages, sizeof(p42aBattVoltages));
+			cell_type_last = 0;
+			break;
+		case DG40:
+			memcpy(battVoltages, dg40BattVoltages, sizeof(dg40BattVoltages));
+			cell_type_last = 1;
+			break;
+		default: // Just in case
+			memcpy(battVoltages, p42aBattVoltages, sizeof(p42aBattVoltages));
+			cell_type_last = 0;
+			break;
+		}
+	}
 
 	for (int i=0;i<10;i++) {
 		if (battery_voltage > battVoltages[i]) {
 			Power_Display_Flag = i + 1;
 			break;
 		}
+		// Between zero and min voltage
+		if (i == 9) {
+			Power_Display_Flag = 10;
+		}
 	}
 }
+
 
 /**************************************************
  * @brief  :Power_Task()

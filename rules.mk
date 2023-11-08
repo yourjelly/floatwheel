@@ -64,9 +64,11 @@ endif
 TGT_INCFLAGS := $(addprefix -I $(TOP)/, $(INCLUDES))
 
 
-.PHONY: all clean flash echo
+.PHONY: all clean flash flashDG40 echo DG40 P42A comp
 
-all: $(BDIR)/$(PROJECT).elf $(BDIR)/$(PROJECT).bin $(BDIR)/$(PROJECT).hex
+all: DG40 P42A
+
+comp: $(BDIR)/$(PROJECT).elf $(BDIR)/$(PROJECT).bin $(BDIR)/$(PROJECT).hex
 
 # for debug
 echo:
@@ -106,6 +108,16 @@ $(BDIR)/$(PROJECT).elf: $(OBJS) $(TOP)/$(LDSCRIPT)
 	@printf "  OBJCP HEX\t$@\n"
 	$(Q)$(OBJCOPY) -I elf32-littlearm -O ihex  $< $@
 
+DG40:
+	sed -i 's/CELL_TYPE                 P42A/CELL_TYPE                 DG40/g' Code/App/task.h &&\
+	make comp &&\
+	cp Build/app.hex Build/DG40.hex
+
+P42A:
+	sed -i 's/CELL_TYPE                 DG40/CELL_TYPE                 P42A/g' Code/App/task.h &&\
+	make comp &&\
+	cp Build/app.hex Build/P42A.hex
+
 clean:
 	rm -rf $(BDIR)/*
 
@@ -114,5 +126,13 @@ ifeq ($(FLASH_PROGRM),jlink)
 	$(JLINKEXE) -device $(JLINK_DEVICE) -if swd -speed 4000 -JLinkScriptFile $(TOP)/Misc/jlink-script -CommanderScript $(TOP)/Misc/jlink-command
 else ifeq ($(FLASH_PROGRM),pyocd)
 	$(PYOCD_EXE) erase -c -t $(PYOCD_DEVICE) --config $(TOP)/Misc/pyocd.yaml
-	$(PYOCD_EXE) load $(BDIR)/$(PROJECT).hex -t $(PYOCD_DEVICE) --config $(TOP)/Misc/pyocd.yaml
+	$(PYOCD_EXE) load $(BDIR)/P42A.hex -t $(PYOCD_DEVICE) --config $(TOP)/Misc/pyocd.yaml
+endif
+
+flashDG40:
+ifeq ($(FLASH_PROGRM),jlink)
+	$(JLINKEXE) -device $(JLINK_DEVICE) -if swd -speed 4000 -JLinkScriptFile $(TOP)/Misc/jlink-script -CommanderScript $(TOP)/Misc/jlink-command
+else ifeq ($(FLASH_PROGRM),pyocd)
+	$(PYOCD_EXE) erase -c -t $(PYOCD_DEVICE) --config $(TOP)/Misc/pyocd.yaml
+	$(PYOCD_EXE) load $(BDIR)/DG40.hex -t $(PYOCD_DEVICE) --config $(TOP)/Misc/pyocd.yaml
 endif
