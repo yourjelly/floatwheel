@@ -145,7 +145,7 @@ void TIM6_IRQHandler(void)
 		ADC_Time++;
 		Shutdown_Time_S++;
 		Flashlight_Detection_Time++;
-		Charger_Detection_1ms++;
+		Charger_Detection_Timer++;
 		KEY1_Scan();
 		Buzzer_Scan();
   }

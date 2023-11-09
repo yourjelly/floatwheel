@@ -382,7 +382,7 @@ void Power_Task(void)
 				case 1:
 					if(Power_Time > VESC_BOOT_TIME)
 					{
-						Power_Flag = 2; //�������?
+						Power_Flag = 2; //�������??
 						Light_Profile = 1; //������Ĭ����1��
 						Buzzer_Flag = 2;    //����Ĭ�Ϸ�������
 						power_step = 0;
@@ -392,10 +392,10 @@ void Power_Task(void)
 			
 		break;	
 		
-		case 3://VESC�ػ�������������ӹ���?
+		case 3://VESC�ػ�������������ӹ���??
 			PWR_OFF;
 			//LED1_Filp_Time(1000);	
-			//Charge_Flag = 1; //׼�����?
+			//Charge_Flag = 1; //׼�����??
 		break;
 		
 		default:
@@ -406,7 +406,7 @@ void Power_Task(void)
 
 /**************************************************
  * @brief  :Charge_Task()
- * @note   :�������? 
+ * @note   :�������?? 
  * @param  :��
  * @retval :��
  **************************************************/
@@ -434,7 +434,7 @@ void Charge_Task(void)
 		break;
 		
 		case 2:
-			CHARGE_ON;  //�򿪳����?
+			CHARGE_ON;  //�򿪳����??
 			Charge_Flag = 2;
 		    charge_step = 3;
 		break;
@@ -444,22 +444,22 @@ void Charge_Task(void)
 			charge_step = 4;
 		break;
 			
-		case 4:	
-			if(Charge_Time > DETECTION_SWITCH_TIME) 
+		case 4:	// Current Sampling
+			if(Charge_Time > 500) // If sampling current for >500ms switch to voltage sampling
 			{
 				V_I = 1;
 				Charge_Time = 0;
-				LED1_ON; //�ɼ�����ѹ
+				// LED1_ON; //�ɼ�����ѹ
 				charge_step = 5;
 			}
 		break;
 			
-		case 5:
-			if(Charge_Time > DETECTION_SWITCH_TIME) 
+		case 5: // Voltage Sampling
+			if(Charge_Time > 500) // If sampling voltage for >500ms switch to current sampling
 			{
 				V_I = 0;
 				Charge_Time = 0;
-				LED1_OFF; //�ɼ������?
+				// LED1_OFF; //�ɼ������??
 				charge_step = 4;
 			}		
 		break;
@@ -640,7 +640,7 @@ void Flashlight_Task(void)
 			Flashlight_Bright(1,2);
 		break;
 
-		case 3://VESCǰ���ƺ���׵�?(��ת)
+		case 3://VESCǰ���ƺ���׵�??(��ת)
 			Flashlight_Bright(2,2);
 		break;
 
@@ -705,7 +705,7 @@ void Buzzer_Task(void)
 		return;
 	}
 	
-	if(Buzzer_Frequency == 0 && Light_Profile_last == Light_Profile) //���������Ƶ���?0����һ�εĵ�λ������εĵ��?
+	if(Buzzer_Frequency == 0 && Light_Profile_last == Light_Profile) //���������Ƶ���?0����һ�εĵ�λ������εĵ��?
 	{
 		BUZZER_OFF;
 		buzzer_step = 0;
@@ -810,8 +810,7 @@ void Usart_Task(void)
 				{
 						//LED1_Filp_Time(500);				
 						Usart_Flag = 1;
-						//Battery_Voltage = data.inpVoltage; //��ص��?
-						//VESC_Rpm = data.rpm;            //ת��
+						//Battery_Voltage = data.inpVoltage; //��ص��?
 						//AvgInputCurrent = data.avgInputCurrent;  //ĸ�ߵ���
 						//DutyCycleNow = data.dutyCycleNow;   //ռ�ձ�
 				}
@@ -923,15 +922,16 @@ void Conditional_Judgment(void)
 {
 	float battery_voltage = 0;
 	static float battery_voltage_last = 0;
+	float abs_rpm = 0;
 			
 	switch(Power_Flag)
 	{
 		case 1: // Power on check for charging
-			 if(Charge_Voltage > CHARGING_VOLTAGE)
-			 {
-				Power_Flag = 3;
-				Charge_Flag = 1;
-			 }
+			if(Charge_Voltage > CHARGING_VOLTAGE)
+			{
+			Power_Flag = 3;
+			Charge_Flag = 1;
+			}
 		break;
 		
 		case 2: // Boot completed
@@ -939,6 +939,12 @@ void Conditional_Judgment(void)
 			{
 				Usart_Flag = 2;
 				
+				if(data.rpm>0){
+					abs_rpm = data.rpm;
+				}else{
+					abs_rpm = -data.rpm;
+				}
+
 				if(data.dutyCycleNow < 0)
 				{
 					data.dutyCycleNow = -data.dutyCycleNow;
@@ -969,11 +975,6 @@ void Conditional_Judgment(void)
 					Flashlight_Flag = 4;
 				}
 				
-				if(data.rpm<0)
-				{
-					data.rpm = -data.rpm;
-				}
-				
 				battery_voltage = (data.inpVoltage+1)/BATTERY_STRING; // Divides pack voltage by cells -- +1 is the correction factor
 				
 				if((battery_voltage > (battery_voltage_last+VOLTAGE_RECEIPT)) || (battery_voltage < (battery_voltage_last - VOLTAGE_RECEIPT))) {
@@ -982,13 +983,12 @@ void Conditional_Judgment(void)
 					battery_voltage_last = battery_voltage;
 				}
 				
-				
 				if(data.avgInputCurrent < 0)
 				{
 					data.avgInputCurrent = -data.avgInputCurrent;
 				}
 
-				if(data.rpm<VESC_RPM)
+				if(data.rpm < SENSOR_ACTV_DISPLAY_RPM) //Below this RPM show footpad activation on Lightbar
 				{
 					if(ADC1_Val < ADC_THRESHOLD_UPPER && ADC2_Val < ADC_THRESHOLD_UPPER)
 					{
@@ -1010,39 +1010,39 @@ void Conditional_Judgment(void)
 						Sensor_Activation_Display_Flag = 2;  // Right Footpad Sensor Activated
 					}
 				}
-				else
+				else 
 				{
-					if(data.avgInputCurrent < 0.8F && data.rpm < 6000)
+					if(data.avgInputCurrent < 0.8F && abs_rpm < 6000) // Conditions for showing battery level
 					{
-						Lightbar_Battery_Flag = 1; //��ʾ����
+						Lightbar_Battery_Flag = 1;
 					}
-					else
+					else if(abs_rpm > 8000) // Too fast no distracting leds
 					{
-						Lightbar_Battery_Flag = 2; //����ʾ����
-						Sensor_Activation_Display_Flag = 4; //��10����
+						Lightbar_Battery_Flag = 2;
+						Sensor_Activation_Display_Flag = 4; // sus TODO
 					}
 				}
 				
 				if((Charge_Voltage > CHARGING_VOLTAGE) && (data.avgInputCurrent<0.8F))
 				{
-					if(Charger_Detection_1ms > CHARGER_DETECTION_DELAY)
+					if(Charger_Detection_Timer > 1000) // If charger detection timer reaches 1000ms (1s), initiate charging
 					{
 						Power_Flag = 3;
 						Charge_Flag = 1;
 						Flashlight_Flag = 0;
-						Lightbar_Battery_Flag =0;
+						Lightbar_Battery_Flag = 0;
 					}
 					
 				}
 				else
 				{
-					Charger_Detection_1ms = 0;
+					Charger_Detection_Timer = 0;
 				}
 				/*
 					BOARD TIMEOUT SHUTDOWN COUNTER
 					Reset if either footpad is activated or if motor rpm excedes 1000
 				*/
-				if(ADC1_Val > ADC_THRESHOLD_UPPER || ADC2_Val > ADC_THRESHOLD_UPPER || data.rpm > 1000)
+				if(ADC1_Val > ADC_THRESHOLD_UPPER || ADC2_Val > ADC_THRESHOLD_UPPER || abs_rpm > 1000)
 				{
 					Shutdown_Time_S = 0;
 					Shutdown_Time_M = 0;
@@ -1072,7 +1072,7 @@ void Conditional_Judgment(void)
 					{
 						//Charge_Flag = 3;
 						Shutdown_Cnt = 0;
-						CHARGE_OFF;  //�رճ����?
+						CHARGE_OFF;  //�رճ����??
 					}
 				}
 				else

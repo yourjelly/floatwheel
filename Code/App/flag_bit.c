@@ -126,4 +126,4 @@ uint16_t Flashlight_Detection_Time = 0; // When the button is double-clicked wit
 uint8_t Shutdown_Time_M = 0; // Shutdown time in minutes.
 uint16_t Shutdown_Time_S = 0; // Shutdown time in seconds.
 uint8_t Shutdown_Cnt = 0; // Number of times the current reaches the shutdown value.
-uint16_t Charger_Detection_1ms = 0; // Charger detection time.
+uint16_t Charger_Detection_Timer = 0; // Charger detection timer.

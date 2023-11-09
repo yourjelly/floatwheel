@@ -43,7 +43,7 @@ extern float Charge_Current;
 extern uint16_t Power_Time;
 extern uint16_t Charge_Time;
 extern uint16_t Usart_Time;
-extern uint16_t Charger_Detection_1ms;
+extern uint16_t Charger_Detection_Timer;
 extern uint16_t Flashlight_Time;
 extern uint16_t Flashlight_Detection_Time;
 extern uint16_t Shutdown_Time_S;
