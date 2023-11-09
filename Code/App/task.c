@@ -758,7 +758,7 @@ void Buzzer_Task(void)
 				{	
 					ring_frequency++;
 					buzzer_step = 0;
-					if(ring_frequency == Light_Profile)
+					if(ring_frequency >= Light_Profile)
 					{
 						ring_frequency = 0;
 						Light_Profile_last = Light_Profile;
