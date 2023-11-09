@@ -15,6 +15,7 @@ typedef enum
 	DG40
 } CELL_TYPE;
 
+#define   CELL_TYPE                 P42A        // Cell configuration to use for voltage display (P42A, DG40)
 #define	  CHARGING_VOLTAGE	  		40   		// Charging voltage detection. Greater than this value is considered that the charger is plugged in
 #define   BATTERY_STRING      		20    		// Number of battery cells
 #define   SHUTDOWN_TIME		  		30   		// Shutdown time (minutes)
@@ -40,7 +41,6 @@ typedef enum
 #define   CHARGE_CURRENT_H			0.24F       // High Charging current unit A
 #define   DETECTION_SWITCH_TIME     500         // Detection switch time unit ms
 #define   CHARGER_DETECTION_DELAY	1000        // Charger detection delay unit ms
-#define   CELL_TYPE                 P42A        // Cell configuration to use for voltage display (P42A, DG40)
 
 void KEY1_Task(void);
 void WS2812_Task(void);
