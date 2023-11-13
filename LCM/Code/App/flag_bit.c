@@ -33,18 +33,18 @@ uint8_t Usart_Flag = 0;
 */
 uint8_t Flashlight_Flag = 0;
 /*
-	Brightness_Flag = 0; Default state.
-	Brightness_Flag = 1; Starting brightness adjustment.
-	Brightness_Flag = 2; Running brightness adjustment.
-	Brightness_Flag = 3; Brightness adjustment completed.
+	Brightness_Adjustment_Flag = 0; Default state.
+	Brightness_Adjustment_Flag = 1; Starting brightness adjustment.
+	Brightness_Adjustment_Flag = 2; Running brightness adjustment.
+	Brightness_Adjustment_Flag = 3; Brightness adjustment completed.
 */
-uint8_t Brightness_Flag = 0;
+uint8_t Brightness_Adjustment_Flag = 0;
 /*
-	Lightbar_Mode_Flag = 0; Default state.
-	Lightbar_Mode_Flag = 1; Display battery level.
-	Lightbar_Mode_Flag = 2; Do not display battery level.
+	Lightbar_Battery_Flag = 0; Default state.
+	Lightbar_Battery_Flag = 1; Display battery level.
+	Lightbar_Battery_Flag = 2; Do not display battery level.
 */
-uint8_t Lightbar_Mode_Flag = 0;
+uint8_t Lightbar_Battery_Flag = 0;
 /*
 	Power_Display_Flag = 0; Default state.
 	Power_Display_Flag = 1; 4.08V-4.2V: 10 white LEDs.
@@ -67,7 +67,7 @@ uint8_t Power_Display_Flag = 0;
 */
 uint8_t Light_Profile = 0;
 
-uint8_t WS2812_Measure = 0; // Lightbar runtime brightness setting (0-255)
+uint8_t Lightbar_Brightness = 0; // Lightbar runtime brightness setting (0-255)
 
 uint16_t Main_Brightness = 0; // Main lights runtime brightness setting (0-9999) -> 9999 = 0% brightness and 0 = 100% brightness
 /*
@@ -77,13 +77,13 @@ uint16_t Flashlight_Detection_Time = 0;
 
 //// FOOTPAD STATE
 /*
-	Footpad_Activation_Flag = 0; Powered on.
-	Footpad_Activation_Flag = 1; Left 5 LEDs blue, Right 5 LEDs off (adc1 > 2.5V, adc2 < 2.5V).
-	Footpad_Activation_Flag = 2; Left 5 LEDs off, Right 5 LEDs blue (adc1 < 2.5V, adc2 > 2.5V).
-	Footpad_Activation_Flag = 3; All 10 LEDs blue (adc1 > 2.5V, adc2 > 2.5V).
-	Footpad_Activation_Flag = 4; All 10 LEDs off.
+	Sensor_Activation_Display_Flag = 0; Powered on.
+	Sensor_Activation_Display_Flag = 1; Left 5 LEDs blue, Right 5 LEDs off (adc1 > 2.5V, adc2 < 2.5V).
+	Sensor_Activation_Display_Flag = 2; Left 5 LEDs off, Right 5 LEDs blue (adc1 < 2.5V, adc2 > 2.5V).
+	Sensor_Activation_Display_Flag = 3; All 10 LEDs blue (adc1 > 2.5V, adc2 > 2.5V).
+	Sensor_Activation_Display_Flag = 4; All 10 LEDs off.
 */
-uint8_t Footpad_Activation_Flag = 0;
+uint8_t Sensor_Activation_Display_Flag = 0;
 /*
 	ADC sampling time.
 */
@@ -114,10 +114,6 @@ uint16_t Buzzer_Time = 0;
 uint8_t Buzzer_Frequency = 0;
 
 //// COUNTING FLAGS
-/*
-	VESC boot time.
-*/
-uint16_t VESC_Boot_Time = 0;
 /*
 	Charging time.
 */

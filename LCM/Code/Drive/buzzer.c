@@ -3,7 +3,7 @@
 uint16_t Buzzer_Counter = 0;
 
 /**************************************************
- * @brie   :Buzzer_Init()
+ * @brief  :Buzzer_Init()
  * @note   :��������ʼ��
  * @param  :��
  * @retval :��
@@ -24,7 +24,7 @@ void Buzzer_Init(void)
 }
 
 /**************************************************
- * @brie   :Buzzer_Scan()
+ * @brief  :Buzzer_Scan()
  * @note   :������ɨ��
  * @param  :��
  * @retval :��
@@ -53,7 +53,7 @@ void Buzzer_Scan(void)
 }
 
 /**************************************************
- * @brie   :Buzzer_Ring()
+ * @brief  :Buzzer_Ring()
  * @note   :��������
  * @param  :ring_time ���ʱ��
  * @retval :��

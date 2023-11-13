@@ -8,7 +8,7 @@ dataPackage data;
 
 uint8_t protocol_buff[256]; // send buffer
 /**************************************************
- * @brie   :Send_Pack_Data()
+ * @brief  :Send_Pack_Data()
  * @note : Send a packet of data
  * @param : The starting address of the data packet to be sent by the payload
  * len packet length
@@ -62,7 +62,7 @@ void Send_Pack_Data(uint8_t *payload,uint16_t len)
 }
 
 /**************************************************
- * @brie :Get_Vesc_Pack_Data()
+ * @brief:Get_Vesc_Pack_Data()
  * @note : Get a packet of data
  * @param: id packet id
  * @retval : None
@@ -90,7 +90,7 @@ void Get_Eeprom_Data(LCM_COMMANDS command) //Retrieve data stored in eeprom
 	Send_Pack_Data(message, 4);
 }
 /**************************************************
- * @brie   :buffer_get_int16()
+ * @brief  :buffer_get_int16()
  * @note : Two bytes in the buffer spell an int16_t
  * @param : buffer address index address offset
  * @retval : None
@@ -102,7 +102,7 @@ int16_t buffer_get_int16(const uint8_t *buffer, int32_t *index) {
 	return res;
 }
 /**************************************************
- * @brie   :buffer_get_uint16()
+ * @brief  :buffer_get_uint16()
  * @note : Two bytes in the buffer spell a uint16_t
  * @param : buffer address index address offset
  * @retval : None
@@ -114,7 +114,7 @@ uint16_t buffer_get_uint16(const uint8_t *buffer, int32_t *index) {
 	return res;
 }
 /**************************************************
- * @brie   :buffer_get_int32()
+ * @brief  :buffer_get_int32()
  * @note : The four bytes of the buffer spell an int32_t
  * @param : buffer address index address offset
  * @retval : None
@@ -128,7 +128,7 @@ int32_t buffer_get_int32(const uint8_t *buffer, int32_t *index) {
 	return res;
 }
 /**************************************************
- * @brie   :buffer_get_uint32()
+ * @brief  :buffer_get_uint32()
  * @note : The four bytes of the buffer spell an int32_t
  * @param : buffer address index address offset
  * @retval : None
@@ -142,7 +142,7 @@ uint32_t buffer_get_uint32(const uint8_t *buffer, int32_t *index) {
 	return res;
 }
 /**************************************************
- * @brie   :buffer_get_float16()
+ * @brief  :buffer_get_float16()
  * @note : Two bytes in the buffer spell a float
  * @param : buffer address index address offset scale denominator
  * @retval : None
@@ -151,7 +151,7 @@ float buffer_get_float16(const uint8_t *buffer, float scale, int32_t *index) {
     return (float)buffer_get_int16(buffer, index) / scale;
 }
 /**************************************************
- * @brie   :buffer_get_float32()
+ * @brief  :buffer_get_float32()
  * @note : The four bytes of the buffer spell a float
  * @param : buffer address index address offset scale denominator
  * @retval : None
@@ -161,7 +161,7 @@ float buffer_get_float32(const uint8_t *buffer, float scale, int32_t *index) {
 }
 
 /**************************************************
- * @brie   :Protocol_Parse()
+ * @brief  :Protocol_Parse()
  * @note : protocol analysis
  * @param: the start address of the message received data
  * @retval :0 parsing success 1 parsing failure
@@ -265,7 +265,7 @@ uint8_t Protocol_Parse(uint8_t * message)
 				break;
 
 			case CHANGE_LIGHTBAR_BRIGHTNESS:
-				WS2812_Measure = message[counter++];  //For runtime light changes (Lightbar)
+				Lightbar_Brightness = message[counter++];  //For runtime light changes (Lightbar)
 				break; 
 			// case 1:// lights on
 			// case 2: //lights off

@@ -44,7 +44,7 @@ void Change_Boot_Animation(uint8_t animation,bool get) {
 }*/
 
 /**************************************************
- * @brie   :KEY1_Task()
+ * @brief  :KEY1_Task()
  * @note   :KEY1����
  **************************************************/
 void KEY1_Task(void)
@@ -73,7 +73,7 @@ void KEY1_Task(void)
 		case 3: // Press
 			Power_Flag = 4;
 			// Flashlight_Flag = 0;
-			// Lightbar_Mode_Flag = 0;
+			// Lightbar_Battery_Flag = 0;
 			break;
 
 		case 4: // Tripple Press
@@ -105,13 +105,13 @@ void Power_Display(void)
 	for (i=0;i<10;i++) {
 		if (Power_Display_Flag == 0) {
 			// Something is wrong - set all LEDs to red
-			WS2812_Set_Colour(i,WS2812_Measure,0,0);
+			WS2812_Set_Colour(i,Lightbar_Brightness,0,0);
 		} else {
 			if (i < num) {
 				if (num <= 2) {
-					WS2812_Set_Colour(i,WS2812_Measure,0,0);
+					WS2812_Set_Colour(i,Lightbar_Brightness,0,0);
 				} else {
-					WS2812_Set_Colour(i,WS2812_Measure,WS2812_Measure,WS2812_Measure);
+					WS2812_Set_Colour(i,Lightbar_Brightness,Lightbar_Brightness,Lightbar_Brightness);
 				}
 			} else {
 				WS2812_Set_Colour(i,0,0,0);
@@ -129,12 +129,12 @@ void Sensor_Activation_Diplay(void)
 {
 	uint8_t i;
 
-	switch(Footpad_Activation_Flag)
+	switch(Sensor_Activation_Display_Flag)
 	{
 		case 1:// adc1>ADC_THRESHOLD_LOWER  adc2<ADC_THRESHOLD_LOWER
 			for(i=0;i<5;i++)
 		{
-				WS2812_Set_Colour(i,0,0,WS2812_Measure);
+				WS2812_Set_Colour(i,0,0,Lightbar_Brightness);
 		}
 				for(i=5;i<10;i++)
 		{
@@ -149,14 +149,14 @@ void Sensor_Activation_Diplay(void)
 		}
 				for(i=5;i<10;i++)
 		{
-				WS2812_Set_Colour(i,0,0,WS2812_Measure);
+				WS2812_Set_Colour(i,0,0,Lightbar_Brightness);
 		}
 		break;
 
 		case 3:// adc1>ADC_THRESHOLD_LOWER  adc2>ADC_THRESHOLD_LOWER
 			for(i=0;i<10;i++)
 		{
-				WS2812_Set_Colour(i,0,0,WS2812_Measure);
+				WS2812_Set_Colour(i,0,0,Lightbar_Brightness);
 		}
 		break;
 
@@ -181,7 +181,7 @@ void Sensor_Activation_Diplay(void)
 /**************************************************
  * @note	Displays the boot animation on the lightbar
  **************************************************/
-void WS2812_Boot(void) {
+void Boot_Animation(void) {
 	uint8_t i;
 	uint8_t num = floor(Power_Time / 500) + 1;
 	uint8_t rgbMap[10][3] = {{255,0,0}, {255,127,0}, {255,255,0}, {127,255,0}, {0,255,0}, {0,255,127}, {0,255,255}, {0,127,255}, {0,0,255}, {127,0,255}};
@@ -211,7 +211,7 @@ void WS2812_Boot(void) {
 }
 
 /**************************************************
- * @brie   :WS2812_Cal_Bri()
+ * @brief  :WS2812_Cal_Bri()
  * @note   :��������
  * @param  :���� 1�α�ʾ200ms
  * @retval :����
@@ -338,14 +338,14 @@ void WS2812_Charge(void)
 }
 
 /**************************************************
- * @brie   :WS2812_Task()
+ * @brief  :WS2812_Task()
  * @note   :WS2812����
  * @param  :��
  * @retval :��
  **************************************************/
 void WS2812_Task(void)
 {
-	//	static uint8_t Footpad_Activation_Flag_last = 0; //��һ�ε�״̬
+	//	static uint8_t Sensor_Activation_Display_Flag_last = 0; //��һ�ε�״̬
 	//	static uint8_t power_display_flag_last = 0; //��һ�ε�״̬
 	uint8_t i;
 
@@ -364,8 +364,8 @@ void WS2812_Task(void)
 		}
 		WS2812_Refresh();
 
-		Lightbar_Mode_Flag = 0;
-		Footpad_Activation_Flag = 0;
+		Lightbar_Battery_Flag = 0;
+		Sensor_Activation_Display_Flag = 0;
 		Power_Display_Flag = 0;
 
 		return;
@@ -374,7 +374,7 @@ void WS2812_Task(void)
 	// VESC Booting play boot animation
 	if(Power_Flag == 1)
 	{
-		WS2812_Boot();
+		Boot_Animation();
 		return;
 	}
 
@@ -395,7 +395,7 @@ void WS2812_Task(void)
 		return;
 	}
 
-	if(Lightbar_Mode_Flag == 1)  //��ʾ����
+	if(Lightbar_Battery_Flag == 1)  //��ʾ����
 	{
 		//		if(Power_Display_Flag == power_display_flag_last) //��һ�κ���һ��һ��ֱ���˳�
 		//		{
@@ -410,13 +410,13 @@ void WS2812_Task(void)
 	}
 	else //����ʾ����
 	{
-		//		if(Footpad_Activation_Flag_last == Footpad_Activation_Flag) //��һ�κ���һ��һ��ֱ���˳�
+		//		if(Sensor_Activation_Display_Flag_last == Sensor_Activation_Display_Flag) //��һ�κ���һ��һ��ֱ���˳�
 		//		{
 		//			return;
 		//		}
 		//		else
 		//		{
-		//			Footpad_Activation_Flag_last = Footpad_Activation_Flag;
+		//			Sensor_Activation_Display_Flag_last = Sensor_Activation_Display_Flag;
 		//			WS2812();//����ʾ����WS2812
 		//		}
 		Sensor_Activation_Diplay();//����ʾ����WS2812
@@ -444,7 +444,7 @@ void Change_Light_Profile(bool persist)
 }
 
 /// Only call the when the Light_Profile is changed (either via button or bluetooth) or after first eeprom read
-/// Allows runtime bluetooth changes on WS2812_Measure and Main_Brightness
+/// Allows runtime bluetooth changes on Lightbar_Brightness and Main_Brightness
 /*
 * @note Sets light brightness to the current Light_Profile
 */
@@ -454,22 +454,22 @@ void Set_Light_Brightness()
 	{
 	// Inversely set the brightness of the lightbar to the brightness of the main lights
 	case 1: // Low
-		WS2812_Measure = LIGHTBAR_BRIGHTNESS_HIGH;
+		Lightbar_Brightness = LIGHTBAR_BRIGHTNESS_HIGH;
 		Main_Brightness = MAIN_BRIGHTNESS_LOW;
 		break;
 
 	case 2: // Med
-		WS2812_Measure = LIGHTBAR_BRIGHTNESS_MED;
+		Lightbar_Brightness = LIGHTBAR_BRIGHTNESS_MED;
 		Main_Brightness = MAIN_BRIGHTNESS_MED;
 		break;
 
 	case 3: // High
-		WS2812_Measure = LIGHTBAR_BRIGHTNESS_LOW;
+		Lightbar_Brightness = LIGHTBAR_BRIGHTNESS_LOW;
 		Main_Brightness = MAIN_BRIGHTNESS_HIGH;
 		break;
 
 	default:
-		WS2812_Measure = LIGHTBAR_BRIGHTNESS_HIGH;
+		Lightbar_Brightness = LIGHTBAR_BRIGHTNESS_HIGH;
 		Main_Brightness = MAIN_BRIGHTNESS_LOW;
 		break;
 	}
@@ -485,9 +485,9 @@ void Light_Transition(uint16_t target, uint16_t time)
 	static uint16_t brightness = 9999;
 	uint16_t diff = 0;
 	int mod = 1;
-	if (Brightness_Flag == 1) // if target has changed restart timer
+	if (Brightness_Adjustment_Flag == 1) // if target has changed restart timer
 	{
-		Brightness_Flag = 2;
+		Brightness_Adjustment_Flag = 2;
 		Flashlight_Time = 0;
 	}
 	if (brightness > target)
@@ -501,7 +501,7 @@ void Light_Transition(uint16_t target, uint16_t time)
 	if (Flashlight_Time >= time)
 	{
 		TIM_SetCompare2(TIM1, target);
-		Brightness_Flag = 3;
+		Brightness_Adjustment_Flag = 3;
 		return;
 	}
 	if (Flashlight_Time % FADE_REFRESH == 0)
@@ -510,14 +510,14 @@ void Light_Transition(uint16_t target, uint16_t time)
 		TIM_SetCompare2(TIM1, brightness);
 		time -= FADE_REFRESH;
 	}
-	if (Brightness_Flag == 2)
+	if (Brightness_Adjustment_Flag == 2)
 	{
 		Light_Transition(target, time);
 	}
 }
 
 /**************************************************
- * @brie   : Flashlight_Bright()
+ * @brief  : Flashlight_Bright()
  * @note   : Flashlight brightness control
  * @param direction 1=Forward 2=Reverse  
  * @param bright 1=transition to REST 2=transition from 10% to 100%
@@ -525,9 +525,9 @@ void Light_Transition(uint16_t target, uint16_t time)
 void Flashlight_Bright(uint8_t direction,uint8_t bright)
 {
 	static uint8_t direction_last = 0;
-	if (Brightness_Flag == 2)
+	if (Brightness_Adjustment_Flag == 2)
 	{ 
-		Brightness_Flag = 3;
+		Brightness_Adjustment_Flag = 3;
 	}
 	if (direction == 1) // Direction forward
 	{
@@ -579,7 +579,7 @@ void Flashlight_Task(void)
 	else if(flashlight_flag_last != Flashlight_Flag)
 	{
 		flashlight_flag_last = Flashlight_Flag;
-		Brightness_Flag = 3; // Breaks out of current transition to prepare for the next
+		Brightness_Adjustment_Flag = 3; // Breaks out of current transition to prepare for the next
 
 	}
 	switch(Flashlight_Flag)
@@ -792,7 +792,7 @@ void Charge_Task(void)
 }
 
 /**************************************************
- * @brie   :Buzzer_Task()
+ * @brief  :Buzzer_Task()
  * @note   :����������
  * @param  :��
  * @retval :��
@@ -1094,7 +1094,7 @@ void Apply_BatteryPowerFlag(float battery_voltage)
 	float dg40BattVoltages[10] = {4.07, 4.025, 3.91, 3.834, 3.746, 3.607, 3.49, 3.351, 3.168, 2.81};
 	static uint8_t cell_type_last = 0; //CELL_TYPE P42A equates out to 0
 
-	if (CELL_TYPE != cell_type_last) // Only run once or on change
+	if (CELL_TYPE != cell_type_last) // Only run once at boot or on change
 	{
 		switch (CELL_TYPE)
 		{
@@ -1199,34 +1199,34 @@ void Conditional_Judgment(void)
 			{
 				if(ADC1_Val < ADC_THRESHOLD_UPPER && ADC2_Val < ADC_THRESHOLD_UPPER)
 				{
-					Lightbar_Mode_Flag = 1;  //��ʾ����
+					Lightbar_Battery_Flag = 1;  //��ʾ����
 				}
 				else if(ADC1_Val > ADC_THRESHOLD_UPPER && ADC2_Val > ADC_THRESHOLD_UPPER)
 				{
-					Lightbar_Mode_Flag = 2;  //����ʾ����
-					Footpad_Activation_Flag = 3;  //10���ƶ�������
+					Lightbar_Battery_Flag = 2;  //����ʾ����
+					Sensor_Activation_Display_Flag = 3;  //10���ƶ�������
 				}
 				else if(ADC1_Val >ADC_THRESHOLD_UPPER)
 				{
-					Lightbar_Mode_Flag = 2;//����ʾ����
-					Footpad_Activation_Flag = 1;  //���5������     �Ҳ�5���Ʋ�����
+					Lightbar_Battery_Flag = 2;//����ʾ����
+					Sensor_Activation_Display_Flag = 1;  //���5������     �Ҳ�5���Ʋ�����
 				}
 				else
 				{
-					Lightbar_Mode_Flag = 2;//����ʾ����
-					Footpad_Activation_Flag = 2;  //���5���Ʋ����� �Ҳ�5������
+					Lightbar_Battery_Flag = 2;//����ʾ����
+					Sensor_Activation_Display_Flag = 2;  //���5���Ʋ����� �Ҳ�5������
 				}
 			}
 			else
 			{
 				if(data.avgInputCurrent < 0.8 && data.rpm < 6000)
 				{
-					Lightbar_Mode_Flag = 1; //��ʾ����
+					Lightbar_Battery_Flag = 1; //��ʾ����
 				}
 				else
 				{
-					Lightbar_Mode_Flag = 2; //����ʾ����
-					Footpad_Activation_Flag = 4; //��10����
+					Lightbar_Battery_Flag = 2; //����ʾ����
+					Sensor_Activation_Display_Flag = 4; //��10����
 				}
 			}
 
@@ -1237,7 +1237,7 @@ void Conditional_Judgment(void)
 					if (!ENABLE_POWER_WHILE_CHARGE) {
 						Power_Flag = 3;
 						Flashlight_Flag = 0;
-						Lightbar_Mode_Flag = 0;
+						Lightbar_Battery_Flag = 0;
 					}
 					Charge_Flag = 1;
 				}
@@ -1304,7 +1304,7 @@ void Conditional_Judgment(void)
 
 		break;
 
-	case 4:
+	case 4: //???
 		break;
 
 	default:

@@ -1,24 +1,24 @@
 /**
   ******************************************************************************
-  * @file       �� main.c
+  * @file       : main.c
   * @author     :  FCZ
-  * @version    �� V1.1.6
-  * @date       �� 2022��03��28��
-  * @brief      �� ������ - LCM�ƿ�
+  * @version    : V1.1.6
+  * @date       :  March 28, 2022
+  * @brief      :  Main function - LCM light control
   * @mcu        :  HK32F030MF4P6
   ******************************************************************************/
 /*----------------------------------------------------------------------------
-  ������־:
-  2022-03-28 V1.0.0:��ʼ�汾
-  2022-05-16 ���ӿ�����ʾ�������ͳ����ʾ��ѹ
-  2022-05-17 ���ĳ����ʾΪ������Ч��
-  2022-06-09 �ػ�ʱ����5���Ӹ�Ϊ15���� 
-             ռ�ձ��ɳ���70%��Ϊ����80%���������١����١�����
-			 �Զ��ػ�������ԭ���Ĳ��Ƚ�̤������һ����ת�ٵ���1000�ſ�ʼ��ʱ�ػ�
-  2022-07-19 �����12����Ϊ20��
-             �ػ�ʱ���Ϊ30����
-			 �������ѹ����ƽ��ֵ�˲�����ѹ�жϼӻ�ִ��ѹ��Χ
-  2023-01-16 WS2812������Ӳ��SPIģ���ΪIO�ڼ���ʱģ��
+  Update log:
+  2022-03-28 V1.0.0: Initial version
+  2022-05-16 Added boot display progress bar and charging display voltage
+  2022-05-17 Change charging display to breathing light effect
+  2022-06-09 The shutdown time is changed from 5 minutes to 15 minutes
+             When the duty cycle changes from more than 70% to more than 80%, the buzzer will sound "beep" and "beep".
+			 The automatic shutdown condition is added from the original one of not stepping on the foot pedal and the timing shutdown will only start when the rotation speed is lower than 1000.
+  2022-07-19 The battery is changed from 12 strings to 20 strings
+             Change the shutdown time to 30 minutes
+			 Charger voltage detection plus average filtering, voltage judgment plus receipt of voltage range
+  2023-01-16 The WS2812 driver is changed from hardware SPI simulation to IO port plus delay simulation
   ----------------------------------------------------------------------------*/
 #include "hk32f030m.h"
 #include "led.h"
@@ -42,7 +42,7 @@
 */
 
 /**************************************************
- * @brie   :main()
+ * @brief  :main()
  * @note   :������
  * @param  :��
  * @retval :��
@@ -61,7 +61,7 @@ int main(void)
 	Time6_Init();
 	///Set the brightness of the lightbar and main lights to 0% at start
 	Main_Brightness = 9999; 
-	WS2812_Measure = 0;
+	Lightbar_Brightness = 0;
 	if(KEY1 ==  0)
 	{
 		KEY1_State = 1;

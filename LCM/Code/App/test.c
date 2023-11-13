@@ -1,15 +1,15 @@
 #include "test.h"
 
 
-/*ÒÔÏÂ´úÂë¶¼ÊÇ²âÊÔÏà¹Ø²¿·Ö¹¦ÄÜµÄ*/
+/*ï¿½ï¿½ï¿½Â´ï¿½ï¿½ë¶¼ï¿½Ç²ï¿½ï¿½ï¿½ï¿½ï¿½Ø²ï¿½ï¿½Ö¹ï¿½ï¿½Üµï¿½*/
 uint8_t  Test_Step = 0;
 uint16_t Test_Counter = 0;
 
 /**************************************************
- * @brie   :Test_Charge()
- * @note   :²âÊÔ³äµç¿Ú
- * @param  :ÎÞ
- * @retval :ÎÞ
+ * @brief  :Test_Charge()
+ * @note   :ï¿½ï¿½ï¿½Ô³ï¿½ï¿½ï¿½
+ * @param  :ï¿½ï¿½
+ * @retval :ï¿½ï¿½
  **************************************************/
 void Test_Charge(void)
 {
@@ -22,7 +22,7 @@ void Test_Charge(void)
 		case 0:
 			adc_val = Read_ADC_Value(3);
 			charge_voltage = (float)(adc_val*0.0257080078125);
-			if(charge_voltage > 1.5)  //³äµçÆ÷²åÈë
+			if(charge_voltage > 1.5)  //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 			{
 				Test_Counter = 0;
 				test_charge = 1;
@@ -30,18 +30,18 @@ void Test_Charge(void)
 		break;
 		
 		case 1:
-			if(Test_Counter >= 1000) //ÑÓÊ±1S
+			if(Test_Counter >= 1000) //ï¿½ï¿½Ê±1S
 			{
 				adc_val = Read_ADC_Value(3);
 				charge_voltage = (float)(adc_val*0.0257080078125);
-				if(charge_voltage > 1.5) //³äµçÆ÷È·Êµ²åÈë
+				if(charge_voltage > 1.5) //ï¿½ï¿½ï¿½ï¿½ï¿½È·Êµï¿½ï¿½ï¿½ï¿½
 				{
-					CHARGE_ON;   //´ò¿ª³äµç¿Ú
+					CHARGE_ON;   //ï¿½ò¿ª³ï¿½ï¿½ï¿½
 					test_charge = 2;
 				}
 				else
 				{
-					CHARGE_OFF;  //¹Ø±Õ³äµç¿Ú
+					CHARGE_OFF;  //ï¿½Ø±Õ³ï¿½ï¿½ï¿½
 					test_charge = 0;
 				}
 			}
@@ -50,9 +50,9 @@ void Test_Charge(void)
 		case 2:	
 			adc_val = Read_ADC_Value(3);
 			charge_voltage = (float)(adc_val*0.0257080078125);
-			if(charge_voltage < 1.0)  //³äµçÆ÷°Î³ö
+			if(charge_voltage < 1.0)  //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î³ï¿½
 			{
-				CHARGE_OFF;  //¹Ø±Õ³äµç¿Ú
+				CHARGE_OFF;  //ï¿½Ø±Õ³ï¿½ï¿½ï¿½
 				test_charge = 0;
 			}
 		break;
@@ -60,10 +60,10 @@ void Test_Charge(void)
 }
 
 /**************************************************
- * @brie   :Test_LED()
- * @note   :²âÊÔLED
- * @param  :ÎÞ
- * @retval :ÎÞ
+ * @brief  :Test_LED()
+ * @note   :ï¿½ï¿½ï¿½ï¿½LED
+ * @param  :ï¿½ï¿½
+ * @retval :ï¿½ï¿½
  **************************************************/
 void Test_LED(void)
 {
@@ -135,10 +135,10 @@ void Test_LED(void)
 }
 
 /**************************************************
- * @brie   :Test_USART()
- * @note   :²âÊÔ´®¿Ú
- * @param  :ÎÞ
- * @retval :ÎÞ
+ * @brief  :Test_USART()
+ * @note   :ï¿½ï¿½ï¿½Ô´ï¿½ï¿½ï¿½
+ * @param  :ï¿½ï¿½
+ * @retval :ï¿½ï¿½
  **************************************************/
 void Test_USART(void)
 {
@@ -158,11 +158,11 @@ void Test_USART(void)
 				VESC_RX_Flag = 0;
 				result = Protocol_Parse(VESC_RX_Buff);
 				
-				if(result == 0) //½âÎö³É¹¦
+				if(result == 0) //ï¿½ï¿½ï¿½ï¿½ï¿½É¹ï¿½
 				{
 					//Buzzer_Ring(200);		
 				}
-				else	//½âÎöÊ§°Ü
+				else	//ï¿½ï¿½ï¿½ï¿½Ê§ï¿½ï¿½
 				{
 					//Buzzer_Ring(1000);
 				}
@@ -202,10 +202,10 @@ float adc1_voltage = 0;
 float adc2_voltage = 0;
 float charge_voltage = 0;
 /**************************************************
- * @brie   :Test_ADC()
- * @note   :²âÊÔADC
- * @param  :ÎÞ
- * @retval :ÎÞ
+ * @brief  :Test_ADC()
+ * @note   :ï¿½ï¿½ï¿½ï¿½ADC
+ * @param  :ï¿½ï¿½
+ * @retval :ï¿½ï¿½
  **************************************************/
 void Test_ADC(void)
 {
@@ -268,10 +268,10 @@ void Test_ADC(void)
 }
 
 /**************************************************
- * @brie   :Test_Task()
- * @note   :²âÊÔÈÎÎñ
- * @param  :ÎÞ
- * @retval :ÎÞ
+ * @brief  :Test_Task()
+ * @note   :ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+ * @param  :ï¿½ï¿½
+ * @retval :ï¿½ï¿½
  **************************************************/
 void Test_Task(void)
 {
@@ -281,19 +281,19 @@ void Test_Task(void)
 			
 		break;
 		
-		case 1: //²âÊÔ³äµç¿Ú
+		case 1: //ï¿½ï¿½ï¿½Ô³ï¿½ï¿½ï¿½
 			Test_Charge();
 		break;
 				
-		case 2: //²âÊÔLED
+		case 2: //ï¿½ï¿½ï¿½ï¿½LED
 			Test_LED();
 		break;
 						
-		case 3: //²âÊÔ´®¿Ú
+		case 3: //ï¿½ï¿½ï¿½Ô´ï¿½ï¿½ï¿½
 			Test_USART();
 		break;
 		
-		case 4: //²âÊÔADC1 ADC2
+		case 4: //ï¿½ï¿½ï¿½ï¿½ADC1 ADC2
 			Test_ADC();
 		break;
 		

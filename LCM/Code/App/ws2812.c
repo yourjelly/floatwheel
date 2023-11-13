@@ -4,7 +4,7 @@ uint16_t WS2812_Counter = 0;
 uint8_t WS2812_Buff[WS2812_N][24];
 
 /**************************************************
- * @brie   :WS2812_Init()
+ * @brief  :WS2812_Init()
  * @note   :WS2812 initialization
  * @param  : none
  * @retval : none
@@ -26,7 +26,7 @@ void WS2812_Init(void)
 }
 
 /**************************************************
- * @brie   :WS2812_Set_Colour()
+ * @brief  :WS2812_Set_Colour()
  * @note   :WS2812 set color
  * @param  :num 	number of lights
  *          red 	0-255
@@ -82,7 +82,7 @@ void WS2812_Set_Colour(uint8_t num,uint8_t red,uint8_t green,uint8_t blue)
 }
 
 /**************************************************
- * @brie   :WS2812_Left()
+ * @brief  :WS2812_Left()
  * @note   :WS2812���� 
  * @param  :��
  * @retval :��
@@ -112,7 +112,7 @@ void WS2812_Left(void)
 }
 
 ///**************************************************
-// * @brie   :WS2812_Refresh()
+// * @brief  :WS2812_Refresh()
 // * @note   :WS2812ˢ��һ��
 // * @param  :��
 // * @retval :��

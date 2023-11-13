@@ -10,7 +10,7 @@
 uint8_t KEY1_State = 0;
 
 /**************************************************
- * @brie   :KEY_Init()
+ * @brief  :KEY_Init()
  * @note   :KEY����
  * @param  :��
  * @retval :��
@@ -28,7 +28,7 @@ void KEY_Init(void)
 }
 
 /**************************************************
- * @brie   :KEY1_Scan()
+ * @brief  :KEY1_Scan()
  * @note   :KEY1ɨ��
  * @param  :��
  * @retval :��

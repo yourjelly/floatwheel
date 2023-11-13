@@ -4,10 +4,10 @@ uint16_t LED_Counter = 0;
 //uint16_t LED_Filp_Time = 200;
 
 /**************************************************
- * @brie   :LED_Init()
- * @note   :LED³õÊ¼»¯
- * @param  :ÎÞ
- * @retval :ÎÞ
+ * @brief  :LED_Init()
+ * @note   :LEDï¿½ï¿½Ê¼ï¿½ï¿½
+ * @param  :ï¿½ï¿½
+ * @retval :ï¿½ï¿½
  **************************************************/
 void LED_Init(void)
 {
@@ -43,10 +43,10 @@ void LED_Init(void)
 }
 
 /**************************************************
- * @brie   :LED1_Filp_Time()
- * @note   :ÉèÖÃLED1ÉÁË¸Ê±¼ä
- * @param  :filp_time ÉÁË¸Ê±¼ä
- * @retval :ÎÞ
+ * @brief  :LED1_Filp_Time()
+ * @note   :ï¿½ï¿½ï¿½ï¿½LED1ï¿½ï¿½Ë¸Ê±ï¿½ï¿½
+ * @param  :filp_time ï¿½ï¿½Ë¸Ê±ï¿½ï¿½
+ * @retval :ï¿½ï¿½
  **************************************************/
 //void LED1_Filp_Time(uint16_t filp_time)
 //{

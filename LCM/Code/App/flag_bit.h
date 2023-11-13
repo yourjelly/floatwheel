@@ -12,17 +12,17 @@ extern uint8_t Usart_Flag;
 // LIGHT STATE
 
 extern uint8_t Flashlight_Flag;
-extern uint8_t Brightness_Flag;
-extern uint8_t Lightbar_Mode_Flag;
+extern uint8_t Brightness_Adjustment_Flag;
+extern uint8_t Lightbar_Battery_Flag;
+extern uint8_t Sensor_Activation_Display_Flag;
 extern uint8_t Power_Display_Flag;
 extern uint8_t Light_Profile;
-extern uint8_t WS2812_Measure;
+extern uint8_t Lightbar_Brightness;
 extern uint16_t Main_Brightness;
 extern uint16_t Flashlight_Detection_Time;
 
 // FOOTPAD STATE
 
-extern uint8_t Footpad_Activation_Flag;
 extern uint16_t ADC_Time;
 extern float ADC1_Val;
 extern float ADC2_Val;
