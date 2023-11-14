@@ -3,7 +3,7 @@
 
 /**************************************************
  * @brief  :KEY1_Task()
- * @note   :KEY1锟斤拷锟斤拷
+ * @note   :KEY1����
  **************************************************/
 void KEY1_Task(void)
 {
@@ -162,9 +162,9 @@ void Boot_Animation(void)
 
 /**************************************************
  * @brief  :WS2812_Cal_Bri()
- * @note   :锟斤拷锟斤拷锟斤拷锟斤拷
- * @param  :锟斤拷锟斤拷 1锟轿憋拷示200ms
- * @retval :锟斤拷锟斤拷
+ * @note   :��������
+ * @param  :���� 1�α�ʾ200ms
+ * @retval :����
  **************************************************/
 uint8_t WS2812_Cal_Bri(uint8_t cnt)
 {
@@ -229,15 +229,15 @@ void WS2812_Charge(void)
 
 /**************************************************
  * @brief  :WS2812_Task()
- * @note   :WS2812锟斤拷锟斤拷 
+ * @note   :WS2812���� 
  **************************************************/
 void WS2812_Task(void)
 {
-    //static uint8_t Sensor_Activation_Display_Flag_last = 0; //锟斤拷一锟轿碉拷状态
-    //static uint8_t power_display_flag_last = 0; //锟斤拷一锟轿碉拷状态
+    //static uint8_t Sensor_Activation_Display_Flag_last = 0; //��һ�ε�״̬
+    //static uint8_t power_display_flag_last = 0; //��һ�ε�״̬
 	uint8_t i;
 
-	if(WS2812_Counter < 20) //20ms刷锟斤拷一锟斤拷
+	if(WS2812_Counter < 20) //20msˢ��һ��
 	{
 		return;
 	}
@@ -249,7 +249,7 @@ void WS2812_Task(void)
 			{
 				WS2812_Set_Colour(i,0,0,0);
 			}
-			WS2812_Refresh();//刷锟斤拷锟斤拷示
+			WS2812_Refresh();//ˢ����ʾ
 			
 			Lightbar_Battery_Flag = 0;
 			Sensor_Activation_Display_Flag = 0;
@@ -260,11 +260,11 @@ void WS2812_Task(void)
 	
 	if(Power_Flag == 1)
 	{
-		Boot_Animation();  //锟斤拷锟斤拷锟斤拷锟斤拷
+		Boot_Animation();  //��������
 		return;
 	}
 	
-	if(Charge_Flag == 3) //锟斤拷氐锟斤拷锟斤拷锟斤拷
+	if(Charge_Flag == 3) //��ص������
 	{
 		for(i=0;i<10;i++)
 		{
@@ -273,7 +273,7 @@ void WS2812_Task(void)
 		return;
 	}
 	
-	if(Charge_Flag == 2) //锟斤拷锟斤拷锟斤拷锟斤拷示
+	if(Charge_Flag == 2) //��������ʾ
 	{
 		WS2812_Charge();
 		return;
@@ -298,13 +298,13 @@ void WS2812_Task(void)
 		break;
 	}
 	
-	if(Lightbar_Battery_Flag == 1)  //锟斤拷示锟斤拷锟斤拷
+	if(Lightbar_Battery_Flag == 1)  //��ʾ����
 	{
-		Power_Display();// 锟斤拷锟斤拷锟斤拷示
+		Power_Display();// ������ʾ
 	}
-	else //锟斤拷锟斤拷示锟斤拷锟斤拷
+	else //����ʾ����
 	{
-		Sensor_Activation_Display();//锟斤拷锟斤拷示锟斤拷锟斤拷WS2812
+		Sensor_Activation_Display();//����ʾ����WS2812
 	}
 	
 }
@@ -422,6 +422,10 @@ void Charge_Task(void)
 		
 	if(Charge_Flag == 0)
 	{
+		return;
+	}else if(Charge_Flag == 3)
+	{
+		CHARGE_OFF;  // Stop charging
 		return;
 	}
 	
@@ -633,7 +637,7 @@ void Flashlight_Task(void)
 			Flashlight_Bright(1,2);
 		break;
 
-		case 3://VESC前锟斤拷锟狡猴拷锟斤拷椎锟??(锟斤拷转)
+		case 3://VESCǰ���ƺ���׵�??(��ת)
 			Flashlight_Bright(2,2);
 		break;
 
@@ -682,23 +686,23 @@ void Flashlight_Detection(void)
 
 /**************************************************
  * @brief  :Buzzer_Task()
- * @note   :锟斤拷锟斤拷锟斤拷锟斤拷锟斤拷
+ * @note   :����������
  **************************************************/
 void Buzzer_Task(void)
 {
 	static uint8_t buzzer_step = 0;
-	static uint8_t Light_Profile_last = 0; //锟斤拷一锟轿的碉拷位
+	static uint8_t Light_Profile_last = 0; //��һ�εĵ�λ
 	static uint8_t ring_frequency = 0;
 	static uint16_t sound_frequency = 0;
 	
-	if(Power_Flag != 2 || Buzzer_Flag == 1) //VESC锟较碉拷锟斤拷锟斤拷锟斤拷锟截憋拷 
+	if(Power_Flag != 2 || Buzzer_Flag == 1) //VESC�ϵ��������ر� 
 	{
 		BUZZER_OFF;
 		buzzer_step = 0;
 		return;
 	}
 	
-	if(Buzzer_Frequency == 0 && Light_Profile_last == Light_Profile) //锟斤拷锟斤拷锟斤拷锟斤拷锟狡碉拷锟斤拷?0锟斤拷锟斤拷一锟轿的碉拷位锟斤拷锟斤拷锟斤拷蔚牡锟斤拷?
+	if(Buzzer_Frequency == 0 && Light_Profile_last == Light_Profile) //���������Ƶ���?0����һ�εĵ�λ������εĵ��?
 	{
 		BUZZER_OFF;
 		buzzer_step = 0;
@@ -799,15 +803,15 @@ void Usart_Task(void)
 				VESC_RX_Flag = 0;
 				result = Protocol_Parse(VESC_RX_Buff);
 				
-				if(result == 0) //锟斤拷锟斤拷锟缴癸拷
+				if(result == 0) //�����ɹ�
 				{
 						//LED1_Filp_Time(500);				
 						Usart_Flag = 1;
-						//Battery_Voltage = data.inpVoltage; //锟斤拷氐锟斤拷?
-						//AvgInputCurrent = data.avgInputCurrent;  //母锟竭碉拷锟斤拷
-						//DutyCycleNow = data.dutyCycleNow;   //占锟秸憋拷
+						//Battery_Voltage = data.inpVoltage; //��ص��?
+						//AvgInputCurrent = data.avgInputCurrent;  //ĸ�ߵ���
+						//DutyCycleNow = data.dutyCycleNow;   //ռ�ձ�
 				}
-				else	//锟斤拷锟斤拷失锟斤拷
+				else	//����ʧ��
 				{
 						//LED1_Filp_Time(100);
 						Usart_Flag = 2;
@@ -1054,18 +1058,16 @@ void Conditional_Judgment(void)
 			}
 		break;
 		
-		case 3: // VESC shutdown and charger supplying power to board
+		case 3: // Charging shutdown and charger supplying power to board
 			if(V_I == 0 && Charge_Time > 150)
 			{
-				if(Charge_Current < CHARGE_CURRENT && Charge_Current > 0) // if the charger current is between 0 & 0.3A
-				//if(Charge_Current > CHARGE_CURRENT_L && Charge_Current < CHARGE_CURRENT_H)
+				if(Charge_Current > 0 && Charge_Current < CHARGE_SHUTOFF_CURRENT) // if the charger current is between 0 & 0.3A
 				{
 					Shutdown_Cnt++;
-					if(Shutdown_Cnt>10)
+					if(Shutdown_Cnt>10) // 10 count to stop charging (ms?)
 					{
-						//Charge_Flag = 3;
+						Charge_Flag = 3;
 						Shutdown_Cnt = 0;
-						CHARGE_OFF;  //锟截闭筹拷锟斤拷锟??
 					}
 				}
 				else

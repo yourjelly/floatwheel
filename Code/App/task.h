@@ -17,6 +17,7 @@ typedef enum
 
 #define   CELL_TYPE                 P42A        // Cell configuration to use for voltage display (P42A, DG40)
 #define	  CHARGING_VOLTAGE	  		40   		// Charging voltage detection. Greater than this value is considered that the charger is plugged in
+#define   CHARGE_SHUTOFF_CURRENT	0.3F        // Current threshold to stop charging unit A
 #define   BATTERY_STRING      		20    		// Number of battery cells
 #define   SHUTDOWN_TIME		  		30   		// Shutdown time (minutes)
 #define	  POWER_VESC_ON_CHARGER		true		// Turn on VESC while on charger
@@ -39,7 +40,6 @@ typedef enum
 #define   MAIN_BRIGHTNESS_HIGH		0			// High brightness value (0-9999) -- Stock (0)
 #define   FADE_TIME					1000		// Time of fade transition (ms)
 #define   FADE_REFRESH				2			// (ms); FADE_TIME/FADE_REFRESH = fade steps
-#define   CHARGE_CURRENT			0.3F        // Charging current unit A
 
 void KEY1_Task(void);
 void WS2812_Task(void);
