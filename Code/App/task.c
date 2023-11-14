@@ -1012,11 +1012,11 @@ void Conditional_Judgment(void)
 				}
 				else 
 				{
-					if(data.avgInputCurrent < 0.8F && abs_rpm < 6000) // Conditions for showing battery level
+					if(data.avgInputCurrent < 0.8F && abs_rpm < LIGHTBAR_SPEEDGATE_ON) // Conditions for showing battery level
 					{
 						Lightbar_Battery_Flag = 1;
 					}
-					else if(abs_rpm > 8000) // Too fast no distracting leds
+					else if(abs_rpm > LIGHTBAR_SPEEDGATE_OFF) // Too fast no distracting leds
 					{
 						Lightbar_Battery_Flag = 2;
 						Sensor_Activation_Display_Flag = 4; // sus TODO

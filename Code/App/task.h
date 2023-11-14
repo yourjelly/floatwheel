@@ -30,6 +30,8 @@ typedef enum
 #define   LIGHTBAR_BRIGHTNESS_HIGH 	204			// High brightness value (0-255) -- Stock (204)
 #define   LIGHTBAR_BRIGHTNESS_MED	128			// Medium brightness value (0-255) -- Stock (128)
 #define   LIGHTBAR_BRIGHTNESS_LOW 	30			// Low brightness value (0-255) -- Stock (30)
+#define   LIGHTBAR_SPEEDGATE_ON 	6000		// Speed in erpm for the lightbar to turn on
+#define   LIGHTBAR_SPEEDGATE_OFF 	8000		// Speed in erpm for the lightbar to turn off
 #define   MAIN_BRIGHTNESS_REST		9000		// Main brightness at rest -- Stock 10% (9000)
 #define   MAIN_BRIGHTNESS_LOW		7000		// Low brightness value (0-9999) -- Stock (7000)
 #define   MAIN_BRIGHTNESS_MED		4000		// Medium brightness value (0-9999) -- Stock (4000)
