@@ -414,9 +414,7 @@ void Power_Task(void)
 
 /**************************************************
  * @brief  :Charge_Task()
- * @note   :ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿?? 
- * @param  :ï¿½ï¿½
- * @retval :ï¿½ï¿½
+ * @note   :Sets appropriate flags for current charging state
  **************************************************/
 void Charge_Task(void)
 {
@@ -435,43 +433,30 @@ void Charge_Task(void)
 		break;
 		
 		case 1:
-			if(Charge_Time > 1000)  //ï¿½ï¿½Ê±1S
+			if(Charge_Time > 1000)  // Delay 1 second
 			{
-				charge_step = 2;
-			}
-		break;
-		
-		case 2:
-			CHARGE_ON;  //ï¿½ò¿ª³ï¿½ï¿½ï¿½ï¿??
-			Charge_Flag = 2;
-		    charge_step = 3;
-		break;
-		
-		case 3:
-			Charge_Time = 0;
-			charge_step = 4;
-		break;
-			
-		case 4:	// Current Sampling
-			if(Charge_Time > 500) // If sampling current for >500ms switch to voltage sampling
-			{
-				V_I = 1;
+				CHARGE_ON;  // Enable charging
+				Charge_Flag = 2;
 				Charge_Time = 0;
-				// LED1_ON; //ï¿½É¼ï¿½ï¿½ï¿½ï¿½ï¿½Ñ¹
-				charge_step = 5;
+				charge_step = 2; // Charge sampling
 			}
 		break;
 			
-		case 5: // Voltage Sampling
-			if(Charge_Time > 500) // If sampling voltage for >500ms switch to current sampling
+		case 2:	// Current Sampling
+			if(Charge_Time > 500) // If sampling for longer than 500ms switch type
 			{
-				V_I = 0;
 				Charge_Time = 0;
-				// LED1_OFF; //ï¿½É¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿??
-				charge_step = 4;
-			}		
+				if(V_I == 0) // If Current sampling switch to Volatge
+				{
+					V_I = 1;
+					LED1_ON;
+				}else // Else Voltage sampling switch to Current
+				{
+					V_I = 0;
+					LED1_OFF;
+				}
+			}
 		break;
-			
 		
 		default:
 			
