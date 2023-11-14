@@ -6,7 +6,8 @@
 	Power_Flag = 0; Default state.
 	Power_Flag = 1; VESC booting up.
 	Power_Flag = 2; VESC boot-up completed.
-	Power_Flag = 3; VESC powered off, board on charger.
+	Power_Flag = 3; Board on charger.
+	Power_Flag = 4; Power off Signal
 */
 uint8_t Power_Flag = 0;
 /*
@@ -54,10 +55,10 @@ uint8_t Brightness_Adjustment_Flag = 0;
 uint8_t Lightbar_Battery_Flag = 0;
 /*
 	Sensor_Activation_Display_Flag = 0; Default state.
-	Sensor_Activation_Display_Flag = 1; Left 5 LEDs blue, Right 5 LEDs off (adc1 > 2.5V, adc2 < 2.5V)
-	Sensor_Activation_Display_Flag = 2; Left 5 LEDs off, Right 5 LEDs blue (adc1 < 2.5V, adc2 > 2.5V)
-	Sensor_Activation_Display_Flag = 3; All 10 LEDs blue (adc1 > 2.5V, adc2 > 2.5V)
-	Sensor_Activation_Display_Flag = 4; All 10 LEDs off.
+	Sensor_Activation_Display_Flag = 1; Left 5 LEDs blue, Right 5 LEDs off (adc1 > ADC_THRESHOLD_LOWER > adc2)
+	Sensor_Activation_Display_Flag = 2; Left 5 LEDs off, Right 5 LEDs blue (adc1 < ADC_THRESHOLD_LOWER < adc2)
+	Sensor_Activation_Display_Flag = 3; All 10 LEDs blue (adc1 && adc2 > ADC_THRESHOLD_LOWER)
+	Sensor_Activation_Display_Flag = 4; All 10 LEDs off (adc1 && adc2 < ADC_THRESHOLD_LOWER)
 */
 uint8_t Sensor_Activation_Display_Flag = 0;
 

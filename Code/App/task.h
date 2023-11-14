@@ -19,6 +19,7 @@ typedef enum
 #define	  CHARGING_VOLTAGE	  		40   		// Charging voltage detection. Greater than this value is considered that the charger is plugged in
 #define   BATTERY_STRING      		20    		// Number of battery cells
 #define   SHUTDOWN_TIME		  		30   		// Shutdown time (minutes)
+#define	  POWER_VESC_ON_CHARGER		true		// Turn on VESC while on charger
 #define   VESC_BOOT_TIME      		6000 		// VESC boot time (ms)
 #define   DUTY_CYCLE          		0.7F  		// When duty cycle greater than this value (%), beep beep beep (sic)
 #define   VOLTAGE_RECEIPT     		0.02F 		// Threshold for meaningful voltage change (V)

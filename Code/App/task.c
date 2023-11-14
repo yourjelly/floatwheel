@@ -28,9 +28,9 @@ void KEY1_Task(void)
 		break;
 		
 		case 3:		// Long Press ~~ Power Off
-			Power_Flag = 3;
-			Flashlight_Flag = 0;
-			Lightbar_Battery_Flag = 2;
+			Power_Flag = 4;
+			// Flashlight_Flag = 0;
+			// Lightbar_Battery_Flag = 2;
 		break;
 		
 		case 4:		// Triple Click ~~ Toggle Buzzer
@@ -354,11 +354,11 @@ void Apply_BatteryPowerFlag(float battery_voltage)
 
 /**************************************************
  * @brief  :Power_Task()
- * @note   :��Դ���� 
+ * @note   :Sets appropriate flags for current power state
  **************************************************/
 void Power_Task(void)
 {
-	static uint8_t power_flag_last = 0; //��һ�ε�״̬
+	static uint8_t power_flag_last = 0; // Previous state
 	static uint8_t power_step = 0;
 	
 	if(power_flag_last == Power_Flag && Power_Flag != 1)
@@ -369,35 +369,43 @@ void Power_Task(void)
 	
 	switch(Power_Flag)
 	{
-		case 1://VESC����
+		case 1:// VESC Booting
 			PWR_ON;
 			Flashlight_Flag = 1;
 			switch(power_step)
 			{
-				case 0:
+				case 0: // Wating to boot or boot finished
 					Power_Time = 0;
 					power_step = 1;
 				break;
 				
-				case 1:
-					if(Power_Time > VESC_BOOT_TIME)
+				case 1: // Boot in progress
+					if(Power_Time > VESC_BOOT_TIME) // Wait timer for VESC to boot
 					{
-						Power_Flag = 2; //�������??
-						Light_Profile = 1; //������Ĭ����1��
-						Buzzer_Flag = 2;    //����Ĭ�Ϸ�������
-						power_step = 0;
+						Power_Flag = 2;		// VESC Boot Complete
+						Light_Profile = 1;	// Set light profile to Low
+						Buzzer_Flag = 2;	// Set buzzer to on
+						power_step = 0;		// Reset boot progress
+						Set_Light_Brightness();
 					}
 				break;
 			}
 			
 		break;	
 		
-		case 3://VESC�ػ�������������ӹ���??
-			PWR_OFF;
-			//LED1_Filp_Time(1000);	
-			//Charge_Flag = 1; //׼�����??
+		case 3: // Powered by charger
+			if (POWER_VESC_ON_CHARGER != true)
+			{
+				Power_Flag = 4;
+			}
 		break;
 		
+		case 4: // Signal to power board off
+			Flashlight_Flag = 0;
+			Lightbar_Battery_Flag = 2;
+			PWR_OFF;
+		break;
+
 		default:
 			
 		break;
