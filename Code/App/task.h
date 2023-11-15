@@ -15,6 +15,19 @@ typedef enum
 	DG40
 } CELL_TYPE;
 
+typedef enum
+{
+	NORMAL,
+	RAINBOW
+} BOOT_ANIMATION;
+
+typedef enum
+{
+	LCM,
+	VESC,
+	OFF
+} BUZZER_TYPE;
+
 #define   CELL_TYPE                 P42A        // Cell configuration to use for voltage display (P42A, DG40)
 #define	  CHARGING_VOLTAGE	  		40   		// Charging voltage detection. Greater than this value is considered that the charger is plugged in
 #define   CHARGE_SHUTOFF_CURRENT	0.3F        // Current threshold to stop charging unit A
@@ -40,6 +53,9 @@ typedef enum
 #define   MAIN_BRIGHTNESS_HIGH		0			// High brightness value (0-9999) -- Stock (0)
 #define   FADE_TIME					1000		// Time of fade transition (ms)
 #define   FADE_REFRESH				2			// (ms); FADE_TIME/FADE_REFRESH = fade steps
+/******   CONFIG VALUES   **************************************************************/
+#define   BOOT_ANIMATION		    RAINBOW     // Boot animation (NORMAL, RAINBOW)
+#define	  BUZZER_TYPE				LCM			// Change control of buzzer (LCM, VESC, OFF) - TODO implement the different options in code
 
 void KEY1_Task(void);
 void WS2812_Task(void);
@@ -54,5 +70,8 @@ void Flashlight_Detection(void);
 void Change_Light_Profile(bool persist);
 void Set_Light_Brightness(void);
 void Light_Transition(uint16_t target, uint16_t time);
+void Change_Boot_Animation(uint8_t animation);
+void Change_Cell_Type(uint8_t type);
+void Change_Buzzer_Type(uint8_t type);
 
 #endif

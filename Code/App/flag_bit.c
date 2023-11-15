@@ -128,3 +128,13 @@ uint8_t Shutdown_Time_M = 0; // Shutdown time in minutes.
 uint16_t Shutdown_Time_S = 0; // Shutdown time in seconds.
 uint8_t Shutdown_Cnt = 0; // Number of times the current reaches the shutdown value.
 uint16_t Charger_Detection_Timer = 0; // Charger detection timer.
+
+//// CONFIG
+/// Configured cell type (gets read from EEPROM)
+uint8_t Config_Cell_Type = 0;
+
+/// Configured boot animation (gets read from EEPROM)
+uint8_t Config_Boot_Animation = 0;
+
+/// Configured buzzer (gets read from EEPROM)
+uint8_t Config_Buzzer = 0;

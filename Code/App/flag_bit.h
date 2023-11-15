@@ -49,6 +49,12 @@ extern uint16_t Flashlight_Detection_Time;
 extern uint16_t Shutdown_Time_S;
 extern uint8_t Shutdown_Time_M;
 extern uint8_t Shutdown_Cnt;
+
+// Config
+
+extern uint8_t Config_Cell_Type;
+extern uint8_t Config_Boot_Animation;
+extern uint8_t Config_Buzzer;
 #endif
 
 

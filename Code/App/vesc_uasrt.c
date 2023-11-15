@@ -75,6 +75,20 @@ void Get_Vesc_Pack_Data(COMM_PACKET_ID id)
 	Send_Pack_Data(command,1);
 }
 
+void Get_Vesc_Adc_Data()
+{
+	uint8_t message[3] = {COMM_CUSTOM_APP_DATA, 102, GET_VESC_ADC}; //Custom data, magic number, get vesc adc
+	Send_Pack_Data(message, 3);
+}
+
+void Get_Eeprom_Data(LCM_COMMANDS command) //Retrieve data stored in eeprom 
+{
+	uint8_t data;
+	EEPROM_ReadByte(command, &data);
+	uint8_t message[4] = {COMM_CUSTOM_APP_DATA, 103, command, data};
+	Send_Pack_Data(message, 4);
+}
+
 /**************************************************
  * @brief  :buffer_get_int16()
  * @note : Two bytes in the buffer spell an int16_t
@@ -169,6 +183,7 @@ uint8_t Protocol_Parse(uint8_t *message)
 	uint16_t crcpayload;
 	uint8_t id;
 	int32_t ind = 0;
+	uint8_t command = 0;
 	
 	start = message[counter++];
 	
@@ -214,6 +229,107 @@ uint8_t Protocol_Parse(uint8_t *message)
 			data.tachometerAbs 		= buffer_get_int32(pdata, &ind);
 
 		break;
+
+		/*
+		Receive custom data + magic number (102)
+		command 0 = Change the brightness of the front and rear light 	(uint8_t brightness)
+		command 1 = Change the brightness of the lightbar (footpad sensor) (uint8_t brightness)
+		
+		
+		// Possible other commands 
+		command 2 = Change buzzer -> (uint8_t ON_OFF, uint8_t VOLUME, uint8_t target) 
+		target -> duty cycle, faults, current, motor current, temp, or combination
+		toggle with bits (1 == ON, 0 == OFF)
+		target bits:
+			bit 1 = currently unused
+			bit 2 = currently unused
+			bit 3 = temperature motor
+			bit 4 = temperature mosfet
+			bit 5 = current motor
+			bit 6 = current
+			bit 7 = faults
+			bit 8 = duty cycle
+
+		command 3 = Dim lightbar on speed -> (uint8_t ON_OFF) //or integrate with command 1
+		command 4 = Brakelight -> (uint8_t ON_OFF) //keep brightness at (70%) set brightness until braking (hard) occurs -> then scale to 100%
+
+*/
+   case COMM_CUSTOM_APP_DATA:
+      if (message[counter++] ==
+          102)  // Magic number specificly for the Floatwheel light control
+                // module (Float package uses 101 - dont interfere with the
+                // float package)
+      {
+        command = message[counter++];
+        switch (command) 
+		{
+          // Light commands
+          	case CHANGE_LIGHT_PROFILE:
+            // Change light profile
+            	Change_Light_Profile(true);
+            	break;
+
+			case CHANGE_LIGHT_BRIGHTNESS:
+				//Should be changed to uint16 instead of uint8
+				Main_Brightness =  message[counter++];  //For runtime light changes (Main light) 
+				break;
+
+			case CHANGE_LIGHTBAR_BRIGHTNESS:
+				Lightbar_Brightness = message[counter++];  //For runtime light changes (Lightbar)
+				break; 
+			// case 1:// lights on
+			// case 2: //lights off
+			case CHANGE_BOOT_ANIMATION:
+				Change_Boot_Animation(message[counter++]);
+				break;
+
+			case CHANGE_CELL_TYPE:
+				Change_Cell_Type(message[counter++]);
+				break;
+
+
+			// case 10: // change headlight brightness
+			// case 20: // change lightbar colour
+			// case 21: // change lightbar brightness
+			// case 22: // change boot animation
+
+        	// Buzzer commands
+
+			case SET_BUZZER_ON: //Might change this to an unused vesc command -> message will still be build correct but shorter.
+				if (Config_Buzzer == VESC) {
+					// Buzzer on
+					BUZZER_ON;
+				}
+				break;
+
+			case SET_BUZZER_OFF: //Might change this to an unused vesc command -> message will still be build correct but shorter.
+				if (Config_Buzzer == VESC) {
+					// Buzzer off
+					BUZZER_OFF;
+				}
+				break;
+			case SET_BUZZER_STATE: //TODO -> Change lightbar color based on the state
+				break; 
+
+			case CHANGE_BUZZER_TYPE:
+				Change_Buzzer_Type(message[counter++]);
+				break;
+				// EEPROM and system commands
+				// case 200:
+				// 	// Save settings
+				// 	EEPROM_WriteByte(0, Light_Profile);
+				// case 201: // change cell type
+				// case 202: // change ADC thresholds
+			case GET_VESC_ADC:
+			//Todo - change the values of the LCM and perhaps set in eeprom
+				//uint8_t adc1 = message[counter++]; 
+				//uint8_t adc2 = message[counter++];
+				break;
+        }
+      } else {
+        return 0;
+      }
+      break;
 	}
 	
 	return 0;

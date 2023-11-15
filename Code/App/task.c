@@ -1,9 +1,26 @@
 #include "task.h"
 
+void Change_Cell_Type(uint8_t type) {
+	if (type == DG40 || type == P42A) {
+		EEPROM_WriteByte(CHANGE_CELL_TYPE, type);
+	}
+}
+
+void Change_Boot_Animation(uint8_t animation) {
+	if (animation == RAINBOW || animation == NORMAL) {
+		EEPROM_WriteByte(CHANGE_BOOT_ANIMATION, animation);
+	}
+}
+
+void Change_Buzzer_Type(uint8_t type) {
+	if (type == LCM || type == VESC || type == OFF) {
+		EEPROM_WriteByte(CHANGE_BUZZER_TYPE, type);
+	}
+}
 
 /**************************************************
  * @brief  :KEY1_Task()
- * @note   :KEY1„1¤7„1¤7„1¤7„1¤7
+ * @note   :KEY1ï¿½1ï¿½7ï¿½1ï¿½7ï¿½1ï¿½7ï¿½1ï¿½7
  **************************************************/
 void KEY1_Task(void)
 {
@@ -162,9 +179,9 @@ void Boot_Animation(void)
 
 /**************************************************
  * @brief  :WS2812_Cal_Bri()
- * @note   :„1¤7„1¤7„1¤7„1¤7„1¤7„1¤7„1¤7„1¤7
- * @param  :„1¤7„1¤7„1¤7„1¤7 1„1¤7¦Á„1¤70¶5200ms
- * @retval :„1¤7„1¤7„1¤7„1¤7
+ * @note   :ï¿½1ï¿½7ï¿½1ï¿½7ï¿½1ï¿½7ï¿½1ï¿½7ï¿½1ï¿½7ï¿½1ï¿½7ï¿½1ï¿½7ï¿½1ï¿½7
+ * @param  :ï¿½1ï¿½7ï¿½1ï¿½7ï¿½1ï¿½7ï¿½1ï¿½7 1ï¿½1ï¿½7ï¿½ï¿½ï¿½1ï¿½7ï¿½0ï¿½5200ms
+ * @retval :ï¿½1ï¿½7ï¿½1ï¿½7ï¿½1ï¿½7ï¿½1ï¿½7
  **************************************************/
 uint8_t WS2812_Cal_Bri(uint8_t cnt)
 {
@@ -229,15 +246,15 @@ void WS2812_Charge(void)
 
 /**************************************************
  * @brief  :WS2812_Task()
- * @note   :WS2812„1¤7„1¤7„1¤7„1¤7 
+ * @note   :WS2812ï¿½1ï¿½7ï¿½1ï¿½7ï¿½1ï¿½7ï¿½1ï¿½7 
  **************************************************/
 void WS2812_Task(void)
 {
-    //static uint8_t Sensor_Activation_Display_Flag_last = 0; //„1¤7„1¤70Ý5„1¤7¦Å„1¤70ü80Á0
-    //static uint8_t power_display_flag_last = 0; //„1¤7„1¤70Ý5„1¤7¦Å„1¤70ü80Á0
+    //static uint8_t Sensor_Activation_Display_Flag_last = 0; //ï¿½1ï¿½7ï¿½1ï¿½7ï¿½0ï¿½5ï¿½1ï¿½7ï¿½Å„1ï¿½7ï¿½0ï¿½8ï¿½0ï¿½0
+    //static uint8_t power_display_flag_last = 0; //ï¿½1ï¿½7ï¿½1ï¿½7ï¿½0ï¿½5ï¿½1ï¿½7ï¿½Å„1ï¿½7ï¿½0ï¿½8ï¿½0ï¿½0
 	uint8_t i;
 
-	if(WS2812_Counter < 20) //20ms0¹6„1¤7„1¤70Ý5„1¤7„1¤7
+	if(WS2812_Counter < 20) //20msï¿½0ï¿½6ï¿½1ï¿½7ï¿½1ï¿½7ï¿½0ï¿½5ï¿½1ï¿½7ï¿½1ï¿½7
 	{
 		return;
 	}
@@ -249,7 +266,7 @@ void WS2812_Task(void)
 			{
 				WS2812_Set_Colour(i,0,0,0);
 			}
-			WS2812_Refresh();//0¹6„1¤7„1¤7„1¤7„1¤70¶5
+			WS2812_Refresh();//ï¿½0ï¿½6ï¿½1ï¿½7ï¿½1ï¿½7ï¿½1ï¿½7ï¿½1ï¿½7ï¿½0ï¿½5
 			
 			Lightbar_Battery_Flag = 0;
 			Sensor_Activation_Display_Flag = 0;
@@ -260,11 +277,11 @@ void WS2812_Task(void)
 	
 	if(Power_Flag == 1)
 	{
-		Boot_Animation();  //„1¤7„1¤7„1¤7„1¤7„1¤7„1¤7„1¤7„1¤7
+		Boot_Animation();  //ï¿½1ï¿½7ï¿½1ï¿½7ï¿½1ï¿½7ï¿½1ï¿½7ï¿½1ï¿½7ï¿½1ï¿½7ï¿½1ï¿½7ï¿½1ï¿½7
 		return;
 	}
 	
-	if(Charge_Flag == 3) //„1¤7„1¤71…3„1¤7„1¤7„1¤7„1¤7„1¤7„1¤7
+	if(Charge_Flag == 3) //ï¿½1ï¿½7ï¿½1ï¿½7ï¿½1ï¿½3ï¿½1ï¿½7ï¿½1ï¿½7ï¿½1ï¿½7ï¿½1ï¿½7ï¿½1ï¿½7ï¿½1ï¿½7
 	{
 		for(i=0;i<10;i++)
 		{
@@ -273,7 +290,7 @@ void WS2812_Task(void)
 		return;
 	}
 	
-	if(Charge_Flag == 2) //„1¤7„1¤7„1¤7„1¤7„1¤7„1¤7„1¤7„1¤70¶5
+	if(Charge_Flag == 2) //ï¿½1ï¿½7ï¿½1ï¿½7ï¿½1ï¿½7ï¿½1ï¿½7ï¿½1ï¿½7ï¿½1ï¿½7ï¿½1ï¿½7ï¿½1ï¿½7ï¿½0ï¿½5
 	{
 		WS2812_Charge();
 		return;
@@ -298,13 +315,13 @@ void WS2812_Task(void)
 		break;
 	}
 	
-	if(Lightbar_Battery_Flag == 1)  //„1¤7„1¤70¶5„1¤7„1¤7„1¤7„1¤7
+	if(Lightbar_Battery_Flag == 1)  //ï¿½1ï¿½7ï¿½1ï¿½7ï¿½0ï¿½5ï¿½1ï¿½7ï¿½1ï¿½7ï¿½1ï¿½7ï¿½1ï¿½7
 	{
-		Power_Display();// „1¤7„1¤7„1¤7„1¤7„1¤7„1¤70¶5
+		Power_Display();// ï¿½1ï¿½7ï¿½1ï¿½7ï¿½1ï¿½7ï¿½1ï¿½7ï¿½1ï¿½7ï¿½1ï¿½7ï¿½0ï¿½5
 	}
-	else //„1¤7„1¤7„1¤7„1¤70¶5„1¤7„1¤7„1¤7„1¤7
+	else //ï¿½1ï¿½7ï¿½1ï¿½7ï¿½1ï¿½7ï¿½1ï¿½7ï¿½0ï¿½5ï¿½1ï¿½7ï¿½1ï¿½7ï¿½1ï¿½7ï¿½1ï¿½7
 	{
-		Sensor_Activation_Display();//„1¤7„1¤7„1¤7„1¤70¶5„1¤7„1¤7„1¤7„1¤7WS2812
+		Sensor_Activation_Display();//ï¿½1ï¿½7ï¿½1ï¿½7ï¿½1ï¿½7ï¿½1ï¿½7ï¿½0ï¿½5ï¿½1ï¿½7ï¿½1ï¿½7ï¿½1ï¿½7ï¿½1ï¿½7WS2812
 	}
 	
 }
@@ -316,26 +333,16 @@ void WS2812_Task(void)
 void Apply_BatteryPowerFlag(float battery_voltage)
 {
 	float battVoltages[10] = {4.054, 4.01, 3.908, 3.827, 3.74, 3.651, 3.571, 3.485, 3.38, 3.0}; //P42A
-	float p42aBattVoltages[10] = {4.054, 4.01, 3.908, 3.827, 3.74, 3.651, 3.571, 3.485, 3.38, 3.0};
-	float dg40BattVoltages[10] = {4.07, 4.025, 3.91, 3.834, 3.746, 3.607, 3.49, 3.351, 3.168, 2.81};
+	float battcellcurves[2][10] = {{4.054, 4.01, 3.908, 3.827, 3.74, 3.651, 3.571, 3.485, 3.38, 3.0},   //P42A
+								   {4.07, 4.025, 3.91, 3.834, 3.746, 3.607, 3.49, 3.351, 3.168, 2.81}}; //DG40
 	static uint8_t cell_type_last = 0; //CELL_TYPE P42A equates out to 0
 
 	if (CELL_TYPE != cell_type_last) // If !P42a run once at boot or on change
 	{
-		switch (CELL_TYPE)
+		cell_type_last = CELL_TYPE;
+		for (int i=0;i<10;i++)
 		{
-		case P42A:
-			memcpy(battVoltages, p42aBattVoltages, sizeof(p42aBattVoltages));
-			cell_type_last = 0;
-			break;
-		case DG40:
-			memcpy(battVoltages, dg40BattVoltages, sizeof(dg40BattVoltages));
-			cell_type_last = 1;
-			break;
-		default: // Just in case
-			memcpy(battVoltages, p42aBattVoltages, sizeof(p42aBattVoltages));
-			cell_type_last = 0;
-			break;
+			battVoltages[i] = battcellcurves[cell_type_last][i];
 		}
 	}
 
@@ -386,6 +393,35 @@ void Power_Task(void)
 						Light_Profile = 1;	// Set light profile to Low
 						Buzzer_Flag = 2;	// Set buzzer to on
 						power_step = 0;		// Reset boot progress
+						Config_Cell_Type = CELL_TYPE;			// Set to the define
+						Config_Boot_Animation = BOOT_ANIMATION; // Set to the define
+						Config_Buzzer = BUZZER_TYPE;
+						// Read saved value from EEPROM
+						uint8_t data = Light_Profile;
+						EEPROM_ReadByte(0, &data);
+
+						if (data > 0 && data < 4)
+						{
+							Light_Profile = data;
+						}
+						data = Config_Cell_Type;
+						EEPROM_ReadByte(CHANGE_CELL_TYPE, &data);
+						if (data == DG40 || data == P42A)
+						{
+							Config_Cell_Type = data;
+						}
+						data = Config_Boot_Animation;
+						EEPROM_ReadByte(CHANGE_BOOT_ANIMATION, &data);
+						if (data == NORMAL || data == RAINBOW)
+						{
+							Config_Boot_Animation = data;
+						}
+						data = Config_Buzzer;
+						EEPROM_ReadByte(CHANGE_BUZZER_TYPE, &data);
+						if (data == LCM || data == VESC || data == OFF)
+						{
+							Config_Buzzer = data;
+						}
 						Set_Light_Brightness();
 					}
 				break;
@@ -637,7 +673,7 @@ void Flashlight_Task(void)
 			Flashlight_Bright(1,2);
 		break;
 
-		case 3://VESC0¢2„1¤7„1¤7„1¤706„1¤7„1¤7„1¤70ü9„1¤7??(„1¤7„1¤70û8)
+		case 3://VESCï¿½0ï¿½2ï¿½1ï¿½7ï¿½1ï¿½7ï¿½1ï¿½7ï¿½0ï¿½6ï¿½1ï¿½7ï¿½1ï¿½7ï¿½1ï¿½7ï¿½0ï¿½9ï¿½1ï¿½7??(ï¿½1ï¿½7ï¿½1ï¿½7ï¿½0ï¿½8)
 			Flashlight_Bright(2,2);
 		break;
 
@@ -686,30 +722,34 @@ void Flashlight_Detection(void)
 
 /**************************************************
  * @brief  :Buzzer_Task()
- * @note   :„1¤7„1¤7„1¤7„1¤7„1¤7„1¤7„1¤7„1¤7„1¤7„1¤7
+ * @note   :Controls the buzzer
  **************************************************/
 void Buzzer_Task(void)
 {
 	static uint8_t buzzer_step = 0;
-	static uint8_t Light_Profile_last = 0; //„1¤7„1¤70Ý5„1¤7¦Å07„1¤7¦Ë
+	static uint8_t Light_Profile_last = 0;
 	static uint8_t ring_frequency = 0;
 	static uint16_t sound_frequency = 0;
-	
-	if(Power_Flag != 2 || Buzzer_Flag == 1) //VESC„1¤70Ð3„1¤7„1¤7„1¤7„1¤7„1¤7„1¤7„1¤7„1¤71„9„1¤7 
+
+	if (Config_Buzzer == VESC) {
+		return; //Do nothing with the buzzer, let the vesc handle everything -> when changed to vesc make sure to initialy set buzzer off
+	}
+
+	if(Power_Flag != 2 || Buzzer_Flag == 1 || Config_Buzzer == OFF) // If buzzer is set to off turn off
 	{
 		BUZZER_OFF;
 		buzzer_step = 0;
 		return;
 	}
 	
-	if(Buzzer_Frequency == 0 && Light_Profile_last == Light_Profile) //„1¤7„1¤7„1¤7„1¤7„1¤7„1¤7„1¤7„1¤7„1¤701„1¤7„1¤7„1¤7?0„1¤7„1¤7„1¤7„1¤70Ý5„1¤7¦Å07„1¤7¦Ë„1¤7„1¤7„1¤7„1¤7„1¤7„1¤7¦Å07„1¤7„1¤7?
+	if(Buzzer_Frequency == 0 && Light_Profile_last == Light_Profile) // If the frequency is zero and the light profile hasnt changed
 	{
 		BUZZER_OFF;
 		buzzer_step = 0;
 		return;
 	}
 	
-	if(Buzzer_Frequency != 0)	
+	if(Buzzer_Frequency != 0) // this triggers only on dutycycle
 	{
 		switch(buzzer_step)
 		{
@@ -803,15 +843,15 @@ void Usart_Task(void)
 				VESC_RX_Flag = 0;
 				result = Protocol_Parse(VESC_RX_Buff);
 				
-				if(result == 0) //„1¤7„1¤7„1¤7„1¤7„1¤70¯6„1¤7
+				if(result == 0) //ï¿½1ï¿½7ï¿½1ï¿½7ï¿½1ï¿½7ï¿½1ï¿½7ï¿½1ï¿½7ï¿½0ï¿½6ï¿½1ï¿½7
 				{
 						//LED1_Filp_Time(500);				
 						Usart_Flag = 1;
-						//Battery_Voltage = data.inpVoltage; //„1¤7„1¤71…3„1¤7„1¤7?
-						//AvgInputCurrent = data.avgInputCurrent;  //0‘0„1¤71²1„1¤7„1¤7„1¤7
-						//DutyCycleNow = data.dutyCycleNow;   //0ð8„1¤70ï7„1¤7
+						//Battery_Voltage = data.inpVoltage; //ï¿½1ï¿½7ï¿½1ï¿½7ï¿½1ï¿½3ï¿½1ï¿½7ï¿½1ï¿½7?
+						//AvgInputCurrent = data.avgInputCurrent;  //ï¿½0ï¿½0ï¿½1ï¿½7ï¿½1ï¿½1ï¿½1ï¿½7ï¿½1ï¿½7ï¿½1ï¿½7
+						//DutyCycleNow = data.dutyCycleNow;   //ï¿½0ï¿½8ï¿½1ï¿½7ï¿½0ï¿½7ï¿½1ï¿½7
 				}
-				else	//„1¤7„1¤7„1¤7„1¤70´2„1¤7„1¤7
+				else	//ï¿½1ï¿½7ï¿½1ï¿½7ï¿½1ï¿½7ï¿½1ï¿½7ï¿½0ï¿½2ï¿½1ï¿½7ï¿½1ï¿½7
 				{
 						//LED1_Filp_Time(100);
 						Usart_Flag = 2;
