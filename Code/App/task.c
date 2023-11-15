@@ -521,6 +521,10 @@ void Change_Light_Profile(bool persist)
 	{
 		EEPROM_WriteByte(0, Light_Profile);
 	}
+	if (Flashlight_Flag == 4)
+	{
+		Flashlight_Flag = 2;
+	}
 	Set_Light_Brightness();
 }
 
@@ -623,7 +627,7 @@ void Flashlight_Bright(uint8_t direction, uint8_t bright)
 
 	if (bright == 1)
 	{
-		if (Main_Brightness > MAIN_BRIGHTNESS_REST) {  // If your light profile is less than rest use that
+		if (Main_Brightness > MAIN_BRIGHTNESS_REST) {  // If your light profile is less than rest use that **higher number is dimmer**
 			Light_Transition(Main_Brightness, FADE_TIME);
 		} 
 		else {
@@ -638,7 +642,7 @@ void Flashlight_Bright(uint8_t direction, uint8_t bright)
 	
 /**************************************************
  * @brief  :Flashlight_Task()
- * @note   :Controls headlight/taillight brightness multiplier and direction
+ * @note   :Controls headlight/tail light brightness multiplier and direction
  **************************************************/
 void Flashlight_Task(void)
 {
@@ -649,7 +653,7 @@ void Flashlight_Task(void)
 		LED_B_OFF;
 		LED_F_OFF;
 		Flashlight_Flag = 0;
-		TIM_SetCompare2(TIM1,9999);
+		// TIM_SetCompare2(TIM1,9999);
 		return;
 	}
 
@@ -665,19 +669,23 @@ void Flashlight_Task(void)
 	}
 	switch(Flashlight_Flag)
 	{
-		case 1://VESC booting -> 0% -> 10% in 2 sec
+		case 0: // Lights out
+			Light_Transition(9999, FADE_TIME);
+		break;
+		
+		case 1: // VESC booting -> 0% -> 10% in 2 sec
 			Flashlight_Bright(1,1);
 		break;
 
-		case 2:
+		case 2: // Riding forward
 			Flashlight_Bright(1,2);
 		break;
 
-		case 3://VESC�0�2�1�7�1�7�1�7�0�6�1�7�1�7�1�7�0�9�1�7??(�1�7�1�7�0�8)
+		case 3: // Riding reverse
 			Flashlight_Bright(2,2);
 		break;
 
-		case 4:
+		case 4: // Dim at rest
 			Flashlight_Bright(1,1);
 		break;
 
@@ -686,6 +694,10 @@ void Flashlight_Task(void)
 	}
 }
 
+/**************************************************
+ * @brief  : Flashlight_Detection()
+ * @note   : Controls lightS activity on profile change and allows to dim
+ **************************************************/
 void Flashlight_Detection(void)
 {
 	static uint8_t Light_Profile_last = 0;
@@ -702,19 +714,9 @@ void Flashlight_Detection(void)
 	{
 		if(Light_Profile_last != Light_Profile)
 		{
-			if(ADC1_Val < ADC_THRESHOLD_LOWER && ADC2_Val < ADC_THRESHOLD_LOWER)
-			{
-				Set_Light_Brightness();
-				TIM_SetCompare2(TIM1,Main_Brightness);
-				Flashlight_Detection_Time = 0;
-			}
-			else
-			{
-				Set_Light_Brightness();
-				TIM_SetCompare2(TIM1,Main_Brightness);
-
-				Flashlight_Detection_Time = 3100;
-			}
+			Set_Light_Brightness();
+			Light_Transition(Main_Brightness,FADE_TIME/2);
+			Flashlight_Detection_Time = 0;
 			Light_Profile_last = Light_Profile;
 		}
 	}
