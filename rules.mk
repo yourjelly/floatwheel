@@ -111,12 +111,12 @@ $(BDIR)/$(PROJECT).elf: $(OBJS) $(TOP)/$(LDSCRIPT)
 DG40:
 	sed -i 's/CELL_TYPE                 P42A/CELL_TYPE                 DG40/g' Code/App/task.h &&\
 	make comp &&\
-	cp Build/app.hex Build/DG40.hex
+	mv Build/app.hex Build/DG40.hex
 
 P42A:
 	sed -i 's/CELL_TYPE                 DG40/CELL_TYPE                 P42A/g' Code/App/task.h &&\
 	make comp &&\
-	cp Build/app.hex Build/P42A.hex
+	mv Build/app.hex Build/P42A.hex
 
 clean:
 	rm -rf $(BDIR)/*
