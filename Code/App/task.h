@@ -48,14 +48,14 @@ typedef enum
 #define   LIGHTBAR_SPEEDGATE_ON 	6000		// Speed in erpm for the lightbar to turn on
 #define   LIGHTBAR_SPEEDGATE_OFF 	8000		// Speed in erpm for the lightbar to turn off
 #define   MAIN_BRIGHTNESS_REST		9000		// Main brightness at rest -- Stock 10% (9000)
-#define   MAIN_BRIGHTNESS_LOW		7000		// Low brightness value (0-9999) -- Stock (7000)
-#define   MAIN_BRIGHTNESS_MED		4000		// Medium brightness value (0-9999) -- Stock (4000)
-#define   MAIN_BRIGHTNESS_HIGH		0			// High brightness value (0-9999) -- Stock (0)
+#define   MAIN_BRIGHTNESS_LOW		7000		// Low brightness value (9999-0) -- Stock (7000)
+#define   MAIN_BRIGHTNESS_MED		4000		// Medium brightness value (9999-0) -- Stock (4000)
+#define   MAIN_BRIGHTNESS_HIGH		0			// High brightness value (9999-0) -- Stock (0)
 #define   FADE_TIME					1000		// Time of fade transition (ms)
 #define   FADE_REFRESH				2			// (ms); FADE_TIME/FADE_REFRESH = fade steps
 /******   CONFIG VALUES   **************************************************************/
 #define   BOOT_ANIMATION		    RAINBOW     // Boot animation (NORMAL, RAINBOW)
-#define	  BUZZER_TYPE				LCM			// Change control of buzzer (LCM, VESC, OFF) - TODO implement the different options in code
+#define	  BUZZER_TYPE				VESC		// Change control of buzzer (LCM, VESC, OFF) - TODO implement the different options in code
 
 void KEY1_Task(void);
 void WS2812_Task(void);
