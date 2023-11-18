@@ -160,14 +160,24 @@ void Sensor_Activation_Display(void)
 void Boot_Animation(void)
 {
 	uint8_t i;
-	uint8_t num = floorf(Power_Time / 500) + 1;
-	
+	uint8_t num = floor(Power_Time / 500) + 1;
+	uint8_t rgbMap[10][3] = {{255,0,0}, {255,127,0}, {255,255,0}, {127,255,0}, {0,255,0}, {0,255,127}, {0,255,255}, {0,127,255}, {0,0,255}, {127,0,255}};
+
 	if (num > 10) {
 		num = 10;
 	}
 
 	for (i=0;i<num;i++) {
-		WS2812_Set_Colour(i,0,255,255);
+		//switch (Config_Boot_Animation) {  Not sure what would happen if no bytes are stored (set to 0xFF?)
+		//Then this switch can be implemented
+		switch (BOOT_ANIMATION) {
+		case NORMAL:
+			WS2812_Set_Colour(i,0,255,255);
+			break;
+		case RAINBOW:
+			WS2812_Set_Colour(i,rgbMap[i][0],rgbMap[i][1],rgbMap[i][2]);
+			break;
+		}
 	}
 
 	for (i = num; i < 10; i++) {
@@ -179,14 +189,14 @@ void Boot_Animation(void)
 
 /**************************************************
  * @brief  :WS2812_Cal_Bri()
- * @note   :�1�7�1�7�1�7�1�7�1�7�1�7�1�7�1�7
- * @param  :�1�7�1�7�1�7�1�7 1�1�7���1�7�0�5200ms
- * @retval :�1�7�1�7�1�7�1�7
+ * @note   :Brightness pulse effect
+ * @param  cnt: 1 count is 200ms
  **************************************************/
 uint8_t WS2812_Cal_Bri(uint8_t cnt)
 {
 	static uint8_t brightness = 1;
-	
+
+	// Update brightness
 	if(cnt < 50)
 	{
 		brightness++;
@@ -196,6 +206,7 @@ uint8_t WS2812_Cal_Bri(uint8_t cnt)
 		brightness--;
 	}
 	
+	// Clamp brightness
 	if(brightness < 1)
 	{
 		brightness = 1;
@@ -222,11 +233,11 @@ void WS2812_Charge(void)
 	brightness = WS2812_Cal_Bri(cnt);
 	for (i=0;i<10; i++) {
 		if (i <= num) {
-			if (num >= 10) { // Full charged
+			if (num >= 10) { // Full charged - Set all to green
 				WS2812_Set_Colour(i,0,brightness,0);
-			} else if (num <= 2) { // Low battery
+			} else if (num <= 2) { // Low battery - Set first two to red
 				WS2812_Set_Colour(i,brightness,0,0);
-			} else { // Normal charging
+			} else { // Normal charging - All to bright
 				WS2812_Set_Colour(i,brightness,brightness,brightness);
 			}
 		} else {
@@ -246,15 +257,13 @@ void WS2812_Charge(void)
 
 /**************************************************
  * @brief  :WS2812_Task()
- * @note   :WS2812�1�7�1�7�1�7�1�7 
+ * @note   :Main lightbar control task
  **************************************************/
 void WS2812_Task(void)
 {
-    //static uint8_t Sensor_Activation_Display_Flag_last = 0; //�1�7�1�7�0�5�1�7�ń1�7�0�8�0�0
-    //static uint8_t power_display_flag_last = 0; //�1�7�1�7�0�5�1�7�ń1�7�0�8�0�0
 	uint8_t i;
 
-	if(WS2812_Counter < 20) //20ms�0�6�1�7�1�7�0�5�1�7�1�7
+	if(WS2812_Counter < 20) // Refresh every 20ms
 	{
 		return;
 	}
@@ -266,7 +275,7 @@ void WS2812_Task(void)
 			{
 				WS2812_Set_Colour(i,0,0,0);
 			}
-			WS2812_Refresh();//�0�6�1�7�1�7�1�7�1�7�0�5
+			WS2812_Refresh();
 			
 			Lightbar_Battery_Flag = 0;
 			Sensor_Activation_Display_Flag = 0;
@@ -277,11 +286,11 @@ void WS2812_Task(void)
 	
 	if(Power_Flag == 1)
 	{
-		Boot_Animation();  //�1�7�1�7�1�7�1�7�1�7�1�7�1�7�1�7
+		Boot_Animation();
 		return;
 	}
 	
-	if(Charge_Flag == 3) //�1�7�1�7�1�3�1�7�1�7�1�7�1�7�1�7�1�7
+	if(Charge_Flag == 3) // Battery Fully charged - All LED white
 	{
 		for(i=0;i<10;i++)
 		{
@@ -290,7 +299,7 @@ void WS2812_Task(void)
 		return;
 	}
 	
-	if(Charge_Flag == 2) //�1�7�1�7�1�7�1�7�1�7�1�7�1�7�1�7�0�5
+	if(Charge_Flag == 2) // Charging call charge function
 	{
 		WS2812_Charge();
 		return;
@@ -315,13 +324,13 @@ void WS2812_Task(void)
 		break;
 	}
 	
-	if(Lightbar_Battery_Flag == 1)  //�1�7�1�7�0�5�1�7�1�7�1�7�1�7
+	if(Lightbar_Battery_Flag == 1)  // Display Battery level
 	{
-		Power_Display();// �1�7�1�7�1�7�1�7�1�7�1�7�0�5
+		Power_Display();
 	}
-	else //�1�7�1�7�1�7�1�7�0�5�1�7�1�7�1�7�1�7
+	else // Display Sensor Activation
 	{
-		Sensor_Activation_Display();//�1�7�1�7�1�7�1�7�0�5�1�7�1�7�1�7�1�7WS2812
+		Sensor_Activation_Display();
 	}
 	
 }
