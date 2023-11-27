@@ -6,11 +6,9 @@ Board inside the ADV Floatwheel that controls lighting, power, charing and buzze
 
 * Floatwheels's LCM
 * Programmer
-  * J-Link: J-Link OB programmer Software and Documentation pack [https://www.segger.com/downloads/jlink/](https://www.segger.com/downloads/jlink/)
   * ST-LINK: ST-Link downloads [https://www.st.com/en/development-tools/stsw-link007.html](https://www.st.com/en/development-tools/stsw-link007.html)
 * PyOCD [https://pyocd.io/docs/installing](https://pyocd.io/docs/installing)
 * Compilier
-  * GNU Arm Embedded Toolchain
   * Keil μVision
 
 # Building
@@ -19,31 +17,7 @@ Board inside the ADV Floatwheel that controls lighting, power, charing and buzze
 
 Clone this repository to local workspace
 
-## A. Install GNU Arm Embedded Toolchain
-
-Download the toolchain yourself from [Arm GNU Toolchain Downloads](https://developer.arm.com/downloads/-/arm-gnu-toolchain-downloads) according to your pc architecture, extract the files. Or use the provided link in the commands below
-
-```bash
-cd ~/Downloads
-curl  https://developer.arm.com/-/media/Files/downloads/gnu/12.2.mpacbti-rel1/binrel/arm-gnu-toolchain-12.2.mpacbti-rel1-x86_64-arm-none-eabi.tar.xz -L -o arm-gnu-toolchain-12.2.mpacbti-rel1-x86_64-arm-none-eabi.tar.xz
-tar xvf arm-gnu-toolchain-12.2.mpacbti-rel1-x86_64-arm-none-eabi.tar.xz
-sudo mkdir -p /opt/gcc-arm 
-cd /opt/gcc-arm/
-sudo mv ~/Downloads/arm-gnu-toolchain-12.2.mpacbti-rel1-x86_64-arm-none-eabi/ .
-sudo chown -R root:root arm-gnu-toolchain-12.2.mpacbti-rel1-x86_64-arm-none-eabi/
-```
-
-### Build
-```bash
-# clean source code
-make clean
-# build
-make
-# or make with verbose output
-V=1 make
-```
-
-## B. Install Keil μVision (Windows)
+## Install Keil μVision (Windows)
 
 Download Keil μVision from here https://www.keil.com/demo/eval/arm.htm
 
@@ -53,28 +27,9 @@ Download Keil μVision from here https://www.keil.com/demo/eval/arm.htm
 4: In project go to Options for target (Alt + F7) -> In the target window, switch the Arm compiler (V6.19 works)
 5: Start the compiling by going to project -> build target (F7)
 
-
-
 # Flashing
 
-## Option #A: Install SEGGER J-Link
-
-Download and install JLink from [J-Link / J-Trace Downloads](https://www.segger.com/downloads/jlink/).
-
-```bash
-# installation command for .deb
-sudo dpkg -i JLink_Linux_V770a_x86_64.deb
-```
-
-The default installation directory is */opt/SEGGER*
-
-### Flash
-
-```bash
-make flash
-```
-
-## Option #B: Install pyocd
+## Install pyocd
 
 ```bash
 pip install pyocd
@@ -91,13 +46,9 @@ This will install PyOCD into:
 
 .profile will take care of the PATH, run `source ~/.profile` to make pyocd command available
 
-### Flash
+## Flash
 
-Run flash.bat or flash.sh from the repo
-
-
-# Building With Keil μVision (Windows)
-
+Run flash.bat (windows) or flash.sh (linux/mac) from the repo
 
 
 TODO and/or in the works:
