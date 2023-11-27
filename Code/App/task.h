@@ -28,7 +28,7 @@ typedef enum
 	OFF
 } BUZZER_TYPE;
 
-#define   CELL_TYPE                 P42A        // Cell configuration to use for voltage display (P42A, DG40)
+#define   CELL_TYPE                 DG40        // Cell configuration to use for voltage display (P42A, DG40)
 #define	  CHARGING_VOLTAGE	  		40   		// Charging voltage detection. Greater than this value is considered that the charger is plugged in
 #define   CHARGE_SHUTOFF_CURRENT	0.3F        // Current threshold to stop charging unit A
 #define   BATTERY_STRING      		20    		// Number of battery cells
@@ -55,7 +55,7 @@ typedef enum
 #define   FADE_REFRESH				2			// (ms); FADE_TIME/FADE_REFRESH = fade steps
 /******   CONFIG VALUES   **************************************************************/
 #define   BOOT_ANIMATION		    RAINBOW     // Boot animation (NORMAL, RAINBOW)
-#define	  BUZZER_TYPE				VESC		// Change control of buzzer (LCM, VESC, OFF) - TODO implement the different options in code
+#define	  BUZZER_TYPE				LCM		// Change control of buzzer (LCM, VESC, OFF) - TODO implement the different options in code
 
 void KEY1_Task(void);
 void WS2812_Task(void);

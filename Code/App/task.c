@@ -723,9 +723,9 @@ void Flashlight_Detection(void)
 	{
 		if(Light_Profile_last != Light_Profile)
 		{
-			Set_Light_Brightness();
-			Light_Transition(Main_Brightness,FADE_TIME/2);
 			Flashlight_Detection_Time = 0;
+			Set_Light_Brightness();
+			Light_Transition(Main_Brightness,FADE_TIME);
 			Light_Profile_last = Light_Profile;
 		}
 	}
