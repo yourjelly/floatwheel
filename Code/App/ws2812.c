@@ -28,15 +28,49 @@ void WS2812_Init(void)
 /**************************************************
  * @brie	WS2812_Set_Colour()
  * @note	WS2812 set color
- * @param	num 	number of lights
- * @param	red 	0-255
- * @param	green	0-255
- * @param	blue    0-255
+ * @param	num 	light to assign color to
+ * @param	colour 	0-14 from ws2812.h enum list
+ * @param	brightness 0-100 scale for brightness
  * @retval	None
  **************************************************/
-void WS2812_Set_Colour(uint8_t num,uint8_t red,uint8_t green,uint8_t blue)
+void WS2812_Set_Colour(uint8_t num, uint8_t colour, uint8_t brightness)
 {
+	uint8_t colourRGB[15][3] = {
+		{255,0,0},    //  0 - Red
+		{0,255,0},    //  1 - Green
+		{0,0,255},    //  2 - Blue
+		{255,128,0},  //  3 - Orange
+		{255,255,0},  //  4 - Yellow
+		{0,255,255},  //  5 - Cyan
+		{127,0,255},  //  6 - Violet
+		{255,0,255},  //  7 - Magenta
+		{255,0,127},  //  8 - Pink
+		{255,255,255},//  9 - White
+		{255,69,0},   // 10 - RedOrange
+		{127,255,0},  // 11 - YellowGreen
+		{0,255,127},  // 12 - GreenCyan
+		{0,128,255},  // 13 - CyanBlue
+		{0,0,0}       // 14 - Off
+	};
+	
 	uint8_t i = 0;
+	uint8_t red = colourRGB[colour][0];
+	uint8_t green = colourRGB[colour][1];
+	uint8_t blue = colourRGB[colour][2];
+	
+	if (colour == Off || brightness == 0) // shortcut if light should be off
+	{
+		for(i=0; i<24; i++)
+		{
+			WS2812_Buff[num][i] = WS2812_0;
+		}
+		return;
+	}
+	else if (brightness != 255) {
+		red = round(red * brightness / 255);
+		green = round(green * brightness / 255);
+		blue = round(blue * brightness / 255);
+	}
 	
 	for(i=0; i<24; i++)
 	{
@@ -79,6 +113,22 @@ void WS2812_Set_Colour(uint8_t num,uint8_t red,uint8_t green,uint8_t blue)
 		
 	}
 	
+}
+
+ /**************************************************
+ * @note   :Set all to off
+ * @param  None
+ * @retval None
+ **************************************************/
+void WS2812_All_Off(void)
+{
+	for(uint8_t num=0; num<10; num++)
+	{
+		for(uint8_t i=0; i<24; i++)
+		{
+			WS2812_Buff[num][i] = WS2812_0;
+		}
+	}
 }
 
 /**************************************************

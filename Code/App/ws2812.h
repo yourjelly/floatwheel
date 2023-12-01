@@ -4,17 +4,37 @@
 #include "hk32f030m.h"
 #include "spi.h"
 #include "io_ws2812.h"
+#include <math.h>
 
-#define     WS2812_N    10      	//µÆÖéÊýÁ¿
-#define		WS2812_0	0xE0  	//0Âë
-#define		WS2812_1	0xFF 	//1Âë
-#define		WS2812_R	0x00  	//¸´Î»Âë
+typedef enum {
+	Red,
+	Green,
+	Blue,
+    Orange,
+    Yellow,
+    Cyan,
+    Violet,
+    Magenta,
+    Pink,
+    White,
+    RedOrange,
+    YellowGreen,
+    GreenCyan,
+    CyanBlue,
+    Off
+} COLORS;
+
+#define     WS2812_N    10      	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+#define		WS2812_0	0xE0  	//0ï¿½ï¿½
+#define		WS2812_1	0xFF 	//1ï¿½ï¿½
+#define		WS2812_R	0x00  	//ï¿½ï¿½Î»ï¿½ï¿½
 
 extern uint16_t WS2812_Counter;
 extern uint8_t WS2812_Buff[WS2812_N][24];
 
 void WS2812_Init(void);
-void WS2812_Set_Colour(uint8_t num,uint8_t red,uint8_t green,uint8_t blue);
+void WS2812_Set_Colour(uint8_t num, uint8_t colour, uint8_t brightness);
+void WS2812_All_Off(void);
 void WS2812_Task(void);
 void WS2812_Refresh(void);
 

@@ -79,17 +79,17 @@ void Power_Display(void)
 
 	for (i=0;i<10;i++) {
 		if (Power_Display_Flag == 0) {
-			// Something is wrong - set all LEDs to red
-			WS2812_Set_Colour(i,Lightbar_Brightness,0,0);
+			// Something is wrong - set all LEDs to red at full brightness
+			WS2812_Set_Colour(i, Red, 255);
 		} else {
 			if (i < num) {
 				if (num <= 2) {
-					WS2812_Set_Colour(i,Lightbar_Brightness,0,0);
+					WS2812_Set_Colour(i, Red, Lightbar_Brightness);
 				} else {
-					WS2812_Set_Colour(i,Lightbar_Brightness,Lightbar_Brightness,Lightbar_Brightness);
+					WS2812_Set_Colour(i, White, Lightbar_Brightness);
 				}
 			} else {
-				WS2812_Set_Colour(i,0,0,0);
+				WS2812_Set_Colour(i, Off, 0);
 			}
 		}
 	}
@@ -110,44 +110,38 @@ void Sensor_Activation_Display(void)
 		case 1: // adc1>ADC_THRESHOLD_LOWER  adc2<ADC_THRESHOLD_LOWER
 			for(i=0;i<5;i++)
 			{
-				WS2812_Set_Colour(i,0,0,Lightbar_Brightness);
+				WS2812_Set_Colour(i, Blue, Lightbar_Brightness);
 			}
 				for(i=5;i<10;i++)
 			{
-				WS2812_Set_Colour(i,0,0,0);
+				WS2812_Set_Colour(i, Off, 0);
 			}
 		break;
 
 		case 2: // adc1<ADC_THRESHOLD_LOWER  adc2>ADC_THRESHOLD_LOWER
 			for(i=0;i<5;i++)
 			{
-				WS2812_Set_Colour(i,0,0,0);
+				WS2812_Set_Colour(i, Off, 0);
 			}
 				for(i=5;i<10;i++)
 			{
-				WS2812_Set_Colour(i,0,0,Lightbar_Brightness);
+				WS2812_Set_Colour(i, Blue, Lightbar_Brightness);
 			}
 		break;
 		
 		case 3: // adc1>ADC_THRESHOLD_LOWER  adc2>ADC_THRESHOLD_LOWER
 			for(i=0;i<10;i++)
 			{
-				WS2812_Set_Colour(i,0,0,Lightbar_Brightness);
+				WS2812_Set_Colour(i, Blue, Lightbar_Brightness);
 			}
 		break;
 
 		case 4: // adc1<ADC_THRESHOLD_LOWER  adc2<ADC_THRESHOLD_LOWER
-			for(i=0;i<10;i++)
-			{
-				WS2812_Set_Colour(i,0,0,0);
-			}
+			WS2812_All_Off();
 		break;
 		
 		default:
-			for(i=0;i<10;i++)
-			{
-				WS2812_Set_Colour(i,0,0,0);
-			}
+			WS2812_All_Off();
 		break;
 	}
 	WS2812_Refresh();
@@ -161,7 +155,7 @@ void Boot_Animation(void)
 {
 	uint8_t i;
 	uint8_t num = floor(Power_Time / 500) + 1;
-	uint8_t rgbMap[10][3] = {{255,0,0}, {255,127,0}, {255,255,0}, {127,255,0}, {0,255,0}, {0,255,127}, {0,255,255}, {0,127,255}, {0,0,255}, {127,0,255}};
+	uint8_t rgbMap[10] = {Red, RedOrange, Orange, Yellow, YellowGreen, Green, Cyan, Blue, Violet, Magenta};
 
 	if (num > 10) {
 		num = 10;
@@ -172,16 +166,16 @@ void Boot_Animation(void)
 		//Then this switch can be implemented
 		switch (BOOT_ANIMATION) {
 		case NORMAL:
-			WS2812_Set_Colour(i,0,255,255);
+			WS2812_Set_Colour(i,Cyan, Lightbar_Brightness);
 			break;
 		case RAINBOW:
-			WS2812_Set_Colour(i,rgbMap[i][0],rgbMap[i][1],rgbMap[i][2]);
+			WS2812_Set_Colour(i,rgbMap[i], Lightbar_Brightness);
 			break;
 		}
 	}
 
 	for (i = num; i < 10; i++) {
-		WS2812_Set_Colour(i,0,0,0);
+		WS2812_Set_Colour(i, Off, 0);
 	}
 
 	WS2812_Refresh();
@@ -234,14 +228,14 @@ void WS2812_Charge(void)
 	for (i=0;i<10; i++) {
 		if (i <= num) {
 			if (num >= 10) { // Full charged - Set all to green
-				WS2812_Set_Colour(i,0,brightness,0);
+				WS2812_Set_Colour(i, Green, brightness);
 			} else if (num <= 2) { // Low battery - Set first two to red
-				WS2812_Set_Colour(i,brightness,0,0);
+				WS2812_Set_Colour(i, Red, brightness);
 			} else { // Normal charging - All to bright
-				WS2812_Set_Colour(i,brightness,brightness,brightness);
+				WS2812_Set_Colour(i, White, brightness);
 			}
 		} else {
-			WS2812_Set_Colour(i,0,0,0);
+			WS2812_Set_Colour(i, Off, 0);
 		}
 	}
 	
@@ -271,10 +265,7 @@ void WS2812_Task(void)
 	
 	if(Power_Flag == 0 || (Power_Flag == 3 && Charge_Flag == 0))
 	{
-			for(i=0;i<10;i++)
-			{
-				WS2812_Set_Colour(i,0,0,0);
-			}
+			WS2812_All_Off();
 			WS2812_Refresh();
 			
 			Lightbar_Battery_Flag = 0;
@@ -294,7 +285,7 @@ void WS2812_Task(void)
 	{
 		for(i=0;i<10;i++)
 		{
-			WS2812_Set_Colour(i,255,255,255);
+			WS2812_Set_Colour(i, White, 255);
 		}
 		return;
 	}

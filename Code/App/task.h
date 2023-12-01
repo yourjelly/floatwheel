@@ -9,20 +9,17 @@
 #include "eeprom.h"
 #include <math.h>
 
-typedef enum
-{
+typedef enum {
 	P42A,
 	DG40
 } CELL_TYPE;
 
-typedef enum
-{
+typedef enum {
 	NORMAL,
 	RAINBOW
 } BOOT_ANIMATION;
 
-typedef enum
-{
+typedef enum {
 	LCM,
 	VESC,
 	OFF
