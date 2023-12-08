@@ -997,7 +997,7 @@ void Conditional_Judgment(void)
 			{
 				Usart_Flag = 2;
 				
-				if(data.rpm>0){
+				if(data.rpm >= 0){
 					abs_rpm = data.rpm;
 				}else{
 					abs_rpm = -data.rpm;
@@ -1046,7 +1046,7 @@ void Conditional_Judgment(void)
 					data.avgInputCurrent = -data.avgInputCurrent;
 				}
 
-				if(data.rpm < SENSOR_ACTV_DISPLAY_RPM) //Below this RPM show footpad activation on Lightbar
+				if(abs_rpm < SENSOR_ACTV_DISPLAY_RPM) //Below this RPM show footpad activation on Lightbar
 				{
 					if(ADC1_Val < ADC_THRESHOLD_UPPER && ADC2_Val < ADC_THRESHOLD_UPPER)
 					{
