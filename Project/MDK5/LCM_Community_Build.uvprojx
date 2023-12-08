@@ -7,21 +7,22 @@
 
   <Targets>
     <Target>
-      <TargetName>HK32F030M_Demo</TargetName>
+      <TargetName>LCM_Community_Build</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
-      <pCCUsed>5060750::V5.06 update 6 (build 750)::ARMCC</pCCUsed>
-      <uAC6>0</uAC6>
+      <pArmCC>6190000::V6.19::ARMCLANG</pArmCC>
+      <pCCUsed>6190000::V6.19::ARMCLANG</pCCUsed>
+      <uAC6>1</uAC6>
       <TargetOption>
         <TargetCommonOption>
-          <Device>HK32F030MJ4M6</Device>
+          <Device>HK32F030MF4P6</Device>
           <Vendor>HK_MicroChip</Vendor>
-          <PackID>HKMicroChip.HK32F030Mxx_DFP.1.0.5</PackID>
+          <PackID>HKMicroChip.HK32F030xMxx_DFP.1.0.17</PackID>
           <PackURL>http://www.hsxp-hk.com/companyfile/2/</PackURL>
           <Cpu>IRAM(0x20000000,0x800) IROM(0x08000000,0x4000) CPUTYPE("Cortex-M0") CLOCK(12000000) ELITTLE</Cpu>
           <FlashUtilSpec></FlashUtilSpec>
           <StartupFile></StartupFile>
-          <FlashDriverDll>UL2CM3(-S0 -C0 -P0 -FD20000000 -FC800 -FN1 -FF0HK32F030MXX_16 -FS08000000 -FL04000 -FP0($$Device:HK32F030MJ4M6$Flash\HK32F030MXX_16.FLM))</FlashDriverDll>
+          <FlashDriverDll>UL2CM3(-S0 -C0 -P0 -FD20000000 -FC800 -FN1 -FF0HK32F030MXX_16 -FS08000000 -FL04000 -FP0($$Device:HK32F030MF4P6$Flash\HK32F030MXX_16.FLM))</FlashDriverDll>
           <DeviceId>0</DeviceId>
           <RegisterFile></RegisterFile>
           <MemoryEnv></MemoryEnv>
@@ -33,7 +34,7 @@
           <SLE66CMisc></SLE66CMisc>
           <SLE66AMisc></SLE66AMisc>
           <SLE66LinkerMisc></SLE66LinkerMisc>
-          <SFDFile>$$Device:HK32F030MJ4M6$SVD\HK32F030M.svd</SFDFile>
+          <SFDFile>$$Device:HK32F030MF4P6$SVD\HK32F030M.svd</SFDFile>
           <bCustSvd>0</bCustSvd>
           <UseEnv>0</UseEnv>
           <BinPath></BinPath>
@@ -49,7 +50,7 @@
             <InvalidFlash>1</InvalidFlash>
           </TargetStatus>
           <OutputDirectory>.\Objects\</OutputDirectory>
-          <OutputName>HK32F030M_Demo</OutputName>
+          <OutputName>LCM_Community_Build</OutputName>
           <CreateExecutable>1</CreateExecutable>
           <CreateLib>0</CreateLib>
           <CreateHexFile>1</CreateHexFile>
@@ -130,7 +131,7 @@
         <Utilities>
           <Flash1>
             <UseTargetDll>1</UseTargetDll>
-            <UseExternalTool>1</UseExternalTool>
+            <UseExternalTool>0</UseExternalTool>
             <RunIndependent>0</RunIndependent>
             <UpdateFlashBeforeDebugging>1</UpdateFlashBeforeDebugging>
             <Capability>1</Capability>
@@ -138,7 +139,7 @@
           </Flash1>
           <bUseTDR>1</bUseTDR>
           <Flash2>BIN\UL2CM3.DLL</Flash2>
-          <Flash3></Flash3>
+          <Flash3>"" ()</Flash3>
           <Flash4></Flash4>
           <pFcarmOut></pFcarmOut>
           <pFcarmGrp></pFcarmGrp>
@@ -185,10 +186,12 @@
             <uocXRam>0</uocXRam>
             <RvdsVP>0</RvdsVP>
             <RvdsMve>0</RvdsMve>
+            <RvdsCdeCp>0</RvdsCdeCp>
+            <nBranchProt>0</nBranchProt>
             <hadIRAM2>0</hadIRAM2>
             <hadIROM2>0</hadIROM2>
             <StupSel>8</StupSel>
-            <useUlib>1</useUlib>
+            <useUlib>0</useUlib>
             <EndSel>0</EndSel>
             <uLtcg>0</uLtcg>
             <nSecure>0</nSecure>
@@ -312,7 +315,7 @@
           </ArmAdsMisc>
           <Cads>
             <interw>1</interw>
-            <Optim>1</Optim>
+            <Optim>2</Optim>
             <oTime>0</oTime>
             <SplitLS>0</SplitLS>
             <OneElfS>1</OneElfS>
@@ -321,14 +324,14 @@
             <PlainCh>0</PlainCh>
             <Ropi>0</Ropi>
             <Rwpi>0</Rwpi>
-            <wLevel>2</wLevel>
+            <wLevel>3</wLevel>
             <uThumb>0</uThumb>
             <uSurpInc>0</uSurpInc>
             <uC99>1</uC99>
             <uGnu>0</uGnu>
             <useXO>0</useXO>
-            <v6Lang>1</v6Lang>
-            <v6LangP>1</v6LangP>
+            <v6Lang>3</v6Lang>
+            <v6LangP>5</v6LangP>
             <vShortEn>1</vShortEn>
             <vShortWch>1</vShortWch>
             <v6Lto>0</v6Lto>
@@ -336,9 +339,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls></MiscControls>
-              <Define>HK32F030M, HK32F030MJ4M6</Define>
+              <Define>HK32F030M, HK32F030MF4P6</Define>
               <Undefine></Undefine>
-              <IncludePath>..\..\HK32F030M\HK32F030M_Lib\inc;..\..\HK32F030M\CMSIS\HK32F030M\Include;..\inc;..\..\HK32F030M\CMSIS\CM0\Core</IncludePath>
+              <IncludePath>..\..\Code\App;..\..\Code\Drive;..\..\Code\User;..\..\Library\HK32F030Mxx_Library_V1.1.6\HK32F030M\HK32F030M_Lib\inc;..\..\Library\HK32F030Mxx_Library_V1.1.6\HK32F030M\CMSIS\CM0\Core;..\..\Library\HK32F030Mxx_Library_V1.1.6\HK32F030M\CMSIS\HK32F030M\Include</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -351,7 +354,7 @@
             <NoWarn>0</NoWarn>
             <uSurpInc>0</uSurpInc>
             <useXO>0</useXO>
-            <uClangAs>0</uClangAs>
+            <ClangAsOpt>4</ClangAsOpt>
             <VariousControls>
               <MiscControls></MiscControls>
               <Define></Define>
@@ -380,122 +383,192 @@
       </TargetOption>
       <Groups>
         <Group>
-          <GroupName>Start</GroupName>
+          <GroupName>Startup</GroupName>
           <Files>
             <File>
               <FileName>KEIL_Startup_hk32f030m.s</FileName>
               <FileType>2</FileType>
-              <FilePath>..\..\HK32F030M\CMSIS\HK32F030M\Source\ARM\KEIL_Startup_hk32f030m.s</FilePath>
+              <FilePath>..\..\Library\HK32F030Mxx_Library_V1.1.6\HK32F030M\CMSIS\HK32F030M\Source\ARM\KEIL_Startup_hk32f030m.s</FilePath>
             </File>
           </Files>
         </Group>
         <Group>
-          <GroupName>src</GroupName>
+          <GroupName>User</GroupName>
           <Files>
             <File>
               <FileName>main.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\src\main.c</FilePath>
+              <FilePath>..\..\Code\User\main.c</FilePath>
             </File>
             <File>
               <FileName>hk32f030m_it.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\src\hk32f030m_it.c</FilePath>
+              <FilePath>..\..\Code\User\hk32f030m_it.c</FilePath>
             </File>
             <File>
               <FileName>system_hk32f030m.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\HK32F030M\CMSIS\HK32F030M\Source\system_hk32f030m.c</FilePath>
+              <FilePath>..\..\Library\HK32F030Mxx_Library_V1.1.6\HK32F030M\CMSIS\HK32F030M\Source\system_hk32f030m.c</FilePath>
             </File>
           </Files>
         </Group>
         <Group>
-          <GroupName>HK32F030M_lib</GroupName>
+          <GroupName>App</GroupName>
+          <Files>
+            <File>
+              <FileName>ws2812.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\Code\App\ws2812.c</FilePath>
+            </File>
+            <File>
+              <FileName>crc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\Code\App\crc.c</FilePath>
+            </File>
+            <File>
+              <FileName>vesc_uasrt.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\Code\App\vesc_uasrt.c</FilePath>
+            </File>
+            <File>
+              <FileName>test.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\Code\App\test.c</FilePath>
+            </File>
+            <File>
+              <FileName>task.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\Code\App\task.c</FilePath>
+            </File>
+            <File>
+              <FileName>flag_bit.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\Code\App\flag_bit.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Drive</GroupName>
+          <Files>
+            <File>
+              <FileName>led.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\Code\Drive\led.c</FilePath>
+            </File>
+            <File>
+              <FileName>time.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\Code\Drive\time.c</FilePath>
+            </File>
+            <File>
+              <FileName>spi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\Code\Drive\spi.c</FilePath>
+            </File>
+            <File>
+              <FileName>power.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\Code\Drive\power.c</FilePath>
+            </File>
+            <File>
+              <FileName>led_pwm.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\Code\Drive\led_pwm.c</FilePath>
+            </File>
+            <File>
+              <FileName>key.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\Code\Drive\key.c</FilePath>
+            </File>
+            <File>
+              <FileName>buzzer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\Code\Drive\buzzer.c</FilePath>
+            </File>
+            <File>
+              <FileName>usart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\Code\Drive\usart.c</FilePath>
+            </File>
+            <File>
+              <FileName>adc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\Code\Drive\adc.c</FilePath>
+            </File>
+            <File>
+              <FileName>io_ws2812.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\Code\Drive\io_ws2812.c</FilePath>
+            </File>
+            <File>
+              <FileName>eeprom.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\Code\Drive\eeprom.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Library</GroupName>
           <Files>
             <File>
               <FileName>hk32f030m_adc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\HK32F030M\HK32F030M_Lib\src\hk32f030m_adc.c</FilePath>
-            </File>
-            <File>
-              <FileName>hk32f030m_awu.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\HK32F030M\HK32F030M_Lib\src\hk32f030m_awu.c</FilePath>
-            </File>
-            <File>
-              <FileName>hk32f030m_beep.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\HK32F030M\HK32F030M_Lib\src\hk32f030m_beep.c</FilePath>
-            </File>
-            <File>
-              <FileName>hk32f030m_crc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\HK32F030M\HK32F030M_Lib\src\hk32f030m_crc.c</FilePath>
-            </File>
-            <File>
-              <FileName>hk32f030m_exti.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\HK32F030M\HK32F030M_Lib\src\hk32f030m_exti.c</FilePath>
-            </File>
-            <File>
-              <FileName>hk32f030m_flash.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\HK32F030M\HK32F030M_Lib\src\hk32f030m_flash.c</FilePath>
+              <FilePath>..\..\Library\HK32F030Mxx_Library_V1.1.6\HK32F030M\HK32F030M_Lib\src\hk32f030m_adc.c</FilePath>
             </File>
             <File>
               <FileName>hk32f030m_gpio.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\HK32F030M\HK32F030M_Lib\src\hk32f030m_gpio.c</FilePath>
-            </File>
-            <File>
-              <FileName>hk32f030m_i2c.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\HK32F030M\HK32F030M_Lib\src\hk32f030m_i2c.c</FilePath>
+              <FilePath>..\..\Library\HK32F030Mxx_Library_V1.1.6\HK32F030M\HK32F030M_Lib\src\hk32f030m_gpio.c</FilePath>
             </File>
             <File>
               <FileName>hk32f030m_iwdg.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\HK32F030M\HK32F030M_Lib\src\hk32f030m_iwdg.c</FilePath>
+              <FilePath>..\..\Library\HK32F030Mxx_Library_V1.1.6\HK32F030M\HK32F030M_Lib\src\hk32f030m_iwdg.c</FilePath>
             </File>
             <File>
               <FileName>hk32f030m_misc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\HK32F030M\HK32F030M_Lib\src\hk32f030m_misc.c</FilePath>
-            </File>
-            <File>
-              <FileName>hk32f030m_pwr.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\HK32F030M\HK32F030M_Lib\src\hk32f030m_pwr.c</FilePath>
+              <FilePath>..\..\Library\HK32F030Mxx_Library_V1.1.6\HK32F030M\HK32F030M_Lib\src\hk32f030m_misc.c</FilePath>
             </File>
             <File>
               <FileName>hk32f030m_rcc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\HK32F030M\HK32F030M_Lib\src\hk32f030m_rcc.c</FilePath>
+              <FilePath>..\..\Library\HK32F030Mxx_Library_V1.1.6\HK32F030M\HK32F030M_Lib\src\hk32f030m_rcc.c</FilePath>
             </File>
             <File>
               <FileName>hk32f030m_spi.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\HK32F030M\HK32F030M_Lib\src\hk32f030m_spi.c</FilePath>
+              <FilePath>..\..\Library\HK32F030Mxx_Library_V1.1.6\HK32F030M\HK32F030M_Lib\src\hk32f030m_spi.c</FilePath>
             </File>
             <File>
               <FileName>hk32f030m_syscfg.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\HK32F030M\HK32F030M_Lib\src\hk32f030m_syscfg.c</FilePath>
+              <FilePath>..\..\Library\HK32F030Mxx_Library_V1.1.6\HK32F030M\HK32F030M_Lib\src\hk32f030m_syscfg.c</FilePath>
             </File>
             <File>
               <FileName>hk32f030m_tim.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\HK32F030M\HK32F030M_Lib\src\hk32f030m_tim.c</FilePath>
+              <FilePath>..\..\Library\HK32F030Mxx_Library_V1.1.6\HK32F030M\HK32F030M_Lib\src\hk32f030m_tim.c</FilePath>
             </File>
             <File>
               <FileName>hk32f030m_usart.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\HK32F030M\HK32F030M_Lib\src\hk32f030m_usart.c</FilePath>
+              <FilePath>..\..\Library\HK32F030Mxx_Library_V1.1.6\HK32F030M\HK32F030M_Lib\src\hk32f030m_usart.c</FilePath>
             </File>
             <File>
-              <FileName>hk32f030m_wwdg.c</FileName>
+              <FileName>hk32f030m_flash.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\HK32F030M\HK32F030M_Lib\src\hk32f030m_wwdg.c</FilePath>
+              <FilePath>..\..\Library\HK32F030Mxx_Library_V1.1.6\HK32F030M\HK32F030M_Lib\src\hk32f030m_flash.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Readme</GroupName>
+          <Files>
+            <File>
+              <FileName>Readme.md</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\Readme.md</FilePath>
             </File>
           </Files>
         </Group>
@@ -508,5 +581,15 @@
     <components/>
     <files/>
   </RTE>
+
+  <LayerInfo>
+    <Layers>
+      <Layer>
+        <LayName>LCM_Community_Build</LayName>
+        <LayTarg>0</LayTarg>
+        <LayPrjMark>1</LayPrjMark>
+      </Layer>
+    </Layers>
+  </LayerInfo>
 
 </Project>

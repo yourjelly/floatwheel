@@ -22,7 +22,7 @@
   </DaveTm>
 
   <Target>
-    <TargetName>LCM_Light_Control_IO_WS2812_New</TargetName>
+    <TargetName>LCM_Community_Build</TargetName>
     <ToolsetNumber>0x4</ToolsetNumber>
     <ToolsetName>ARM-ADS</ToolsetName>
     <TargetOption>
@@ -651,8 +651,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\..\Readme\Readme.txt</PathWithFileName>
-      <FilenameWithoutPath>Readme.txt</FilenameWithoutPath>
+      <PathWithFileName>..\..\Readme.md</PathWithFileName>
+      <FilenameWithoutPath>Readme.md</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
