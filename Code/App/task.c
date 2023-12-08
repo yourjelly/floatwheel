@@ -332,9 +332,12 @@ void WS2812_Task(void)
  **************************************************/
 void Apply_BatteryPowerFlag(float battery_voltage)
 {
-	float battVoltages[10] = {4.054, 4.01, 3.908, 3.827, 3.74, 3.651, 3.571, 3.485, 3.38, 3.0}; //P42A
-	float battcellcurves[2][10] = {{4.054, 4.01, 3.908, 3.827, 3.74, 3.651, 3.571, 3.485, 3.38, 3.0},   //P42A
-								   {4.07, 4.025, 3.91, 3.834, 3.746, 3.607, 3.49, 3.351, 3.168, 2.81}}; //DG40
+	float battVoltages[2][10] = {{4.054,	4.01,	3.908,	3.827,	3.74,	3.651,	3.571,	3.485,	3.38,	3.0}, //P42A discharge
+								 {4.200,	4.19,	4.18,	4.15,	4.108,	4.002,	3.894,	3.79,	3.703,	3.279}}; //P42A charge
+	float cellcurvdischarge[2][10] = {{4.054,	4.01,	3.908,	3.827,	3.74,	3.651,	3.571,	3.485,	3.38,	3.0},   //P42A
+								      {4.07,	4.025,	3.91,	3.834,	3.746,	3.607,	3.49,	3.351,	3.168,	2.81}}; //DG40
+	float cellcurvcharge[2][10] = {{4.2,	4.19,	4.18,	4.15,	4.108,	4.002,	3.894,	3.79,	3.703,	3.279},   //P42A
+								   {4.18,	4.15,	4.1,	4.048,	3.966,	3.878,	3.783,	3.681,	3.603,	3.51}}; //DG40
 	static uint8_t cell_type_last = 0; //CELL_TYPE P42A equates out to 0
 
 	if (CELL_TYPE != cell_type_last) // If !P42a run once at boot or on change
@@ -342,22 +345,38 @@ void Apply_BatteryPowerFlag(float battery_voltage)
 		cell_type_last = CELL_TYPE;
 		for (int i=0;i<10;i++)
 		{
-			battVoltages[i] = battcellcurves[cell_type_last][i];
+			battVoltages[0][i] = cellcurvdischarge[cell_type_last][i];
+			battVoltages[1][i] = cellcurvcharge[cell_type_last][i];
 		}
 	}
 
-	for (int i=0;i<10;i++) {
-		if (battery_voltage > battVoltages[i]) {
-			Power_Display_Flag = i + 1;
-			break;
+	if (Power_Flag == 3) //if charging
+	{
+		for (int i=0;i<10;i++) {
+			if (battery_voltage > battVoltages[1][i]) {
+				Power_Display_Flag = i + 1;
+				break;
+			}
+			// Between zero and min voltage
+			if (i == 9) {
+				Power_Display_Flag = 10;
+			}
 		}
-		// Between zero and min voltage
-		if (i == 9) {
-			Power_Display_Flag = 10;
+	}
+	else
+	{
+		for (int i=0;i<10;i++) {
+			if (battery_voltage > battVoltages[0][i]) {
+				Power_Display_Flag = i + 1;
+				break;
+			}
+			// Between zero and min voltage
+			if (i == 9) {
+				Power_Display_Flag = 10;
+			}
 		}
 	}
 }
-
 
 /**************************************************
  * @brief  :Power_Task()
