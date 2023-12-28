@@ -635,13 +635,13 @@ void Flashlight_Bright(uint8_t direction, uint8_t bright)
 	}
 	if (direction == 1) // Direction forward
 	{
-		LED_F_OFF;
-		LED_B_ON;
+		LED_F_ON;
+		LED_B_OFF;
 	}
 	else // Direction backward
 	{
-		LED_B_OFF;
-		LED_F_ON;
+		LED_B_ON;
+		LED_F_OFF;
 	}
 
 	if (bright == 1)

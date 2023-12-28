@@ -38,8 +38,8 @@ void LED_Init(void)
 	GPIO_Init(GPIOC, &GPIO_InitStructure);	
 	
 	LED1_ON;
-	LED_B_OFF;
-	LED_F_OFF;
+	LED_B_ON;
+	LED_F_ON;
 }
 
 /**************************************************
