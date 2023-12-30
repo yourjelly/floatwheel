@@ -248,7 +248,7 @@ static void Idle_Animation(void)
 		int div = cnt >> 3; // fast div by 8
 		int idx = div % 10;
 		int clr = div % 13;
-		int brightness = div % 100 + 100
+		int brightness = div % 100 + 100;
 		Lightbar_Set_Colour_Range(idx, idx, clr, brightness);
 		Lightbar_Refresh();
 	}
@@ -272,7 +272,7 @@ static void Lightbar_Handtest(void)
 		pulsate = 0;
 
 	// 4 LEDs in the center
-	Lightbar_Set_RGB(4, 7, brightness, pulsate, 0);
+	Lightbar_Set_RGB_Range(4, 7, brightness, pulsate, 0);
 
 	//SUS will these turn off? Replaced with sensor flag switch
 	// if(ADC1_Val > ADC_THRESHOLD_LOWER) // Left ADC check - light first led green 
@@ -321,8 +321,8 @@ void Lightbar_Task(void)
 		return;
 	}
 	WS2812_Counter = 0;
-	
-	Set_Light_Brightness()
+
+	Set_Light_Brightness();
 
 	switch(Animation_Running)
 	{
@@ -392,7 +392,12 @@ void Lightbar_Task(void)
  **************************************************/
 static void Sensor_Activation_Display(void)
 {
-	uint8_t i;
+	uint8_t indicator_color = Blue;
+	if (data.floatPackageSupported)
+	{
+		// make footpad indicators purple if float package commands are received successfully!
+		indicator_color = Violet;
+	}
 
 	switch (Sensor_Activation_Display_Flag)
 	{
@@ -439,100 +444,60 @@ static void Sensor_Activation_Display(void)
 static void Lightbar_VESC(void)
 {
 	uint8_t i;
-	uint8_t indicator_color = Blue;
-	if (data.floatPackageSupported) {
-		// make footpad indicators purple if float package commands are received successfully!
-		indicator_color = Violet;
-	}
 	
 	if(Lightbar_Battery_Flag == 1)  // Display Battery level
-		{
-			Power_Display(Lightbar_Brightness);
-			return;
-		}
-
-	switch(Sensor_Activation_Display_Flag)
 	{
-		case 1:	// Left Foot Sensors
-			if (data.state == DISABLED) {
-				Disabled_Animation();
-				return;
-			}
-			Lightbar_Set_Colour_Range(1, 5, indicator_color, Lightbar_Brightness);
-		break;
-		
-		case 2:	// Right Foot Sensor
-			if (data.state == DISABLED) {
-				Disabled_Animation();
-				return;
-			}
-			Lightbar_Set_Colour_Range(6, 10, indicator_color, Lightbar_Brightness);
-		break;
-		
-		case 3:	// Both Foot Sensors
-			if (data.state == DISABLED) {
-				Disabled_Animation();
-				Buzzer_Frequency = 100;
-				return;
-			}
-			Lightbar_Set_Colour_Range(1, 10, indicator_color, Lightbar_Brightness);
-		break;
-			
-		case 4: // Riding
-			if (data.state != RUNNING_WHEELSLIP) {
-				uint8_t brightness = lcmConfig.isSet ? lcmConfig.statusbarBrightness : Lightbar_Brightness;
-
-				if (Power_Display_Flag > 8) {
-					// Voltage below 30%?
-					// Display red leds at full brightness above anything else
-					Power_Display(255);
-				}
-				else if (data.dutyCycleNow > 90) {
-					Lightbar_Set_Colour_Range(1, 10, Red, brightness);
-				}
-				else if (data.dutyCycleNow > 85) {
-					Lightbar_Set_Colour_Range(1, 9, Red, brightness);
-				}
-				else if (data.dutyCycleNow > 80) {
-					Lightbar_Set_Colour_Range(1, 8, Orange, brightness);
-				}
-				else if (data.dutyCycleNow > 70) {
-					Lightbar_Set_Colour_Range(1, 7, Yellow, brightness/2);
-				}
-				else if (data.dutyCycleNow > 60) {
-					Lightbar_Set_Colour_Range(1, 6, Green, brightness/3);
-				}
-				else if (data.dutyCycleNow > 50) {
-					Lightbar_Set_Colour_Range(1, 5, Green, brightness/4);
-				}
-				else if (Power_Display_Flag > 6) {
-					// Voltage below 40%?
-					// Display yellow leds at full brightness
-					Power_Display(255);
-				}
-				else {
-					Lightbar_Set_Colour_Range(1, 10, Off, brightness);
-				}
-			}
-			else {
-				Lightbar_Set_Colour_Range(1, 10, Off, brightness);
-			}
-		break;
-
-		case 5:
-			// Flywheel Mode: just a rando pattern fpr now
-			uint8_t pos = (Power_Time/100) % 10;
-			uint8_t colour = (Power_Time + pos) % 13;
-			uint8_t bright = (Power_Time + colour) % 255;
-			Lightbar_Set_Colour(pos, color, bright);
-		break;
-
-		default:
-			if (errCode == 0)
-				errCode = 1;
-			//Lightbar_Set_Colour_Range(9, 10, Red, 50);
-		break;
+		Power_Display(Lightbar_Brightness);
+		return;
 	}
+
+	if (data.state == RUNNING_FLYWHEEL)
+	{
+		// Flywheel Mode: just a rando pattern fpr now
+		uint8_t pos = (Power_Time/100) % 10;
+		uint8_t colour = (Power_Time + pos) % 13;
+		uint8_t bright = (Power_Time + colour) % 255;
+		Lightbar_Set_Colour(pos, color, bright);
+	}
+	else if (data.state != RUNNING_WHEELSLIP) {
+		uint8_t brightness = lcmConfig.isSet ? lcmConfig.statusbarBrightness : Lightbar_Brightness;
+
+		if (Power_Display_Flag > 8) {
+			// Voltage below 30%?
+			// Display red leds at full brightness above anything else
+			Power_Display(255);
+		}
+		else if (data.dutyCycleNow > 90) {
+			Lightbar_Set_Colour_Range(1, 10, Red, brightness);
+		}
+		else if (data.dutyCycleNow > 85) {
+			Lightbar_Set_Colour_Range(1, 9, Red, brightness);
+		}
+		else if (data.dutyCycleNow > 80) {
+			Lightbar_Set_Colour_Range(1, 8, Orange, brightness);
+		}
+		else if (data.dutyCycleNow > 70) {
+			Lightbar_Set_Colour_Range(1, 7, Yellow, brightness/2);
+		}
+		else if (data.dutyCycleNow > 60) {
+			Lightbar_Set_Colour_Range(1, 6, Green, brightness/3);
+		}
+		else if (data.dutyCycleNow > 50) {
+			Lightbar_Set_Colour_Range(1, 5, Green, brightness/4);
+		}
+		else if (Power_Display_Flag > 6) {
+			// Voltage below 40%?
+			// Display yellow leds at full brightness
+			Power_Display(255);
+		}
+		else {
+			Lightbar_All_Off();
+		}
+	}
+	else {
+		Lightbar_All_Off();
+	}
+
 	Lightbar_Refresh();
 }
 
@@ -1249,7 +1214,7 @@ void VESC_State_Task(void)
 
 	if(data.state == RUNNING_FLYWHEEL) {
 		Lightbar_Battery_Flag = 2;
-		Sensor_Activation_Display_Flag = 5;
+		Sensor_Activation_Display_Flag = 4;
 		Buzzer_Frequency = 0;
 	}
 	else if(data.rpm < SENSOR_ACTV_DISPLAY_RPM) // Below this RPM show footpad activation on Lightbar

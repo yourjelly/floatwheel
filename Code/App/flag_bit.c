@@ -53,7 +53,6 @@ uint8_t Lightbar_Battery_Flag = 0;
 	Sensor_Activation_Display_Flag = 2; Left 5 LEDs off, Right 5 LEDs blue (adc1 < ADC_THRESHOLD_LOWER < adc2)
 	Sensor_Activation_Display_Flag = 3; All 10 LEDs blue (adc1 && adc2 > ADC_THRESHOLD_LOWER)
 	Sensor_Activation_Display_Flag = 4; All 10 LEDs off (adc1 && adc2 < ADC_THRESHOLD_LOWER)
-	Sensor_Activation_Display_Flag = 5; Flywheel Mode
 */
 uint8_t Sensor_Activation_Display_Flag = 0;
 
