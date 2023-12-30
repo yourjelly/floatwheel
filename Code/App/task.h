@@ -15,8 +15,9 @@ typedef enum {
 } CELL_TYPE;
 
 typedef enum {
-	NORMAL,
-	RAINBOW
+	STOCK,
+	RAINBOW,
+	RWB
 } BOOT_ANIMATION;
 
 typedef enum {
@@ -29,6 +30,7 @@ typedef enum {
 #define	  CHARGING_VOLTAGE	  		40   		// Charging voltage detection. Greater than this value is considered that the charger is plugged in
 #define   CHARGE_SHUTOFF_CURRENT	0.3F        // Current threshold to stop charging unit A
 #define   BATTERY_STRING      		20    		// Number of battery cells
+#define   IDLE_TIME					5			// Time till idle Animation (minutes)
 #define   SHUTDOWN_TIME		  		30   		// Shutdown time (minutes)
 #define	  POWER_VESC_ON_CHARGER		true		// Turn on VESC while on charger
 #define   VESC_BOOT_TIME      		6000 		// VESC boot time (ms)
@@ -43,7 +45,7 @@ typedef enum {
 #define   LIGHTBAR_BRIGHTNESS_MED	128			// Medium brightness value (0-255) -- Stock (128)
 #define   LIGHTBAR_BRIGHTNESS_LOW 	30			// Low brightness value (0-255) -- Stock (30)
 #define   LIGHTBAR_SPEEDGATE_ON 	6000		// Speed in erpm for the lightbar to turn on
-#define   LIGHTBAR_SPEEDGATE_OFF 	7000		// Speed in erpm for the lightbar to turn off
+#define   LIGHTBAR_SPEEDGATE_OFF 	6500		// Speed in erpm for the lightbar to turn off
 #define   MAIN_BRIGHTNESS_REST		9000		// Main brightness at rest -- Stock 10% (9000)
 #define   MAIN_BRIGHTNESS_LOW		7000		// Low brightness value (9999-0) -- Stock (7000)
 #define   MAIN_BRIGHTNESS_MED		4000		// Medium brightness value (9999-0) -- Stock (4000)
@@ -51,24 +53,19 @@ typedef enum {
 #define   FADE_TIME					1000		// Time of fade transition (ms)
 #define   FADE_REFRESH				2			// (ms); FADE_TIME/FADE_REFRESH = fade steps
 /******   CONFIG VALUES   **************************************************************/
-#define   BOOT_ANIMATION		    RAINBOW     // Boot animation (NORMAL, RAINBOW)
+#define   BOOT_ANIMATION		    RAINBOW     // Boot animation (STOCK, RAINBOW, RWB)
 #define	  BUZZER_TYPE				LCM		// Change control of buzzer (LCM, VESC, OFF) - TODO implement the different options in code
 
 void KEY1_Task(void);
-void WS2812_Task(void);
+void Lightbar_Task(void);
 void Power_Task(void);
 void Charge_Task(void);
 void Flashlight_Task(void);
 void Buzzer_Task(void);
 void Usart_Task(void);
 void ADC_Task(void);
-void Conditional_Judgment(void);
+void VESC_State_Task(void);
 void Flashlight_Detection(void);
-void Change_Light_Profile(bool persist);
-void Set_Light_Brightness(void);
-void Light_Transition(uint16_t target, uint16_t time);
-void Change_Boot_Animation(uint8_t animation);
-void Change_Cell_Type(uint8_t type);
-void Change_Buzzer_Type(uint8_t type);
+void Change_Light_Profile(void);
 
 #endif

@@ -17,12 +17,6 @@ uint8_t Power_Flag = 0;
 	Charge_Flag = 3; Battery fully charged.
 */
 uint8_t Charge_Flag = 0;
-/*
-	Usart_Flag = 0; Default state.
-	Usart_Flag = 1; Parsing successful.
-	Usart_Flag = 2; Parsing failed or waiting for the next parsing.
-*/
-uint8_t Usart_Flag = 0;
 
 //// LIGHTS STATE
 
@@ -48,7 +42,7 @@ uint8_t Light_Profile = 0;
 */
 uint8_t Brightness_Adjustment_Flag = 0;
 /*
-	Lightbar_Battery_Flag = 0; Default state.
+	Lightbar_Battery_Flag = 0; Powered on.
 	Lightbar_Battery_Flag = 1; Display battery level.
 	Lightbar_Battery_Flag = 2; Do not display battery level.
 */
@@ -59,6 +53,7 @@ uint8_t Lightbar_Battery_Flag = 0;
 	Sensor_Activation_Display_Flag = 2; Left 5 LEDs off, Right 5 LEDs blue (adc1 < ADC_THRESHOLD_LOWER < adc2)
 	Sensor_Activation_Display_Flag = 3; All 10 LEDs blue (adc1 && adc2 > ADC_THRESHOLD_LOWER)
 	Sensor_Activation_Display_Flag = 4; All 10 LEDs off (adc1 && adc2 < ADC_THRESHOLD_LOWER)
+	Sensor_Activation_Display_Flag = 5; Flywheel Mode
 */
 uint8_t Sensor_Activation_Display_Flag = 0;
 
@@ -80,6 +75,15 @@ uint16_t Main_Brightness = 0; // Main lights runtime brightness setting (0-9999)
 	Power_Display_Flag = 10; 10%: 1 red LED.
 */
 uint8_t Power_Display_Flag = 0;
+
+/*
+	Animation_Running = 0: False
+	Animation_Running = 1: Boot
+	Animation_Running = 2: Shutdown
+	Animation_Running = 3: Disabled
+	Animation_Running = 4: Idle
+*/
+uint8_t Animation_Running = 0;
 
 //// FOOTPAD STATE
 

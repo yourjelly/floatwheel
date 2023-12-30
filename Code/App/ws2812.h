@@ -33,10 +33,14 @@ extern uint16_t WS2812_Counter;
 extern uint8_t WS2812_Buff[WS2812_N][24];
 
 void WS2812_Init(void);
-void WS2812_Set_Colour(uint8_t num, uint8_t colour, uint8_t brightness);
-void WS2812_All_Off(void);
-void WS2812_Task(void);
-void WS2812_Refresh(void);
+uint8_t rgb_by_colour(uint8_t colour);
+void Lightbar_Set_RGB(uint8_t num, uint8_t red, uint8_t green, uint8_t blue);
+void Lightbar_Set_RGB_Range(uint8_t start, uint8_t end, uint8_t red, uint8_t green, uint8_t blue);
+void Lightbar_Set_Colour(uint8_t num, uint8_t colour, uint8_t brightness);
+void Lightbar_Set_Colour_Range(uint8_t start, uint8_t end, uint8_t colour, uint8_t brightness);
+void Lightbar_All_Off(void);
+void Lightbar_Task(void);
+void Lightbar_Refresh(void);
 
 #endif
 

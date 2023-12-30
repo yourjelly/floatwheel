@@ -61,7 +61,7 @@ int main(void)
 	while(1)
 	{
 		KEY1_Task();
-		WS2812_Task();
+		Lightbar_Task();
 		Power_Task();
 		Charge_Task();
 		Flashlight_Task();
@@ -69,7 +69,7 @@ int main(void)
 		Buzzer_Task();
 		Usart_Task();
 		ADC_Task();
-		Conditional_Judgment();
+		VESC_State_Task();
 	}
 }
 

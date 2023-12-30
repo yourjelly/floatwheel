@@ -1,9 +1,15 @@
 #include "vesc_uasrt.h"
+#include "flag_bit.h"
 
 uint8_t VESC_RX_Buff[256];
 uint8_t VESC_RX_Flag = 0;
 
+// Access ADC values here to determine riding state
+extern float ADC1_Val, ADC2_Val;
+
 dataPackage data;
+lcmConfig_t lcmConfig;
+uint8_t errCode = 0;
 
 uint8_t protocol_buff[256]; // send buffer
 /**************************************************
@@ -68,25 +74,32 @@ void Send_Pack_Data(uint8_t *payload,uint16_t len)
  **************************************************/
 void Get_Vesc_Pack_Data(COMM_PACKET_ID id)
 {
-	uint8_t command[1];
+	uint8_t command[12];
+	int len = 1;
 	
 	command[0] = id;
 	
-	Send_Pack_Data(command,1);
-}
+	if (id == COMM_CUSTOM_APP_DATA) {
+		command[1] = 101;
+		command[2] = 24; // FLOAT_COMMAND_POLL
+		len = 3;
+	}
 
-void Get_Vesc_Adc_Data()
-{
-	uint8_t message[3] = {COMM_CUSTOM_APP_DATA, 102, GET_VESC_ADC}; //Custom data, magic number, get vesc adc
-	Send_Pack_Data(message, 3);
-}
-
-void Get_Eeprom_Data(LCM_COMMANDS command) //Retrieve data stored in eeprom 
-{
-	uint8_t data;
-	EEPROM_ReadByte(command, &data);
-	uint8_t message[4] = {COMM_CUSTOM_APP_DATA, 103, command, data};
-	Send_Pack_Data(message, 4);
+	if (id == COMM_CUSTOM_DEBUG) {
+		command[0] = COMM_CUSTOM_APP_DATA;
+		command[1] = 101;
+		command[2] = 28; // FLOAT_COMMAND_LCM_DEBUG
+		command[3] = Power_Flag;
+		command[4] = Charge_Flag;
+		command[5] = Buzzer_Flag;
+		command[6] = Lightbar_Battery_Flag;
+		command[7] = Sensor_Activation_Display_Flag;
+		command[8] = Light_Profile;
+		command[9] = errCode;
+		len = 10;
+	}
+	
+	Send_Pack_Data(command, len);
 }
 
 /**************************************************
@@ -183,8 +196,7 @@ uint8_t Protocol_Parse(uint8_t *message)
 	uint16_t crcpayload;
 	uint8_t id;
 	int32_t ind = 0;
-	uint8_t command = 0;
-	
+		
 	start = message[counter++];
 	
 	switch(start)
@@ -214,123 +226,58 @@ uint8_t Protocol_Parse(uint8_t *message)
 	{
 		case COMM_GET_VALUES: 
 
-			data.tempFET            = buffer_get_float16(pdata, 10.0, &ind);
-			data.tempMotor          = buffer_get_float16(pdata, 10.0, &ind);
-			data.avgMotorCurrent 	= buffer_get_float32(pdata, 100.0, &ind);
-			data.avgInputCurrent 	= buffer_get_float32(pdata, 100.0, &ind);
-			ind += 8; // skip 8 bytes
-			data.dutyCycleNow 		= buffer_get_float16(pdata, 1000.0, &ind);
+			ind += 8;
+			data.avgInputCurrent 	= buffer_get_float32(pdata, 100.0, &ind); // negative input current implies braking
+			ind += 8; // Skip id/iq currents
+			data.dutyCycleNow 		= buffer_get_float16(pdata, 10.0, &ind);	// duty as value 0..100
 			data.rpm 				= buffer_get_int32(pdata, &ind);
 			data.inpVoltage 		= buffer_get_float16(pdata, 10.0, &ind);
-			data.ampHours 			= buffer_get_float32(pdata, 10000.0, &ind);
-			data.ampHoursCharged 	= buffer_get_float32(pdata, 10000.0, &ind);
-			ind += 8; // skip 8 bytes
-			data.tachometer 		= buffer_get_int32(pdata, &ind);
-			data.tachometerAbs 		= buffer_get_int32(pdata, &ind);
+			
+			if ((data.rpm > 100) || (data.rpm < -100) || (data.avgInputCurrent > 1) || (data.avgInputCurrent < -1)) {
+				data.state = RUNNING;
+			}
+			else {
+				// Use this fault as a placeholder (we only care that the board is stopped anyways)
+				data.state = FAULT_STARTUP;
+			}
 
 		break;
 
-		/*
-		Receive custom data + magic number (102)
-		command 0 = Change the brightness of the front and rear light 	(uint8_t brightness)
-		command 1 = Change the brightness of the lightbar (footpad sensor) (uint8_t brightness)
-		
-		
-		// Possible other commands 
-		command 2 = Change buzzer -> (uint8_t ON_OFF, uint8_t VOLUME, uint8_t target) 
-		target -> duty cycle, faults, current, motor current, temp, or combination
-		toggle with bits (1 == ON, 0 == OFF)
-		target bits:
-			bit 1 = currently unused
-			bit 2 = currently unused
-			bit 3 = temperature motor
-			bit 4 = temperature mosfet
-			bit 5 = current motor
-			bit 6 = current
-			bit 7 = faults
-			bit 8 = duty cycle
-
-		command 3 = Dim lightbar on speed -> (uint8_t ON_OFF) //or integrate with command 1
-		command 4 = Brakelight -> (uint8_t ON_OFF) //keep brightness at (70%) set brightness until braking (hard) occurs -> then scale to 100%
-
-*/
-   case COMM_CUSTOM_APP_DATA:
-      if (message[counter++] ==
-          102)  // Magic number specificly for the Floatwheel light control
-                // module (Float package uses 101 - dont interfere with the
-                // float package)
-      {
-        command = message[counter++];
-        switch (command) 
-		{
-          // Light commands
-          	case CHANGE_LIGHT_PROFILE:
-            // Change light profile
-            	Change_Light_Profile(true);
-            	break;
-
-			case CHANGE_LIGHT_BRIGHTNESS:
-				//Should be changed to uint16 instead of uint8
-				Main_Brightness =  message[counter++];  //For runtime light changes (Main light) 
+		   case COMM_CUSTOM_APP_DATA:
+      
+		  if (len < 12) {
 				break;
-
-			case CHANGE_LIGHTBAR_BRIGHTNESS:
-				Lightbar_Brightness = message[counter++];  //For runtime light changes (Lightbar)
-				break; 
-			// case 1:// lights on
-			// case 2: //lights off
-			case CHANGE_BOOT_ANIMATION:
-				Change_Boot_Animation(message[counter++]);
-				break;
-
-			case CHANGE_CELL_TYPE:
-				Change_Cell_Type(message[counter++]);
-				break;
-
-
-			// case 10: // change headlight brightness
-			// case 20: // change lightbar colour
-			// case 21: // change lightbar brightness
-			// case 22: // change boot animation
-
-        	// Buzzer commands
-
-			case SET_BUZZER_ON: //Might change this to an unused vesc command -> message will still be build correct but shorter.
-				if (Config_Buzzer == VESC) {
-					// Buzzer on
-					BUZZER_ON;
-				}
-				break;
-
-			case SET_BUZZER_OFF: //Might change this to an unused vesc command -> message will still be build correct but shorter.
-				if (Config_Buzzer == VESC) {
-					// Buzzer off
-					BUZZER_OFF;
-				}
-				break;
-			case SET_BUZZER_STATE: //TODO -> Change lightbar color based on the state
-				break; 
-
-			case CHANGE_BUZZER_TYPE:
-				Change_Buzzer_Type(message[counter++]);
-				break;
-				// EEPROM and system commands
-				// case 200:
-				// 	// Save settings
-				// 	EEPROM_WriteByte(0, Light_Profile);
-				// case 201: // change cell type
-				// case 202: // change ADC thresholds
-			case GET_VESC_ADC:
-			//Todo - change the values of the LCM and perhaps set in eeprom
-				//uint8_t adc1 = message[counter++]; 
-				//uint8_t adc2 = message[counter++];
+}
+		  uint8_t magicnr = pdata[ind++];
+		  uint8_t floatcmd = pdata[ind++];
+		  if ((magicnr != 101) || (floatcmd != FLOAT_COMMAND_LCM_POLL)) {
 				break;
         }
-      } else {
-        return 0;
-      }
-      break;
-	}
+      data.floatPackageSupported = true;
+			uint8_t state = pdata[ind++];
+			data.state = state & 0xF;
+			//data.switchstate = (state >> 4) & 0x7;
+			data.isHandtest = (state & 0x80) > 0;
+			data.fault = pdata[ind++];
+			data.dutyCycleNow = pdata[ind++];
+			data.rpm = buffer_get_float16(pdata, 1.0, &ind);
+			data.avgInputCurrent = buffer_get_float16(pdata, 1.0, &ind);
+			data.inpVoltage = buffer_get_float16(pdata, 10.0, &ind);
+
+			uint8_t lcmset = pdata[ind++];
+			if ((lcmset > 0) && (len >= 17)) {
+				lcmConfig.isSet = true;
+				lcmConfig.headlightBrightness = pdata[ind++];
+				lcmConfig.statusbarBrightness = pdata[ind++];
+				lcmConfig.statusbarMode = pdata[ind++];
+				lcmConfig.dutyBeep = pdata[ind++];
+				lcmConfig.boardOff = pdata[ind++];
+			}
+}
+	if (data.rpm > 500)
+		data.isForward = true;
+	if (data.rpm < -500)
+		data.isForward = false;
 	
 	return 0;
 }

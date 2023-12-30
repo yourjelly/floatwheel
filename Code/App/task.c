@@ -1,26 +1,25 @@
 #include "task.h"
 
-void Change_Cell_Type(uint8_t type) {
-	if (type == DG40 || type == P42A) {
-		EEPROM_WriteByte(CHANGE_CELL_TYPE, type);
-	}
+/**************************************************
++ * Reset LCM Config
++ **************************************************/
+static void lcmConfigReset(void)
+{
+	lcmConfig.isSet = false;
+	lcmConfig.headlightBrightness = 0;
+	lcmConfig.statusbarBrightness = 30;
+	lcmConfig.statusbarMode = 0;
+	lcmConfig.dutyBeep = 90;
+	lcmConfig.boardOff = 0;
+	errCode = 0;
 }
 
-void Change_Boot_Animation(uint8_t animation) {
-	if (animation == RAINBOW || animation == NORMAL) {
-		EEPROM_WriteByte(CHANGE_BOOT_ANIMATION, animation);
-	}
-}
-
-void Change_Buzzer_Type(uint8_t type) {
-	if (type == LCM || type == VESC || type == OFF) {
-		EEPROM_WriteByte(CHANGE_BUZZER_TYPE, type);
-	}
-}
+// brightnesses for Light Profile 1, 2, 3:
+int headlight_brightnesses[] = { LIGHTBAR_BRIGHTNESS_LOW, LIGHTBAR_BRIGHTNESS_MED, LIGHTBAR_BRIGHTNESS_HIGH };
+int status_brightnesses[] = { MAIN_BRIGHTNESS_HIGH, MAIN_BRIGHTNESS_MED, MAIN_BRIGHTNESS_LOW };
 
 /**************************************************
  * @brief  :KEY1_Task()
- * @note   :KEY1�1�7�1�7�1�7�1�7
  **************************************************/
 void KEY1_Task(void)
 {
@@ -45,9 +44,11 @@ void KEY1_Task(void)
 		break;
 		
 		case 3:		// Long Press ~~ Power Off
+			if (Power_Flag < 3) {
+				lcmConfigReset();
+			}
 			Power_Flag = 4;
-			// Flashlight_Flag = 0;
-			// Lightbar_Battery_Flag = 2;
+			Power_Time = 0;
 		break;
 		
 		case 4:		// Triple Click ~~ Toggle Buzzer
@@ -62,151 +63,103 @@ void KEY1_Task(void)
 					Buzzer_Flag = 2;
 				}
 			}
-		break;
-		
+		break;		
 	}
+
 	KEY1_State = 0;
 }
 
 /**************************************************
- * @brief  :Power_Display()
- * @note   :Displays current power level on lightbar
+ * @note:	Displays current power level on lightbar
+ * @param:	brightness (0-255)
  **************************************************/
-void Power_Display(void)
+static void Power_Display(uint8_t brightness)
 {
-	uint8_t i;
-	uint8_t num = 10 - (Power_Display_Flag - 1);
-
-	for (i=0;i<10;i++) {
-		if (Power_Display_Flag == 0) {
-			// Something is wrong - set all LEDs to red at full brightness
-			WS2812_Set_Colour(i, Red, 255);
-		} else {
-			if (i < num) {
-				if (num <= 2) {
-					WS2812_Set_Colour(i, Red, Lightbar_Brightness);
-				} else {
-					WS2812_Set_Colour(i, White, Lightbar_Brightness);
-				}
-			} else {
-				WS2812_Set_Colour(i, Off, 0);
-			}
-		}
+	uint8_t numleds = 11 - Power_Display_Flag;
+	// 20% and below: red
+	// 40% and below: yellow
+	// > 40% white
+	uint8_t ledcolour = Red; 
+	if (numleds > 2) {
+		ledcolour = Yellow;
+	}
+	if (numleds > 4) {
+		ledcolour = White;
+	}
+	if (Power_Display_Flag > 0) {
+		Lightbar_Set_Colour_Range(0, numleds, ledcolour, brightness);
+	}
+	else { // Error lights
+		Lightbar_Set_Colour_Range(5, 6, Red, brightness);
 	}
 
-	WS2812_Refresh();
+	Lightbar_Refresh();
 }
 
 /**************************************************
- * @brief  :Sensor_Activation_Display()
  * @note   :Displays current footpad sensor activation on the lightbar
  **************************************************/
-void Sensor_Activation_Display(void)
+static void Sensor_Activation_Display(void)
 {
 	uint8_t i;
 
 	switch(Sensor_Activation_Display_Flag)
 	{
-		case 1: // adc1>ADC_THRESHOLD_LOWER  adc2<ADC_THRESHOLD_LOWER
-			for(i=0;i<5;i++)
-			{
-				WS2812_Set_Colour(i, Blue, Lightbar_Brightness);
+		case 1:	// Left Foot Sensors
+			if (data.state == DISABLED) {
+				Disabled_Animation();
+				return;
 			}
-				for(i=5;i<10;i++)
-			{
-				WS2812_Set_Colour(i, Off, 0);
-			}
-		break;
-
-		case 2: // adc1<ADC_THRESHOLD_LOWER  adc2>ADC_THRESHOLD_LOWER
-			for(i=0;i<5;i++)
-			{
-				WS2812_Set_Colour(i, Off, 0);
-			}
-				for(i=5;i<10;i++)
-			{
-				WS2812_Set_Colour(i, Blue, Lightbar_Brightness);
-			}
+			Lightbar_Set_Colour_Range(1, 5, indicator_color, Lightbar_Brightness);
+			WS2812_Refresh();
 		break;
 		
-		case 3: // adc1>ADC_THRESHOLD_LOWER  adc2>ADC_THRESHOLD_LOWER
-			for(i=0;i<10;i++)
-			{
-				WS2812_Set_Colour(i, Blue, Lightbar_Brightness);
+		case 2:	// Right Foot Sensor
+			if (data.state == DISABLED) {
+				Disabled_Animation();
+				return;
 			}
-		break;
-
-		case 4: // adc1<ADC_THRESHOLD_LOWER  adc2<ADC_THRESHOLD_LOWER
-			WS2812_All_Off();
+			Lightbar_Set_Colour_Range(6, 10, indicator_color, Lightbar_Brightness);
+			WS2812_Refresh();
 		break;
 		
-		default:
-			WS2812_All_Off();
+		case 3:	// Both Foot Sensors
+			if (data.state == DISABLED) {
+				Disabled_Animation();
+				Buzzer_Frequency = 100;
+				return;
+			}
+			Lightbar_Set_Colour_Range(1, 10, indicator_color, Lightbar_Brightness);
+			WS2812_Refresh();
+		break;
+			
+		default: // Riding
+			Lightbar_VESC();
 		break;
 	}
-	WS2812_Refresh();
 }
 
 /**************************************************
- * @brief  :Boot_Animation()
- * @note   :Displays the boot animation on the lightbar
- **************************************************/
-void Boot_Animation(void)
-{
-	uint8_t i;
-	uint8_t num = floor(Power_Time / 500) + 1;
-	uint8_t rgbMap[10] = {Red, RedOrange, Orange, Yellow, YellowGreen, Green, Cyan, Blue, Violet, Magenta};
-
-	if (num > 10) {
-		num = 10;
-	}
-
-	for (i=0;i<num;i++) {
-		//switch (Config_Boot_Animation) {  Not sure what would happen if no bytes are stored (set to 0xFF?)
-		//Then this switch can be implemented
-		switch (BOOT_ANIMATION) {
-		case NORMAL:
-			WS2812_Set_Colour(i,Cyan, Lightbar_Brightness);
-			break;
-		case RAINBOW:
-			WS2812_Set_Colour(i,rgbMap[i], Lightbar_Brightness);
-			break;
-		}
-	}
-
-	for (i = num; i < 10; i++) {
-		WS2812_Set_Colour(i, Off, 0);
-	}
-
-	WS2812_Refresh();
-}
-
-/**************************************************
- * @brief  :WS2812_Cal_Bri()
  * @note   :Brightness pulse effect
  * @param  cnt: 1 count is 200ms
  **************************************************/
-uint8_t WS2812_Cal_Bri(uint8_t cnt)
+uint8_t Lightbar_Pulse(uint8_t cnt)
 {
 	static uint8_t brightness = 1;
 
 	// Update brightness
-	if(cnt < 50)
-	{
+	if(cnt < 50) {
 		brightness++;
 	}
-	else
-	{
+	else {
 		brightness--;
 	}
 	
 	// Clamp brightness
-	if(brightness < 1)
-	{
+	if(brightness < 1) {
 		brightness = 1;
 	}	
-	else if(brightness > 50)
-	{
+	else if(brightness > 50) {
 		brightness = 50;
 	}
 		
@@ -214,59 +167,236 @@ uint8_t WS2812_Cal_Bri(uint8_t cnt)
 }
 
 /**************************************************
- * @brief  :WS2812_Charge()
  * @note   :Shows the current battery % when the board is charging
  **************************************************/
-void WS2812_Charge(void)
+void Lightbar_Charge(void)
 {
-	uint8_t i;
-	uint8_t num = 10 - (Power_Display_Flag - 1);
 	static uint8_t cnt = 0;
-	uint8_t brightness = 0;
-	
-	brightness = WS2812_Cal_Bri(cnt);
-	for (i=0;i<10; i++) {
-		if (i <= num) {
-			if (num >= 10) { // Full charged - Set all to green
-				WS2812_Set_Colour(i, Green, brightness);
-			} else if (num <= 2) { // Low battery - Set first two to red
-				WS2812_Set_Colour(i, Red, brightness);
-			} else { // Normal charging - All to bright
-				WS2812_Set_Colour(i, White, brightness);
-			}
-		} else {
-			WS2812_Set_Colour(i, Off, 0);
-		}
+	if (Power_Display_Flag == 1) {
+		Lightbar_Set_Colour_Range(1, 10, Green, Lightbar_Pulse(cnt));
+
+		Lightbar_Refresh();
 	}
-	
+	else {
+		Power_Display(Lightbar_Pulse(cnt));
+	}
+
 	cnt++;
-	
+
 	if(cnt == 100)
 	{
 		cnt = 0;
 	}
-	
-	WS2812_Refresh();
 }	
 
 /**************************************************
- * @brief  :WS2812_Task()
+ * @note   :Displays the boot animation on the lightbar
+ **************************************************/
+void Boot_Animation(void)
+{
+	Animation_Running = 1;
+	
+	uint8_t i;
+	uint8_t num = floor(Power_Time / 100) + 1;
+	uint8_t rgbMap[3][10] = {{Cyan, Cyan, Cyan, Cyan, Cyan, Cyan, Cyan, Cyan, Cyan, Cyan}, // STOCK
+							{Red, RedOrange, Orange, Yellow, YellowGreen, Green, Cyan, Blue, Violet, Magenta}, // RAINBOW
+							{Red, White, Blue, Red, White, Blue, Red, White, Blue, Red}}; // RWB
+
+	if (num > 10) {
+		num -= 10;
+	}
+
+	for (i=0;i<num;i++) {
+		Lightbar_Set_Colour(i, rgbMap[BOOT_ANIMATION][i], LIGHTBAR_BRIGHTNESS_MED);
+	}
+	
+	Lightbar_Set_Colour(num, rgbMap[BOOT_ANIMATION][num], LIGHTBAR_BRIGHTNESS_HIGH);
+
+	for (i = num + 1; i < 10; i++) {
+		Lightbar_Set_Colour(i, rgbMap[BOOT_ANIMATION][i], LIGHTBAR_BRIGHTNESS_LOW);
+	}
+
+	Lightbar_Refresh();
+
+	if (Power_Time < VESC_BOOT_TIME){
+		Animation_Running = 0;
+	}
+}
+
+/**************************************************
+ * @note   :Displays the shutdown animation on the lightbar
+ **************************************************/
+void Shutdown_Animation(void)
+{
+	Animation_Running = 2;
+
+	uint8_t brightness = 100;
+	uint8_t num = 10 - floor(Power_Time / 100);
+
+	if (num < 1) {
+		num = 1;
+	}
+
+	Lightbar_Set_Colour_Range(num, num, Red, brightness / (11 - num));
+
+	Lightbar_Refresh();
+
+	if (Power_Time < 1000){
+		Animation_Running = 0;
+	}
+}
+
+/**************************************************
+ * @note   :Displays disabled animation on the lightbar
+ **************************************************/
+static void Disabled_Animation(void)
+{
+	Animation_Running = 3;
+
+	uint8_t brightness = Lightbar_Brightness;
+	if (brightness < 20)
+		brightness = 20;
+
+	uint8_t tick = Power_Time % 100;
+	
+	if (tick < 70) {
+		Lightbar_All_Off();
+	}
+	else {
+		Lightbar_Set_Colour_Range(5, 6, Red, brightness); // 2 red LEDs in the center
+	}
+
+	Lightbar_Refresh();
+
+	if (Power_Time < 1000){
+		Animation_Running = 0;
+	}
+}
+
+/**************************************************
+ * @note:	Displays an idle animation on the lightbar
+ **************************************************/
+static void Idle_Animation(void)
+{
+	Animation_Running = 4;
+
+	static int cnt = 0;
+	cnt++;
+	if(cnt == 8 * 512)
+	{
+		cnt = 0;
+	}
+	if ((cnt % 80) == 0) {
+		int r, g, b;
+		int div = cnt >> 3; // fast div by 8
+		int idx = div % 10;
+		int clr = div % 13;
+		int brightness = div % 100 + 100
+		Lightbar_Set_Colour_Range(idx, idx, clr, brightness);
+		Lightbar_Refresh();
+	}
+
+	if (Shutdown_Time_M < IDLE_TIME){
+		Animation_Running = 0;
+	}
+}
+
+/**************************************************
+ * @note:	Display handtest indicators on the lightbar
+ **************************************************/
+static void Lightbar_Handtest(void)
+{
+	static uint8_t pulsate = 0;
+	uint8_t brightness = Lightbar_Brightness;
+	if (brightness < 20)
+		brightness = 20;
+	pulsate++;
+	if (pulsate > 50)
+		pulsate = 0;
+
+	// 4 LEDs in the center
+	Lightbar_Set_RGB(4, 7, brightness, pulsate, 0);
+
+	//SUS will these turn off? Replaced with sensor flag switch
+	// if(ADC1_Val > ADC_THRESHOLD_LOWER) // Left ADC check - light first led green 
+	// {
+	// 	Lightbar_Set_Colour(0, Green, brightness);
+	// }
+
+	// if(ADC2_Val > ADC_THRESHOLD_LOWER) // Right ADC check - light last led green
+	// {
+	// 	Lightbar_Set_Colour(9, Green, brightness);
+	// }
+
+	switch(Sensor_Activation_Display_Flag)
+	{
+		case 1:	// Left Foot Sensor
+			Lightbar_Set_Colour(0, Green, brightness);
+		break;
+		
+		case 2:	// Right Foot Sensor
+			Lightbar_Set_Colour(9, Green, brightness);
+		break;
+
+		case 3:	// Both Foot Sensors
+			Lightbar_Set_Colour(0, Green, brightness);
+			Lightbar_Set_Colour(9, Green, brightness);
+		break;
+
+		default:
+			Lightbar_Set_Colour(0, Off, brightness);
+			Lightbar_Set_Colour(9, Off, brightness);
+		break;
+	}
+
+	Lightbar_Refresh();
+}
+
+/**************************************************
  * @note   :Main lightbar control task
  **************************************************/
-void WS2812_Task(void)
+void Lightbar_Task(void)
 {
 	uint8_t i;
-
+	
 	if(WS2812_Counter < 20) // Refresh every 20ms
 	{
 		return;
 	}
 	WS2812_Counter = 0;
 	
-	if(Power_Flag == 0 || (Power_Flag == 3 && Charge_Flag == 0))
+	Set_Light_Brightness()
+
+	switch(Animation_Running)
 	{
-			WS2812_All_Off();
-			WS2812_Refresh();
+		case 1:
+			Boot_Animation();
+			return;
+		break;
+
+		case 2:
+			Shutdown_Animation();
+			return;
+		break;
+
+		case 3:
+			Disabled_Animation();
+			return;
+		break;
+
+		case 4:
+			Idle_Animation();
+			return;
+		break;
+		
+		default:
+		break;
+	}
+
+	if(Power_Flag == 0 || (Power_Flag == 3 && Charge_Flag == 0)) // Board is off lights should be off
+	{
+			Lightbar_All_Off();
+			Lightbar_Refresh();
 			
 			Lightbar_Battery_Flag = 0;
 			Sensor_Activation_Display_Flag = 0;
@@ -275,111 +405,179 @@ void WS2812_Task(void)
 			return;
 	}
 	
-	if(Power_Flag == 1)
-	{
-		Boot_Animation();
-		return;
-	}
-	
 	if(Charge_Flag == 3) // Battery Fully charged - All LED white
 	{
-		for(i=0;i<10;i++)
-		{
-			WS2812_Set_Colour(i, White, 255);
-		}
-		return;
+		Lightbar_Set_RGB_Range(1, 10, 50, 150, 50); // white with a strong green tint
+		Lightbar_Refresh();
 	}
 	
 	if(Charge_Flag == 2) // Charging call charge function
 	{
-		WS2812_Charge();
+		Lightbar_Charge();
+		return;
+	}
+
+	if(Power_Flag != 2)
+	{
 		return;
 	}
 	
-	switch(Light_Profile)
-	{
-		case 1: // Low Headlights; High lightbar
-			Lightbar_Brightness = LIGHTBAR_BRIGHTNESS_HIGH;
-		break;
-		
-		case 2:	// Medium headlights; Medium lightbar
-			Lightbar_Brightness = LIGHTBAR_BRIGHTNESS_MED;
-		break;
-		
-		case 3: // High headlights; Low lightbar
-			Lightbar_Brightness = LIGHTBAR_BRIGHTNESS_LOW;
-		break;
-		
-		default:
-			
-		break;
+	if (data.isHandtest) {
+		Lightbar_Handtest();
+		return;
+	}
+	
+	Sensor_Activation_Display();
+}
+
+/**************************************************
+ * @note   : Display VESC status & Incorportaes Foot Sensors
+ **************************************************/
+static void Lightbar_VESC(void)
+{
+	uint8_t i;
+	uint8_t indicator_color = Blue;
+	if (data.floatPackageSupported) {
+		// make footpad indicators purple if float package commands are received successfully!
+		indicator_color = Purple;
 	}
 	
 	if(Lightbar_Battery_Flag == 1)  // Display Battery level
+		{
+			Power_Display(Lightbar_Brightness);
+			return;
+		}
+
+	switch(Sensor_Activation_Display_Flag)
 	{
-		Power_Display();
+		case 1:	// Left Foot Sensors
+			if (data.state == DISABLED) {
+				Disabled_Animation();
+				return;
+			}
+			Lightbar_Set_Colour_Range(1, 5, indicator_color, Lightbar_Brightness);
+		break;
+		
+		case 2:	// Right Foot Sensor
+			if (data.state == DISABLED) {
+				Disabled_Animation();
+				return;
+			}
+			Lightbar_Set_Colour_Range(6, 10, indicator_color, Lightbar_Brightness);
+		break;
+		
+		case 3:	// Both Foot Sensors
+			if (data.state == DISABLED) {
+				Disabled_Animation();
+				Buzzer_Frequency = 100;
+				return;
+			}
+			Lightbar_Set_Colour_Range(1, 10, indicator_color, Lightbar_Brightness);
+		break;
+			
+		case 4: // Riding
+			if (data.state != RUNNING_WHEELSLIP) {
+				uint8_t brightness = lcmConfig.isSet ? lcmConfig.statusbarBrightness : Lightbar_Brightness;
+
+				if (Power_Display_Flag > 8) {
+					// Voltage below 30%?
+					// Display red leds at full brightness above anything else
+					Power_Display(255);
+				}
+				else if (data.dutyCycleNow > 90) {
+					Lightbar_Set_Colour_Range(1, 10, Red, brightness);
+				}
+				else if (data.dutyCycleNow > 85) {
+					Lightbar_Set_Colour_Range(1, 9, Red, brightness);
+				}
+				else if (data.dutyCycleNow > 80) {
+					Lightbar_Set_Colour_Range(1, 8, Orange, brightness);
+				}
+				else if (data.dutyCycleNow > 70) {
+					Lightbar_Set_Colour_Range(1, 7, Yellow, brightness/2);
+				}
+				else if (data.dutyCycleNow > 60) {
+					Lightbar_Set_Colour_Range(1, 6, Green, brightness/3);
+				}
+				else if (data.dutyCycleNow > 50) {
+					Lightbar_Set_Colour_Range(1, 5, Green, brightness/4);
+				}
+				else if (Power_Display_Flag > 6) {
+					// Voltage below 40%?
+					// Display yellow leds at full brightness
+					Power_Display(255);
+				}
+				else {
+					Lightbar_Set_Colour_Range(1, 10, Off, brightness);
+				}
+			}
+			else {
+				Lightbar_Set_Colour_Range(1, 10, Off, brightness);
+			}
+		break;
+
+		case 5:
+			// Flywheel Mode: just a rando pattern fpr now
+			uint8_t pos = (Power_Time/100) % 10;
+			uint8_t colour = (Power_Time + pos) % 13;
+			uint8_t bright = (Power_Time + colour) % 255;
+			Lightbar_Set_Colour(pos, color, bright);
+		break;
+
+		default:
+			if (errCode == 0)
+				errCode = 1;
+			//Lightbar_Set_Colour_Range(9, 10, Red, 50);
+		break;
 	}
-	else // Display Sensor Activation
-	{
-		Sensor_Activation_Display();
-	}
-	
+	Lightbar_Refresh();
 }
 
 /**************************************************
  * @note Apply the corresponding battery level based on current voltage
  * @param battery_volatage float of the voltage of the battery cells
  **************************************************/
-void Apply_BatteryPowerFlag(float battery_voltage)
+void CheckPowerLevel(float battery_voltage)
 {
-	float battVoltages[2][10] = {{4.054,	4.01,	3.908,	3.827,	3.74,	3.651,	3.571,	3.485,	3.38,	3.0}, //P42A discharge
-								 {4.200,	4.19,	4.18,	4.15,	4.108,	4.002,	3.894,	3.79,	3.703,	3.279}}; //P42A charge
-	float cellcurvdischarge[2][10] = {{4.054,	4.01,	3.908,	3.827,	3.74,	3.651,	3.571,	3.485,	3.38,	3.0},   //P42A
-								      {4.07,	4.025,	3.91,	3.834,	3.746,	3.607,	3.49,	3.351,	3.168,	2.81}}; //DG40
-	float cellcurvcharge[2][10] = {{4.2,	4.19,	4.18,	4.15,	4.108,	4.002,	3.894,	3.79,	3.703,	3.279},   //P42A
-								   {4.18,	4.15,	4.1,	4.048,	3.966,	3.878,	3.783,	3.681,	3.603,	3.51}}; //DG40
+	float battVoltages[2][10] =		 {{4.054,	4.01,	3.908,	3.827,	3.740,	3.651,	3.571,	3.485,	3.380,	3.000},		//P42A discharge
+									  {4.200,	4.19,	4.180,	4.150,	4.108,	4.002,	3.894,	3.790,	3.703,	3.279}};	//P42A charge
+	float cellcurvdischarge[2][10] = {{4.054,	4.010,	3.908,	3.827,	3.740,	3.651,	3.571,	3.485,	3.380,	3.00},		//P42A
+									  {4.070,	4.025,	3.910,	3.834,	3.746,	3.607,	3.490,	3.351,	3.168,	2.81}};		//DG40
+	float cellcurvcharge[2][10] =	 {{4.20,	4.19,	4.18,	4.150,	4.108,	4.002,	3.894,	3.790,	3.703,	3.279},		//P42A
+									  {4.18,	4.15,	4.10,	4.048,	3.966,	3.878,	3.783,	3.681,	3.603,	3.510}};	//DG40
 	static uint8_t cell_type_last = 0; //CELL_TYPE P42A equates out to 0
+	
+	bool is_charging = false;
+
+	if (Power_Flag == 3) // If charging
+	{
+		is_charging = true;
+	}
 
 	if (CELL_TYPE != cell_type_last) // If !P42a run once at boot or on change
 	{
 		cell_type_last = CELL_TYPE;
 		for (int i=0;i<10;i++)
 		{
-			battVoltages[0][i] = cellcurvdischarge[cell_type_last][i];
-			battVoltages[1][i] = cellcurvcharge[cell_type_last][i];
+			battVoltages[0][i] = cellcurvdischarge[CELL_TYPE][i];
+			battVoltages[1][i] = cellcurvcharge[CELL_TYPE][i];
 		}
 	}
 
-	if (Power_Flag == 3) //if charging
-	{
-		for (int i=0;i<10;i++) {
-			if (battery_voltage > battVoltages[1][i]) {
-				Power_Display_Flag = i + 1;
-				break;
-			}
-			// Between zero and min voltage
-			if (i == 9) {
-				Power_Display_Flag = 10;
-			}
+	for (int i=0;i<10;i++) {
+		if (battery_voltage > battVoltages[is_charging][i]) {
+			Power_Display_Flag = i + 1;
+			break;
+		}
+		// Between zero and min voltage
+		if (i == 9) {
+			Power_Display_Flag = 10;
 		}
 	}
-	else
-	{
-		for (int i=0;i<10;i++) {
-			if (battery_voltage > battVoltages[0][i]) {
-				Power_Display_Flag = i + 1;
-				break;
-			}
-			// Between zero and min voltage
-			if (i == 9) {
-				Power_Display_Flag = 10;
-			}
-		}
-	}
+
 }
 
 /**************************************************
- * @brief  :Power_Task()
  * @note   :Sets appropriate flags for current power state
  **************************************************/
 void Power_Task(void)
@@ -403,6 +601,7 @@ void Power_Task(void)
 				case 0: // Wating to boot or boot finished
 					Power_Time = 0;
 					power_step = 1;
+					Boot_Animation();
 				break;
 				
 				case 1: // Boot in progress
@@ -412,35 +611,7 @@ void Power_Task(void)
 						Light_Profile = 1;	// Set light profile to Low
 						Buzzer_Flag = 2;	// Set buzzer to on
 						power_step = 0;		// Reset boot progress
-						Config_Cell_Type = CELL_TYPE;			// Set to the define
-						Config_Boot_Animation = BOOT_ANIMATION; // Set to the define
-						Config_Buzzer = BUZZER_TYPE;
-						// Read saved value from EEPROM
-						uint8_t data = Light_Profile;
-						EEPROM_ReadByte(0, &data);
-
-						if (data > 0 && data < 4)
-						{
-							Light_Profile = data;
-						}
-						data = Config_Cell_Type;
-						EEPROM_ReadByte(CHANGE_CELL_TYPE, &data);
-						if (data == DG40 || data == P42A)
-						{
-							Config_Cell_Type = data;
-						}
-						data = Config_Boot_Animation;
-						EEPROM_ReadByte(CHANGE_BOOT_ANIMATION, &data);
-						if (data == NORMAL || data == RAINBOW)
-						{
-							Config_Boot_Animation = data;
-						}
-						data = Config_Buzzer;
-						EEPROM_ReadByte(CHANGE_BUZZER_TYPE, &data);
-						if (data == LCM || data == VESC || data == OFF)
-						{
-							Config_Buzzer = data;
-						}
+						Lightbar_Battery_Flag = 1;
 						Set_Light_Brightness();
 					}
 				break;
@@ -449,16 +620,21 @@ void Power_Task(void)
 		break;	
 		
 		case 3: // Powered by charger
-			if (POWER_VESC_ON_CHARGER != true)
+			Flashlight_Flag = 0;
+			Lightbar_Battery_Flag = 0;
+			if (POWER_VESC_ON_CHARGER == false)
 			{
-				Power_Flag = 4;
+				Power_Time = 0;
+				Disabled_Animation();
+				PWR_OFF;
 			}
 		break;
 		
 		case 4: // Signal to power board off
-			Flashlight_Flag = 0;
-			Lightbar_Battery_Flag = 2;
+			Power_Time = 0;
+			Shutdown_Animation();
 			PWR_OFF;
+			Power_Flag = 0;
 		break;
 
 		default:
@@ -468,22 +644,70 @@ void Power_Task(void)
 }
 
 /**************************************************
- * @brief  :Charge_Task()
  * @note   :Sets appropriate flags for current charging state
  **************************************************/
 void Charge_Task(void)
 {
 	static uint8_t charge_step = 0; 
 		
-	if(Charge_Flag == 0)
+	if(Charge_Flag > 0 && Charge_Time > 150)
 	{
-		return;
-	}else if(Charge_Flag == 3)
-	{
-		CHARGE_OFF;  // Stop charging
-		return;
+		if(V_I == 0)
+		{
+			if(Charge_Current > 0 && Charge_Current < CHARGE_SHUTOFF_CURRENT) // if the charger current is between 0 & 0.3A
+			{
+				Charge_Flag = 3;
+				Shutdown_Cnt++;
+				if(Shutdown_Cnt>10) // 10 count to stop charging (ms?)
+				{
+					Charge_Time = 0;
+					V_I = 1;
+					LED1_ON; // Use ADC3 to measure charge voltage
+					CHARGE_OFF;
+				}
+			}
+			else
+			{
+				Shutdown_Cnt = 0;
+			}
+		}
+		else
+		{
+			if(Charge_Flag == 2)
+			{
+				CheckPowerLevel((Charge_Voltage+1)/BATTERY_STRING);
+			}
+			if((Charge_Flag == 3) && (Shutdown_Cnt > 10))
+			{
+				if (Charge_Voltage < CHARGING_VOLTAGE)
+				{
+					// wait for charger to get unplugged to reset back to normal state
+					Charge_Flag = 0;
+					charge_step = 0;
+					Charge_Voltage = 0;
+					Charger_Detection_1ms = 0;
+				}
+			}
+		}
 	}
-	
+	else // Charge_Flag == 0
+	{
+		charge_step = 0;
+		if(Charge_Voltage > CHARGING_VOLTAGE)// && (Charge_Current > 0.1))
+		{
+			if(Charger_Detection_1ms > CHARGER_DETECTION_DELAY)
+			{
+				if (Charge_Flag != 2)
+					Charge_Flag = 1;
+				Lightbar_Battery_Flag = 0;
+			}
+		}
+		else {
+			Charger_Detection_1ms = 0;
+			return;
+		}
+	}
+
 	switch(charge_step)
 	{
 		case 0:
@@ -526,9 +750,8 @@ void Charge_Task(void)
 
 /**************************************************
  * @note   Cycles through the available lighting profiles
- * @param  persist (bool): whether to save the current profile to EEPROM
  **************************************************/
-void Change_Light_Profile(bool persist)
+void Change_Light_Profile(void)
 {
 	// Change light profile
 	Light_Profile++;
@@ -549,10 +772,10 @@ void Change_Light_Profile(bool persist)
 
 /// Only call the when the Light_Profile is changed (either via button or bluetooth) or after first eeprom read
 /// Allows runtime bluetooth changes on Lightbar_Brightness and Main_Brightness
-/**
+/**************************************************
 * @note Sets light brightness to the current Light_Profile
-**/
-void Set_Light_Brightness()
+**************************************************/
+void Set_Light_Brightness(void)
 {
 	switch (Light_Profile)
 	{
@@ -579,11 +802,11 @@ void Set_Light_Brightness()
 	}
 }
 
-/**
+/**************************************************
  * @note transitions from current brightness to end brightness
  * @param target ending brightness
  * @param time transition time in ms
- **/
+ **************************************************/
 void Light_Transition(uint16_t target, uint16_t time)
 {
 	static uint16_t brightness = 9999;
@@ -621,7 +844,6 @@ void Light_Transition(uint16_t target, uint16_t time)
 }
 
 /**************************************************
- * @brief  :Flashlight_Bright()
  * @note   :Flashlight brightness control
  * @param direction 1=Forward 2=Reverse  
  * @param bright 1=transition to REST 2=transition from 10% to 100%
@@ -660,7 +882,6 @@ void Flashlight_Bright(uint8_t direction, uint8_t bright)
 }
 	
 /**************************************************
- * @brief  :Flashlight_Task()
  * @note   :Controls headlight/tail light brightness multiplier and direction
  **************************************************/
 void Flashlight_Task(void)
@@ -714,8 +935,7 @@ void Flashlight_Task(void)
 }
 
 /**************************************************
- * @brief  : Flashlight_Detection()
- * @note   : Controls lightS activity on profile change and allows to dim
+ * @note   : Controls lights activity on profile change and allows to dim
  **************************************************/
 void Flashlight_Detection(void)
 {
@@ -742,7 +962,6 @@ void Flashlight_Detection(void)
 }
 
 /**************************************************
- * @brief  :Buzzer_Task()
  * @note   :Controls the buzzer
  **************************************************/
 void Buzzer_Task(void)
@@ -752,11 +971,7 @@ void Buzzer_Task(void)
 	static uint8_t ring_frequency = 0;
 	static uint16_t sound_frequency = 0;
 
-	if (Config_Buzzer == VESC) {
-		return; //Do nothing with the buzzer, let the vesc handle everything -> when changed to vesc make sure to initialy set buzzer off
-	}
-
-	if(Power_Flag != 2 || Buzzer_Flag == 1 || Config_Buzzer == OFF) // If buzzer is set to off turn off
+	if(Power_Flag != 2 || Buzzer_Flag == 1) // If buzzer is set to off turn off
 	{
 		BUZZER_OFF;
 		buzzer_step = 0;
@@ -833,28 +1048,52 @@ void Buzzer_Task(void)
 }
 
 /**************************************************
- * @brief  :Usart_Task()
  * @note   :Sends commands to VESC controller to get data
  **************************************************/
 void Usart_Task(void)
 {
 	static uint8_t usart_step = 0;
+	static uint8_t alternate = 0;
 	uint8_t result;
-	
+
 	if(Power_Flag != 2)
 	{
-		data.inpVoltage = 0;
+		// legacy/motor data
 		data.rpm = 0;
-		data.avgInputCurrent = 0;
 		data.dutyCycleNow = 0;
+		data.avgInputCurrent = 0;
+		data.inpVoltage = 0;
+
+		// float package data
+		data.floatPackageSupported = false;
+		data.state = 255;
+		data.fault = 0;
+		data.isForward = true;
+
+		lcmConfigReset();
+
 		usart_step = 0;
+		
 		return;
 	}
 	
 	switch(usart_step)
 	{
 		case 0:
-			Get_Vesc_Pack_Data(COMM_GET_VALUES);
+			// Try the custom app command for the first 2 seconds then fall back to generic GET_VALUES
+			if ((data.floatPackageSupported == false) && (Power_Time > VESC_BOOT_TIME * 2))
+				Get_Vesc_Pack_Data(COMM_GET_VALUES);
+			else {
+				if (alternate) {
+					Get_Vesc_Pack_Data(COMM_CUSTOM_DEBUG);
+				}
+				else {
+					Get_Vesc_Pack_Data(COMM_CUSTOM_APP_DATA);
+				}
+			}
+
+			alternate = 1 - alternate;
+
 			usart_step = 1;
 		break;
 		
@@ -864,19 +1103,7 @@ void Usart_Task(void)
 				VESC_RX_Flag = 0;
 				result = Protocol_Parse(VESC_RX_Buff);
 				
-				if(result == 0) //�1�7�1�7�1�7�1�7�1�7�0�6�1�7
-				{
-						//LED1_Filp_Time(500);				
-						Usart_Flag = 1;
-						//Battery_Voltage = data.inpVoltage; //�1�7�1�7�1�3�1�7�1�7?
-						//AvgInputCurrent = data.avgInputCurrent;  //�0�0�1�7�1�1�1�7�1�7�1�7
-						//DutyCycleNow = data.dutyCycleNow;   //�0�8�1�7�0�7�1�7
-				}
-				else	//�1�7�1�7�1�7�1�7�0�2�1�7�1�7
-				{
-						//LED1_Filp_Time(100);
-						Usart_Flag = 2;
-				}
+				Vesc_Data_Ready = (result == 0);
 				Usart_Time = 0;
 				usart_step = 2;
 			}
@@ -912,20 +1139,15 @@ void Usart_Task(void)
 	}
 	
 }
-
 /**************************************************
- * @brief  :ADC_Task()
  * @note   :Sets appropriate flags for current ADC/footpad sensor state
  **************************************************/
 void ADC_Task(void)
 {
 	static uint8_t adc_step = 0;
-	//static uint8_t i = 0;
-	//static uint16_t adc_charge_sum[10];
 	static uint16_t adc_charge_sum_ave = 0;
 	static uint16_t adc1_val_sum_ave = 0;
 	static uint16_t adc2_val_sum_ave = 0;
-	//float old_charge_current = 0;
 	
 	switch(adc_step)
 	{
@@ -951,8 +1173,6 @@ void ADC_Task(void)
 					if(Charge_Time>100)
 					{
 						Charge_Current = (float)(-0.008056640625F*adc_charge_sum_ave+16.5F);
-						//Charge_Current = Charge_Current*k + old_charge_current*(1-k);
-						//old_charge_current = Charge_Current;
 					}
 				}
 				else
@@ -973,190 +1193,158 @@ void ADC_Task(void)
 }
 
 /**************************************************
- * @brief  :Conditional_Judgment()
  * @note   :The main task for determining how to display the lights
  **************************************************/
-void Conditional_Judgment(void)
+void VESC_State_Task(void)
 {
-	float battery_voltage = 0;
-	static float battery_voltage_last = 0;
-	float abs_rpm = 0;
-			
-	switch(Power_Flag)
+	if ((Charge_Flag > 0) || (Power_Flag > 2) || !Vesc_Data_Ready)
+		return;
+
+	Vesc_Data_Ready = false;
+
+	CheckPowerLevel((data.inpVoltage+1)/BATTERY_STRING);
+
+	if(data.dutyCycleNow < 0)
 	{
-		case 1: // Power on check for charging
-			if(Charge_Voltage > CHARGING_VOLTAGE)
+		data.dutyCycleNow = -data.dutyCycleNow;
+	}
+	// Duty Cycle beep
+	if ((lcmConfig.dutyBeep > 0) && (data.dutyCycleNow >= lcmConfig.dutyBeep))
+	{
+		Buzzer_Frequency = ((((uint8_t)(data.dutyCycleNow))*4)-220);
+	}
+	else
+	{
+		Buzzer_Frequency = 0;
+	}
+
+	// Don't buzz in wheel slip or flywheel mode
+	if (data.state == RUNNING_UPSIDEDOWN) {
+		Buzzer_Frequency = 0;
+	}
+			
+	if(ADC1_Val>ADC_THRESHOLD_UPPER || ADC2_Val > ADC_THRESHOLD_UPPER)
+	{
+		if(data.rpm > VESC_RPM_WIDTH)
+		{
+			Flashlight_Flag = 2; // Forward
+		}
+		if(data.rpm < -VESC_RPM_WIDTH)
+		{
+			Flashlight_Flag = 3; // Backward
+		}
+	}
+	else
+	{
+		Flashlight_Flag = 4;
+	}
+
+	if(data.rpm<0)
+	{
+		data.rpm = -data.rpm;
+	}
+
+	if(data.state == RUNNING_FLYWHEEL) {
+		Lightbar_Battery_Flag = 2;
+		Sensor_Activation_Display_Flag = 5;
+		Buzzer_Frequency = 0;
+	}
+	else if(data.rpm < SENSOR_ACTV_DISPLAY_RPM) // Below this RPM show footpad activation on Lightbar
+	{
+		if (data.state == DISABLED) {
+			if ((ADC1_Val > ADC_THRESHOLD_LOWER) || (ADC2_Val > ADC_THRESHOLD_LOWER)) {
+				// Don't touch my board when it's disabled :)
+				Buzzer_Frequency = 100;
+			}
+		}
+		else {
+			Buzzer_Frequency = 0;
+
+			if(ADC1_Val < ADC_THRESHOLD_UPPER && ADC2_Val < ADC_THRESHOLD_UPPER)
 			{
+				Lightbar_Battery_Flag = 1; // Display Battery Level
+			}
+			else {
+				Lightbar_Battery_Flag = 2; // Do not Display Battery Level
+				if(ADC1_Val > ADC_THRESHOLD_UPPER && ADC2_Val > ADC_THRESHOLD_UPPER)
+				{
+					Sensor_Activation_Display_Flag = 3;  // Both Footpad Sensors Activated
+				}
+				else if(ADC1_Val >ADC_THRESHOLD_UPPER)
+				{
+					Sensor_Activation_Display_Flag = 1;  // Left Footpad Sensor Activated
+				}
+				else
+				{
+					Sensor_Activation_Display_Flag = 2;  // Right Footpad Sensor Activated
+				}
+			}
+		}
+	}
+	else
+	{
+		if(data.avgInputCurrent < 0.8F && abs_rpm < LIGHTBAR_SPEEDGATE_ON) // Conditions for showing battery level
+		{
+			Lightbar_Battery_Flag = 1;
+		}
+		else if(abs_rpm > LIGHTBAR_SPEEDGATE_OFF) // Too fast no distracting leds
+		{
+			Lightbar_Battery_Flag = 2;
+			Sensor_Activation_Display_Flag = 4; // sus TODO
+		}
+		// Add check for low voltage to force voltage display on WS2812!
+		Lightbar_Battery_Flag = 2;
+		Sensor_Activation_Display_Flag = 4;	// Normal Riding!
+	}
+
+				
+	if((Charge_Voltage > CHARGING_VOLTAGE) && (data.avgInputCurrent<0.8F))
+	{
+		if(Charger_Detection_Timer > 1000) // If charger detection timer reaches 1000ms (1s), initiate charging
+		{
 			Power_Flag = 3;
 			Charge_Flag = 1;
-			}
-		break;
+			Flashlight_Flag = 0;
+			Lightbar_Battery_Flag = 0;
+		}
 		
-		case 2: // Boot completed
-			if(Usart_Flag == 1)
-			{
-				Usart_Flag = 2;
-				
-				if(data.rpm >= 0){
-					abs_rpm = data.rpm;
-				}else{
-					abs_rpm = -data.rpm;
-				}
-
-				if(data.dutyCycleNow < 0)
-				{
-					data.dutyCycleNow = -data.dutyCycleNow;
-				}
-				/*duty cycle > DUTY_CYCLE buzzer beeps*/
-				if(data.dutyCycleNow >= DUTY_CYCLE)
-				{
-					Buzzer_Frequency = ((((uint8_t)(data.dutyCycleNow*100))*4)-220);
-				}
-				else
-				{
-					Buzzer_Frequency = 0;
-				}
-				
-				if(ADC1_Val>ADC_THRESHOLD_UPPER || ADC2_Val > ADC_THRESHOLD_UPPER)
-				{
-					if(data.rpm > VESC_RPM_WIDTH)
-					{
-						Flashlight_Flag = 2; // Forward
-					}
-					if(data.rpm < -VESC_RPM_WIDTH)
-					{
-						Flashlight_Flag = 3; // Backward
-					}
-				}
-				else
-				{
-					Flashlight_Flag = 4;
-				}
-				
-				battery_voltage = (data.inpVoltage+1)/BATTERY_STRING; // Divides pack voltage by cells -- +1 is the correction factor
-				
-				if((battery_voltage > (battery_voltage_last+VOLTAGE_RECEIPT)) || (battery_voltage < (battery_voltage_last - VOLTAGE_RECEIPT))) {
-					Apply_BatteryPowerFlag(battery_voltage);
-					
-					battery_voltage_last = battery_voltage;
-				}
-				
-				if(data.avgInputCurrent < 0)
-				{
-					data.avgInputCurrent = -data.avgInputCurrent;
-				}
-
-				if(abs_rpm < SENSOR_ACTV_DISPLAY_RPM) //Below this RPM show footpad activation on Lightbar
-				{
-					if(ADC1_Val < ADC_THRESHOLD_UPPER && ADC2_Val < ADC_THRESHOLD_UPPER)
-					{
-						Lightbar_Battery_Flag = 1; // Display Battery Level
-					}
-					else if(ADC1_Val > ADC_THRESHOLD_UPPER && ADC2_Val > ADC_THRESHOLD_UPPER)
-					{
-						Lightbar_Battery_Flag = 2; // Do not Display Battery Level
-						Sensor_Activation_Display_Flag = 3;  // Both Footpad Sensors Activated
-					}
-					else if(ADC1_Val >ADC_THRESHOLD_UPPER)
-					{
-						Lightbar_Battery_Flag = 2; // Do not Display Battery Level
-						Sensor_Activation_Display_Flag = 1;  // Left Footpad Sensor Activated
-					}
-					else
-					{
-						Lightbar_Battery_Flag = 2; // Do not Display Battery Level
-						Sensor_Activation_Display_Flag = 2;  // Right Footpad Sensor Activated
-					}
-				}
-				else 
-				{
-					if(data.avgInputCurrent < 0.8F && abs_rpm < LIGHTBAR_SPEEDGATE_ON) // Conditions for showing battery level
-					{
-						Lightbar_Battery_Flag = 1;
-					}
-					else if(abs_rpm > LIGHTBAR_SPEEDGATE_OFF) // Too fast no distracting leds
-					{
-						Lightbar_Battery_Flag = 2;
-						Sensor_Activation_Display_Flag = 4; // sus TODO
-					}
-				}
-				
-				if((Charge_Voltage > CHARGING_VOLTAGE) && (data.avgInputCurrent<0.8F))
-				{
-					if(Charger_Detection_Timer > 1000) // If charger detection timer reaches 1000ms (1s), initiate charging
-					{
-						Power_Flag = 3;
-						Charge_Flag = 1;
-						Flashlight_Flag = 0;
-						Lightbar_Battery_Flag = 0;
-					}
-					
-				}
-				else
-				{
-					Charger_Detection_Timer = 0;
-				}
-				/*
-					BOARD TIMEOUT SHUTDOWN COUNTER
-					Reset if either footpad is activated or if motor rpm excedes 1000
-				*/
-				if(ADC1_Val > ADC_THRESHOLD_UPPER || ADC2_Val > ADC_THRESHOLD_UPPER || abs_rpm > 1000)
-				{
-					Shutdown_Time_S = 0;
-					Shutdown_Time_M = 0;
-				}
-				
-				if(Shutdown_Time_S>60000)
-				{
-					Shutdown_Time_S = 0;
-					
-					Shutdown_Time_M++;
-					if(Shutdown_Time_M >= SHUTDOWN_TIME)
-					{
-						Power_Flag = 3;
-					}
-				}
-			}
-		break;
+	}
+	else
+	{
+		Charger_Detection_Timer = 0;
+	}
+	/*
+		BOARD TIMEOUT SHUTDOWN COUNTER
+		Reset if either footpad is activated or if motor rpm excedes 1000
+	*/
+	if(ADC1_Val > ADC_THRESHOLD_UPPER || ADC2_Val > ADC_THRESHOLD_UPPER || abs_rpm > 1000)
+	{
+		Shutdown_Time_S = 0;
+		Shutdown_Time_M = 0;
+	}
+	
+	if(Shutdown_Time_S>60000) // if we reach 60s increment minite 
+	{
+		Shutdown_Time_S = 0;
 		
-		case 3: // Charging shutdown and charger supplying power to board
-			if(V_I == 0 && Charge_Time > 150)
-			{
-				if(Charge_Current > 0 && Charge_Current < CHARGE_SHUTOFF_CURRENT) // if the charger current is between 0 & 0.3A
-				{
-					Shutdown_Cnt++;
-					if(Shutdown_Cnt>10) // 10 count to stop charging (ms?)
-					{
-						Charge_Flag = 3;
-						Shutdown_Cnt = 0;
-					}
-				}
-				else
-				{
-					Shutdown_Cnt = 0;
-				}
-			}
-			else if(Charge_Time > 150)
-			{
-				battery_voltage = (Charge_Voltage+1)/BATTERY_STRING; // Divides pack voltage by cells -- +1 is a correction factor - Tony
-				if(Charge_Flag == 2)
-				{
-					if((battery_voltage > (battery_voltage_last+VOLTAGE_RECEIPT)) || (battery_voltage < (battery_voltage_last - VOLTAGE_RECEIPT))) {
-						Apply_BatteryPowerFlag(battery_voltage);
-						battery_voltage_last = battery_voltage;
-					}
-				}
-			}
+		Shutdown_Time_M++;
 
-		break;
-		
-		default:
-			if(Charge_Voltage > CHARGING_VOLTAGE)
-			 {
-				Power_Flag = 3;
-				Charge_Flag = 1;
-			 }
-		break;
-			
+		if(Shutdown_Time_M >= IDLE_TIME && Animation_Running == 0)
+		{
+			Idle_Animation();
+		}
+
+		if(Shutdown_Time_M >= SHUTDOWN_TIME)
+		{
+			Power_Flag = 4;
+			Power_Time = 0;
+		}
+	}
+
+	if(((Shutdown_Time_M > 0) || (Shutdown_Time_S >= 10000)) && (lcmConfig.boardOff > 0))
+	{
+		// After 10 seconds of idle we allow the board to be shut down via app
+		Power_Flag = 4;
+		Power_Time = 0;
 	}
 }
