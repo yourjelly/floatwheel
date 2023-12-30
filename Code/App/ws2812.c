@@ -134,7 +134,7 @@ uint8_t rgb_by_colour(uint8_t colour)
 
 	uint8_t array_RGB[3] = {colourRGB[colour][0], colourRGB[colour][1], colourRGB[colour][2]};
 
-	return array_RGB;
+	return *array_RGB;
 }
 
 /**************************************************
@@ -146,7 +146,8 @@ uint8_t rgb_by_colour(uint8_t colour)
  **************************************************/
 void Lightbar_Set_Colour(uint8_t num, uint8_t colour, uint8_t brightness)
 {
-	uint8_t array_RGB[3] = rgb_by_colour(colour);
+	uint8_t array_RGB[3];
+	*array_RGB = rgb_by_colour(colour);
 	uint8_t red = array_RGB[0];
 	uint8_t green = array_RGB[1];
 	uint8_t blue = array_RGB[2];
