@@ -439,7 +439,7 @@ static void Lightbar_VESC(void)
 	uint8_t indicator_color = Blue;
 	if (data.floatPackageSupported) {
 		// make footpad indicators purple if float package commands are received successfully!
-		indicator_color = Purple;
+		indicator_color = Violet;
 	}
 	
 	if(Lightbar_Battery_Flag == 1)  // Display Battery level
