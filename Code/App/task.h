@@ -20,12 +20,6 @@ typedef enum {
 	RWB
 } BOOT_ANIMATION;
 
-typedef enum {
-	LCM,
-	VESC,
-	OFF
-} BUZZER_TYPE;
-
 #define   CELL_TYPE                 DG40        // Cell configuration to use for voltage display (P42A, DG40)
 #define	  CHARGING_VOLTAGE	  		40   		// Charging voltage detection. Greater than this value is considered that the charger is plugged in
 #define   CHARGE_SHUTOFF_CURRENT	0.3F        // Current threshold to stop charging unit A
@@ -54,7 +48,6 @@ typedef enum {
 #define   FADE_REFRESH				2			// (ms); FADE_TIME/FADE_REFRESH = fade steps
 /******   CONFIG VALUES   **************************************************************/
 #define   BOOT_ANIMATION		    RAINBOW     // Boot animation (STOCK, RAINBOW, RWB)
-#define	  BUZZER_TYPE				LCM		// Change control of buzzer (LCM, VESC, OFF) - TODO implement the different options in code
 
 void KEY1_Task(void);
 void Lightbar_Task(void);
