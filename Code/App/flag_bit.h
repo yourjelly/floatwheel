@@ -7,6 +7,7 @@
 
 extern uint8_t Power_Flag;
 extern uint8_t Charge_Flag;
+extern uint8_t Vesc_Data_Ready;
 
 // LIGHT STATE
 

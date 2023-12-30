@@ -18,6 +18,8 @@ uint8_t Power_Flag = 0;
 */
 uint8_t Charge_Flag = 0;
 
+uint8_t Vesc_Data_Ready = 0;
+
 //// LIGHTS STATE
 
 /*
