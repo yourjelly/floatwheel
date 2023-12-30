@@ -39,7 +39,7 @@ void KEY1_Task(void)
 		case 2:		// Double Click	~~ Increment Light Profile
 			if(Power_Flag == 2 || Power_Flag == 3) // If VESC booted
 			{
-				Change_Light_Profile(true);				
+				Change_Light_Profile();				
 			}
 		break;
 		
@@ -94,49 +94,6 @@ static void Power_Display(uint8_t brightness)
 	}
 
 	Lightbar_Refresh();
-}
-
-/**************************************************
- * @note   :Displays current footpad sensor activation on the lightbar
- **************************************************/
-static void Sensor_Activation_Display(void)
-{
-	uint8_t i;
-
-	switch(Sensor_Activation_Display_Flag)
-	{
-		case 1:	// Left Foot Sensors
-			if (data.state == DISABLED) {
-				Disabled_Animation();
-				return;
-			}
-			Lightbar_Set_Colour_Range(1, 5, indicator_color, Lightbar_Brightness);
-			WS2812_Refresh();
-		break;
-		
-		case 2:	// Right Foot Sensor
-			if (data.state == DISABLED) {
-				Disabled_Animation();
-				return;
-			}
-			Lightbar_Set_Colour_Range(6, 10, indicator_color, Lightbar_Brightness);
-			WS2812_Refresh();
-		break;
-		
-		case 3:	// Both Foot Sensors
-			if (data.state == DISABLED) {
-				Disabled_Animation();
-				Buzzer_Frequency = 100;
-				return;
-			}
-			Lightbar_Set_Colour_Range(1, 10, indicator_color, Lightbar_Brightness);
-			WS2812_Refresh();
-		break;
-			
-		default: // Riding
-			Lightbar_VESC();
-		break;
-	}
 }
 
 /**************************************************
@@ -428,6 +385,52 @@ void Lightbar_Task(void)
 	}
 	
 	Sensor_Activation_Display();
+}
+
+/**************************************************
+ * @note   :Displays current footpad sensor activation on the lightbar
+ **************************************************/
+static void Sensor_Activation_Display(void)
+{
+	uint8_t i;
+
+	switch (Sensor_Activation_Display_Flag)
+	{
+	case 1: // Left Foot Sensors
+		if (data.state == DISABLED)
+		{
+			Disabled_Animation();
+			return;
+		}
+		Lightbar_Set_Colour_Range(1, 5, indicator_color, Lightbar_Brightness);
+		Lightbar_Refresh();
+		break;
+
+	case 2: // Right Foot Sensor
+		if (data.state == DISABLED)
+		{
+			Disabled_Animation();
+			return;
+		}
+		Lightbar_Set_Colour_Range(6, 10, indicator_color, Lightbar_Brightness);
+		Lightbar_Refresh();
+		break;
+
+	case 3: // Both Foot Sensors
+		if (data.state == DISABLED)
+		{
+			Disabled_Animation();
+			Buzzer_Frequency = 100;
+			return;
+		}
+		Lightbar_Set_Colour_Range(1, 10, indicator_color, Lightbar_Brightness);
+		Lightbar_Refresh();
+		break;
+
+	default: // Riding
+		Lightbar_VESC();
+		break;
+	}
 }
 
 /**************************************************

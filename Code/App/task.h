@@ -60,5 +60,6 @@ void ADC_Task(void);
 void VESC_State_Task(void);
 void Flashlight_Detection(void);
 void Change_Light_Profile(void);
+void Sensor_Activation_Display(void);
 
 #endif
