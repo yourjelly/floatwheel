@@ -61,5 +61,7 @@ void VESC_State_Task(void);
 void Flashlight_Detection(void);
 void Change_Light_Profile(void);
 void Sensor_Activation_Display(void);
+static void Set_Light_Brightness(void);
+static void Lightbar_VESC(void);
 
 #endif
