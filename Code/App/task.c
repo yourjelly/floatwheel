@@ -457,7 +457,7 @@ static void Lightbar_VESC(void)
 		uint8_t pos = (Power_Time/100) % 10;
 		uint8_t colour = (Power_Time + pos) % 13;
 		uint8_t bright = (Power_Time + colour) % 255;
-		Lightbar_Set_Colour(pos, color, bright);
+		Lightbar_Set_Colour(pos, colour, bright);
 	}
 	else if (data.state != RUNNING_WHEELSLIP) {
 		uint8_t brightness = lcmConfig.isSet ? lcmConfig.statusbarBrightness : Lightbar_Brightness;
@@ -653,7 +653,7 @@ void Charge_Task(void)
 					Charge_Flag = 0;
 					charge_step = 0;
 					Charge_Voltage = 0;
-					Charger_Detection_1ms = 0;
+					Charger_Detection_Timer = 0;
 				}
 			}
 		}
@@ -663,7 +663,7 @@ void Charge_Task(void)
 		charge_step = 0;
 		if(Charge_Voltage > CHARGING_VOLTAGE)// && (Charge_Current > 0.1))
 		{
-			if(Charger_Detection_1ms > CHARGER_DETECTION_DELAY)
+			if(Charger_Detection_Timer > 1000)
 			{
 				if (Charge_Flag != 2)
 					Charge_Flag = 1;
@@ -671,7 +671,7 @@ void Charge_Task(void)
 			}
 		}
 		else {
-			Charger_Detection_1ms = 0;
+			Charger_Detection_Timer = 0;
 			return;
 		}
 	}
@@ -727,10 +727,7 @@ void Change_Light_Profile(void)
 	{
 		Light_Profile = 1;
 	}
-	if (persist)
-	{
-		EEPROM_WriteByte(0, Light_Profile);
-	}
+
 	if (Flashlight_Flag == 4)
 	{
 		Flashlight_Flag = 2;
@@ -1251,11 +1248,11 @@ void VESC_State_Task(void)
 	}
 	else
 	{
-		if(data.avgInputCurrent < 0.8F && abs_rpm < LIGHTBAR_SPEEDGATE_ON) // Conditions for showing battery level
+		if(data.avgInputCurrent < 0.8F && data.rpm < LIGHTBAR_SPEEDGATE_ON) // Conditions for showing battery level
 		{
 			Lightbar_Battery_Flag = 1;
 		}
-		else if(abs_rpm > LIGHTBAR_SPEEDGATE_OFF) // Too fast no distracting leds
+		else if(data.rpm > LIGHTBAR_SPEEDGATE_OFF) // Too fast no distracting leds
 		{
 			Lightbar_Battery_Flag = 2;
 			Sensor_Activation_Display_Flag = 4; // sus TODO
@@ -1285,7 +1282,7 @@ void VESC_State_Task(void)
 		BOARD TIMEOUT SHUTDOWN COUNTER
 		Reset if either footpad is activated or if motor rpm excedes 1000
 	*/
-	if(ADC1_Val > ADC_THRESHOLD_UPPER || ADC2_Val > ADC_THRESHOLD_UPPER || abs_rpm > 1000)
+	if(ADC1_Val > ADC_THRESHOLD_UPPER || ADC2_Val > ADC_THRESHOLD_UPPER || data.rpm > 1000)
 	{
 		Shutdown_Time_S = 0;
 		Shutdown_Time_M = 0;
